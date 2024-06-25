@@ -10,6 +10,7 @@ class ProductData extends ChangeNotifier {
   bool isLoaded = true;
   String error = "";
   List<Product> product = [];
+  List<Product> addCard = [];
   int productQuantity =1;
   void getData() async {
     try {

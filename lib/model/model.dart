@@ -10,6 +10,7 @@ class Product {
   num rating;
   int stock;
   String availabilityStatus;
+  List<String> images ;
 
   Product({
     required this.category,
@@ -23,6 +24,7 @@ class Product {
     required this.rating,
     required this.stock,
     required this.availabilityStatus,
+    required this.images,
   });
 
   factory Product.fromJson(Map product) {
@@ -38,6 +40,7 @@ class Product {
       rating: product["rating"] ?? 0,
       stock: product["stock"] ?? 0,
       availabilityStatus: product["availabilityStatus"] ?? "",
+      images: product["images"].cast<String>(),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:product_app/view/add_cart.dart';
 import 'package:product_app/view/product_detail.dart';
 import 'package:product_app/widget/bottom_navigation.dart';
 import 'package:product_app/model/model.dart';
@@ -35,7 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return AddCard();
+                  },
+                ),
+              );
+            },
             icon: Icon(
               Icons.shopping_bag_outlined,
               color: Colors.white,
