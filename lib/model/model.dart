@@ -8,6 +8,8 @@ class Product {
   String brand;
   num discountPercentage;
   num rating;
+  int stock;
+  String availabilityStatus;
 
   Product({
     required this.category,
@@ -18,7 +20,9 @@ class Product {
     required this.title,
     required this.brand,
     required this.discountPercentage,
-    required this.rating
+    required this.rating,
+    required this.stock,
+    required this.availabilityStatus,
   });
 
   factory Product.fromJson(Map product) {
@@ -32,6 +36,8 @@ class Product {
       brand: product["brand"] ?? "Gloceries",
       discountPercentage: product["discountPercentage"] ?? 0,
       rating: product["rating"] ?? 0,
+      stock: product["stock"] ?? 0,
+      availabilityStatus: product["availabilityStatus"] ?? "",
     );
   }
 }

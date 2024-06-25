@@ -10,6 +10,7 @@ class ProductData extends ChangeNotifier {
   bool isLoaded = true;
   String error = "";
   List<Product> product = [];
+  int productQuantity =1;
   void getData() async {
     try {
       Response response = await http.get(Uri.parse(endPoint));
@@ -25,6 +26,16 @@ class ProductData extends ChangeNotifier {
     }
   }
 
-
+void increaseQuantity(){
+  productQuantity++;
+  notifyListeners();
+}
   
+  void decreaseQuantity(){
+    if(productQuantity > 1){
+  productQuantity--;
+
+    }
+  notifyListeners();
+}
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:product_app/view/product_detail.dart';
 import 'package:product_app/widget/bottom_navigation.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
@@ -88,22 +90,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color(0xfff3f3f3),
-                        ),
-                        child: SizedBox(
-                          height: 200,
-                          child: Image.network(
-                            productItem.thumbnail,
-                            fit: BoxFit.cover,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return ProductDetail(product: productItem);
+                              },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xfff3f3f3),
+                          ),
+                          child: SizedBox(
+                            height: 200,
+                            child: Hero(
+                              tag: productItem.thumbnail,
+                              child: Image.network(
+                                productItem.thumbnail,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 5.0),
-                        child:Text("⭐⭐⭐⭐⭐"),
+                        child: Text("⭐⭐⭐⭐⭐"),
                       ),
                     ],
                   ),
