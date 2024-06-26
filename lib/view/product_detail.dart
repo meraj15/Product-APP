@@ -9,7 +9,7 @@ import 'package:product_app/widget/product_detail_bottomSheet.dart';
 import 'package:provider/provider.dart';
 
 import '../widget/size_show_model_sheet.dart';
-import '../widget/size_slector.dart';
+import '../widget/size_selector.dart';
 
 class ProductDetail extends StatefulWidget {
   final Product product;

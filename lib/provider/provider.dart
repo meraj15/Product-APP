@@ -11,7 +11,14 @@ class ProductData extends ChangeNotifier {
   String error = "";
   List<Product> product = [];
   List<Product> addCard = [];
-  int productQuantity =1;
+  int productQuantity = 1;
+  String productSize = '';
+
+  void setProductSize(String size) {
+    productSize = size;
+    notifyListeners();
+  }
+
   void getData() async {
     try {
       Response response = await http.get(Uri.parse(endPoint));
@@ -27,16 +34,15 @@ class ProductData extends ChangeNotifier {
     }
   }
 
-void increaseQuantity(){
-  productQuantity++;
-  notifyListeners();
-}
-  
-  void decreaseQuantity(){
-    if(productQuantity > 1){
-  productQuantity--;
+  void increaseQuantity() {
+    productQuantity++;
+    notifyListeners();
+  }
 
+  void decreaseQuantity() {
+    if (productQuantity > 1) {
+      productQuantity--;
     }
-  notifyListeners();
-}
+    notifyListeners();
+  }
 }

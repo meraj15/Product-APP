@@ -24,7 +24,7 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
       padding: EdgeInsets.symmetric(vertical: 10.0),
       height: 70,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xfff3f3f3),
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Padding(
