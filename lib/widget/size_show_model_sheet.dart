@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
-import 'package:product_app/widget/product_detail_bottomSheet.dart';
+import 'package:product_app/widget/product_detail_bottomsheet.dart';
 import 'package:provider/provider.dart';
 
 import 'size_option.dart';

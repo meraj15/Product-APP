@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:product_app/view/favorite_card.dart';
+
+import '../constant/contant.dart';
+import '../view/home_screen.dart';
 
 class BottemNavigation extends StatefulWidget {
   const BottemNavigation({super.key});
@@ -24,10 +28,17 @@ class _BottemNavigationState extends State<BottemNavigation> {
             onTap: () {
               myIndex = 0;
               setState(() {});
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return HomeScreen();
+                  },
+                ),
+              );
               debugPrint("Home");
             },
             child: Icon(Icons.home,
-                color: myIndex == 0 ? Color(0xffdb3022) : Colors.grey),
+                color: myIndex == 0 ? AppColor.appMainColor : Colors.grey),
           ),
           label: 'Home',
           backgroundColor: Colors.white,
@@ -40,24 +51,31 @@ class _BottemNavigationState extends State<BottemNavigation> {
                 debugPrint("shop");
               },
               child: Icon(Icons.shopping_cart_outlined,
-                  color: myIndex == 1 ? Color(0xffdb3022) : Colors.grey)),
+                  color: myIndex == 1 ? AppColor.appMainColor : Colors.grey)),
           label: 'Shop',
-          backgroundColor: Colors.white,
+          backgroundColor: AppColor.whiteColor,
         ),
         BottomNavigationBarItem(
           icon: GestureDetector(
             onTap: () {
               myIndex = 2;
               setState(() {});
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return Favorites();
+                  },
+                ),
+              );
               debugPrint("shop");
             },
             child: Icon(
               Icons.favorite_border_outlined,
-              color: myIndex == 2 ? Color(0xffdb3022) : Colors.grey,
+              color: myIndex == 2 ? AppColor.appMainColor : Colors.grey,
             ),
           ),
           label: 'Favorites',
-          backgroundColor: Colors.white,
+          backgroundColor: AppColor.whiteColor,
         ),
         BottomNavigationBarItem(
           icon: GestureDetector(
@@ -67,12 +85,12 @@ class _BottemNavigationState extends State<BottemNavigation> {
                 debugPrint("shop");
               },
               child: Icon(Icons.person,
-                  color: myIndex == 3 ? Color(0xffdb3022) : Colors.grey)),
+                  color: myIndex == 3 ? AppColor.appMainColor : Colors.grey)),
           label: 'Profile',
-          backgroundColor: Colors.white,
+          backgroundColor: AppColor.whiteColor,
         ),
       ],
-      selectedItemColor: Colors.red,
+      selectedItemColor: AppColor.appMainColor,
       unselectedItemColor: Colors.grey,
     );
   }

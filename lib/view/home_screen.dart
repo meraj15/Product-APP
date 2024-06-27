@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:product_app/constant/contant.dart';
 import 'package:product_app/view/add_cart.dart';
 import 'package:product_app/view/product_detail.dart';
 import 'package:product_app/widget/bottom_navigation.dart';
@@ -25,15 +27,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<ProductData>();
     return Scaffold(
-      backgroundColor: const Color(0xfff9f9f9),
+      backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        backgroundColor: Color(0xffdb3022),
+        backgroundColor: AppColor.appMainColor,
         centerTitle: true,
         title: const Text(
           "Shopping App",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: AppColor.whiteColor),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: AppColor.whiteColor),
         actions: [
           IconButton(
             onPressed: () {
@@ -45,9 +47,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            icon: Icon(
-              Icons.shopping_bag_outlined,
-              color: Colors.white,
+            icon: Badge(
+              label: ValueListenableBuilder(
+                valueListenable: context.read<ProductData>().totalProductCards,
+                builder: (context, value, child) => Text("$value"),
+              ),
+              child: Icon(
+                Icons.shopping_bag_outlined,
+                color: AppColor.whiteColor,
+              ),
             ),
           )
         ],
@@ -57,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ? getLoader()
           : provider.error.isNotEmpty
               ? getError(provider.error)
-              : getBody(provider.product),
+              : getBody(provider.products),
       bottomNavigationBar: BottemNavigation(),
     );
   }
@@ -65,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget getLoader() {
     return const Center(
       child: CircularProgressIndicator(
-        color: Color(0xffdb3022),
+        color: AppColor.appMainColor,
       ),
     );
   }
@@ -76,20 +84,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget getBody(List<Product> product) {
+  Widget getBody(List<Product> products) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.55,
       ),
-      itemCount: product.length,
+      itemCount: products.length,
       itemBuilder: (context, index) {
-        final productItem = product[index];
+        final product = products[index];
+        int rating = product.rating.ceil().toInt();
+        if (rating > 5) {
+          rating = 5;
+        }
+        final isFavorite =
+            context.watch<ProductData>().favorite.contains(product);
+        int filledStars = rating;
+        int outlinedStars = 5 - filledStars;
+
         return Container(
           margin: const EdgeInsets.all(7),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
+            color: AppColor.whiteColor,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) {
-                                return ProductDetail(product: productItem);
+                                return ProductDetail(product: product);
                               },
                             ),
                           );
@@ -112,23 +129,43 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: const Color(0xfff3f3f3),
+                            color: AppColor.imageBackgroundColor,
                           ),
                           child: SizedBox(
                             height: 200,
                             child: Hero(
-                              tag: productItem.thumbnail,
+                              tag: product.thumbnail,
                               child: Image.network(
-                                productItem.thumbnail,
+                                product.thumbnail,
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ),
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text("⭐⭐⭐⭐⭐"),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Row(
+                          children: [
+                            ...List.generate(
+                              filledStars,
+                              (index) => Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
+                            ),
+                            // Outlined stars
+                            ...List.generate(
+                              outlinedStars,
+                              (index) => Icon(
+                                Icons.star_outline,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -139,16 +176,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 40,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: const Color(0xffdb3022),
+                        color: AppColor.appMainColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(5.0),
                         child: Center(
                           child: Text(
-                            "-${productItem.discountPercentage.toInt()}%",
+                            "-${product.discountPercentage.toInt()}%",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColor.whiteColor,
                               fontSize: 12,
                             ),
                           ),
@@ -171,11 +208,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                      child: const CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.favorite_border,
-                          color: Colors.red,
+                      child: CircleAvatar(
+                        backgroundColor: AppColor.whiteColor,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (isFavorite) {
+                                context
+                                    .read<ProductData>()
+                                    .favorite
+                                    .remove(product);
+                              } else {
+                                context
+                                    .read<ProductData>()
+                                    .favorite
+                                    .add(product);
+                              }
+                            });
+                          },
+                          child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: AppColor.appMainColor,
+                          ),
                         ),
                       ),
                     ),
@@ -183,25 +237,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               Text(
-                productItem.brand,
+                product.brand,
                 style: TextStyle(
                   color: Colors.grey,
-                  fontSize: 13,
+                  fontSize: 12,
                 ),
               ),
               Text(
-                productItem.title,
+                product.title,
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                  color: Colors.black54,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-                "\$${productItem.price}",
+                "\$${product.price}",
                 style: TextStyle(
-                  color: Color(0xffdb3022),
-                  fontSize: 15,
+                  color: AppColor.appMainColor,
                   fontWeight: FontWeight.w500,
                 ),
               )

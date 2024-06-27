@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
+
+import '../model/model.dart';
 
 class AddCard extends StatelessWidget {
   const AddCard({super.key});
@@ -8,16 +11,213 @@ class AddCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        title: Text("My Bag"),
+        title: Text(
+          "My Bag",
+          style: TextStyle(
+            color: AppColor.whiteColor,
+          ),
+        ),
+        backgroundColor: AppColor.appMainColor,
+        iconTheme: IconThemeData(color: AppColor.whiteColor),
+        centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: context.watch<ProductData>().addCard.length,
-        itemBuilder: (context, index) {
-          final product = context.read<ProductData>();
-          return Card(
-            child: ListTile(
-              title: Text(product.addCard[index].title),
+      body: Consumer<ProductData>(
+        builder: (context, productData, child) {
+          final cartItems = productData.addCard;
+          // final totalPrice = 0;
+          // cartItems.fold(
+          //     0, (sum, item) => sum + (item.price * productData.productQuantity));
+          if (context.watch<ProductData>().addCard.isEmpty) {
+            return Center(
+              child: Text(
+                "Empty bag!!",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            );
+          }
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.separated(
+              separatorBuilder: (context, index) => SizedBox(
+                height: 17,
+              ),
+              itemCount: cartItems.length,
+              itemBuilder: (context, index) {
+                final product = cartItems[index];
+
+                return Container(
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: AppColor.whiteColor,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 10.0,
+                        color: Colors.black12,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Image.network(
+                        product.thumbnail,
+                        width: 115,
+                        height: 130,
+                        fit: BoxFit.cover,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              product.title,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: Color(0xff222222),
+                              ),
+                            ),
+                            Text(
+                              'Brand: ${product.brand}',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 13,
+                              ),
+                            ),
+                            Text(
+                              'Size: ${context.watch<ProductData>().productSize}',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 13,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: Colors.grey,
+                                          size: 18.0,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: Text(
+                                        product.productQuantity.toString(),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: Colors.grey,
+                                          size: 18.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "\$${product.price.toString()}",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.appMainColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              product.returnPolicy,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      PopupMenuButton(
+                        color: Colors.white,
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            child: Row(
+                              children: [
+                                Icon(Icons.favorite_border),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text("Favorites"),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () {
+                              context.read<ProductData>().deleteAddCard(index);
+                              context
+                                  .read<ProductData>()
+                                  .totalProductCards
+                                  .value--;
+                              product.productQuantity = 1;
+                              context.read<ProductData>().productSize = "";
+                            },
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text("Delete"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           );
         },

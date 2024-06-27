@@ -3,9 +3,10 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
-import 'package:product_app/widget/product_detail_bottomSheet.dart';
+import 'package:product_app/widget/product_detail_bottomsheet.dart';
 import 'package:provider/provider.dart';
 
 import '../widget/size_show_model_sheet.dart';
@@ -25,21 +26,21 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xfff9f9f9),
+        backgroundColor: AppColor.scaffoldColor,
         appBar: AppBar(
-          backgroundColor: Color(0xffdb3022),
+          backgroundColor: AppColor.appMainColor,
           leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.white,
+              color: AppColor.whiteColor,
             ),
           ),
           title: Text(
             "Detail Product",
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: AppColor.whiteColor),
           ),
           centerTitle: true,
         ),
@@ -68,7 +69,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 dotsCount: widget.product.images.length,
                 position: currentIndex,
                 decorator: DotsDecorator(
-                  activeColor: Color(0xffdb3022),
+                  activeColor: AppColor.appMainColor,
                   color: Colors.grey,
                   size: const Size.square(7.0),
                   activeSize: const Size(12.0, 12.0),
@@ -84,7 +85,7 @@ class _ProductDetailState extends State<ProductDetail> {
               child: Container(
                 padding: EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColor.whiteColor,
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(40)),
                     boxShadow: [
@@ -108,7 +109,8 @@ class _ProductDetailState extends State<ProductDetail> {
                               Text(
                                 widget.product.title,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54,
                                   fontSize: 20,
                                 ),
                               ),
@@ -118,7 +120,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xffdb3022),
+                                  color: AppColor.appMainColor,
                                 ),
                               ),
                             ],
@@ -139,10 +141,10 @@ class _ProductDetailState extends State<ProductDetail> {
                                 ],
                               ),
                               child: const CircleAvatar(
-                                backgroundColor: Colors.white,
+                                backgroundColor: AppColor.whiteColor,
                                 child: Icon(
                                   Icons.favorite_border,
-                                  color: Color(0xffdb3022),
+                                  color: AppColor.appMainColor,
                                 ),
                               ),
                             ),
@@ -153,7 +155,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                 fontWeight: FontWeight.w500,
                                 color: widget.product.availabilityStatus ==
                                         "Low Stock"
-                                    ? Color(0xffdb3022)
+                                    ? AppColor.appMainColor
                                     : Colors.green,
                               ),
                             ),
@@ -178,6 +180,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           "Brand: ${widget.product.brand}",
                           style: TextStyle(
                             fontSize: 15,
+                            color: Colors.black54,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -186,7 +189,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xffdb3022),
+                            color: AppColor.appMainColor,
                           ),
                         ),
                       ],
@@ -199,6 +202,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           "Choose amount:",
                           style: TextStyle(
                             fontSize: 15,
+                            color: Colors.black54,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -207,19 +211,18 @@ class _ProductDetailState extends State<ProductDetail> {
                           width: 105,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: Color(0xfff3f3f3),
+                            color: AppColor.imageBackgroundColor,
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               CircleAvatar(
                                 radius: 15,
-                                backgroundColor: Colors.white,
+                                backgroundColor: AppColor.whiteColor,
                                 child: IconButton(
                                     onPressed: () {
-                                      context
-                                          .read<ProductData>()
-                                          .decreaseQuantity();
+                                      widget.product.productQuantity--;
+                                      setState(() {});
                                     },
                                     icon: Icon(
                                       Icons.remove,
@@ -231,10 +234,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
                                 child: Text(
-                                  context
-                                      .watch<ProductData>()
-                                      .productQuantity
-                                      .toString(),
+                                  widget.product.productQuantity.toString(),
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -246,13 +246,12 @@ class _ProductDetailState extends State<ProductDetail> {
                                 backgroundColor: Colors.black,
                                 child: IconButton(
                                     onPressed: () {
-                                      context
-                                          .read<ProductData>()
-                                          .increaseQuantity();
+                                      widget.product.productQuantity++;
+                                      setState(() {});
                                     },
                                     icon: Icon(
                                       Icons.add,
-                                      color: Colors.white,
+                                      color: AppColor.whiteColor,
                                       size: 16,
                                     )),
                               ),
