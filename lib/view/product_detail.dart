@@ -1,16 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
-import 'package:product_app/provider/provider.dart';
+
 import 'package:product_app/widget/product_detail_bottomsheet.dart';
-import 'package:provider/provider.dart';
+
 
 import '../widget/size_show_model_sheet.dart';
-import '../widget/size_selector.dart';
+
 
 class ProductDetail extends StatefulWidget {
   final Product product;
@@ -25,6 +25,7 @@ class _ProductDetailState extends State<ProductDetail> {
   final CarouselController carouselController = CarouselController();
   @override
   Widget build(BuildContext context) {
+     
     return Scaffold(
         backgroundColor: AppColor.scaffoldColor,
         appBar: AppBar(
@@ -33,12 +34,12 @@ class _ProductDetailState extends State<ProductDetail> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            icon: Icon(
+            icon:const Icon(
               Icons.arrow_back_ios,
               color: AppColor.whiteColor,
             ),
           ),
-          title: Text(
+          title:const Text(
             "Detail Product",
             style: TextStyle(color: AppColor.whiteColor),
           ),
@@ -55,7 +56,7 @@ class _ProductDetailState extends State<ProductDetail> {
               options: CarouselOptions(
                 height: 280,
                 autoPlay: widget.product.images.length > 1 ? true : false,
-                autoPlayAnimationDuration: Duration(seconds: 1),
+                autoPlayAnimationDuration:const Duration(seconds: 1),
                 enlargeCenterPage: true,
                 onPageChanged: (index, reason) {
                   setState(() {
@@ -68,26 +69,26 @@ class _ProductDetailState extends State<ProductDetail> {
               DotsIndicator(
                 dotsCount: widget.product.images.length,
                 position: currentIndex,
-                decorator: DotsDecorator(
+                decorator:const DotsDecorator(
                   activeColor: AppColor.appMainColor,
                   color: Colors.grey,
-                  size: const Size.square(7.0),
-                  activeSize: const Size(12.0, 12.0),
+                  size:  Size.square(7.0),
+                  activeSize:  Size(12.0, 12.0),
                 ),
                 onTap: (index) {
                   carouselController.animateToPage(index.toInt());
                 },
               ),
-            SizedBox(
+           const SizedBox(
               height: 10,
             ),
             Expanded(
               child: Container(
-                padding: EdgeInsets.all(16.0),
+                padding:const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                     color: AppColor.whiteColor,
                     borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(40)),
+                       const BorderRadius.vertical(top: Radius.circular(40)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
@@ -108,16 +109,16 @@ class _ProductDetailState extends State<ProductDetail> {
                             children: [
                               Text(
                                 widget.product.title,
-                                style: TextStyle(
+                                style:const TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black54,
                                   fontSize: 20,
                                 ),
                               ),
-                              SizedBox(height: 6),
+                             const SizedBox(height: 6),
                               Text(
                                 "\$${widget.product.price.toString()}",
-                                style: TextStyle(
+                                style:const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: AppColor.appMainColor,
@@ -163,22 +164,22 @@ class _ProductDetailState extends State<ProductDetail> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                   const SizedBox(height: 10),
                     Text(
                       widget.product.description,
                       textAlign: TextAlign.justify,
-                      style: TextStyle(
+                      style:const TextStyle(
                         fontSize: 15,
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(height: 12),
+                   const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Brand: ${widget.product.brand}",
-                          style: TextStyle(
+                          style:const TextStyle(
                             fontSize: 15,
                             color: Colors.black54,
                             fontWeight: FontWeight.w500,
@@ -186,7 +187,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         ),
                         Text(
                           "Discount: ${widget.product.discountPercentage}%",
-                          style: TextStyle(
+                          style:const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: AppColor.appMainColor,
@@ -194,11 +195,11 @@ class _ProductDetailState extends State<ProductDetail> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 12),
+                   const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                       const Text(
                           "Choose amount:",
                           style: TextStyle(
                             fontSize: 15,
@@ -224,7 +225,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                       widget.product.productQuantity--;
                                       setState(() {});
                                     },
-                                    icon: Icon(
+                                    icon:const Icon(
                                       Icons.remove,
                                       color: Colors.black,
                                       size: 16,
@@ -235,7 +236,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                     horizontal: 10.0),
                                 child: Text(
                                   widget.product.productQuantity.toString(),
-                                  style: TextStyle(
+                                  style:const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -249,7 +250,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                       widget.product.productQuantity++;
                                       setState(() {});
                                     },
-                                    icon: Icon(
+                                    icon:const Icon(
                                       Icons.add,
                                       color: AppColor.whiteColor,
                                       size: 16,
@@ -260,7 +261,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         )
                       ],
                     ),
-                    SizedBox(height: 12),
+                  const  SizedBox(height: 12),
                     SizeShowModelBottomSheet(
                       product: widget.product,
                     ),

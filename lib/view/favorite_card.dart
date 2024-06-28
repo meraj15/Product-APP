@@ -3,16 +3,16 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
 
-import '../widget/bottom_navigation.dart';
 
 class Favorites extends StatelessWidget {
   const Favorites({super.key});
 
   @override
   Widget build(BuildContext context) {
+        final providerRead = context.read<ProductData>();
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title:const Text(
           "Favorites",
           style: TextStyle(
             fontWeight: FontWeight.w500,
@@ -26,7 +26,7 @@ class Favorites extends StatelessWidget {
         child: Consumer<ProductData>(
           builder: (context, provider, child) {
             if (provider.favorite.isEmpty) {
-              return Center(
+              return const Center(
                 child: Text("No favorites yet"),
               );
             }
@@ -49,7 +49,7 @@ class Favorites extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColor.whiteColor,
                       borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
+                      boxShadow:const [
                         BoxShadow(
                           color: Colors.black12,
                           blurRadius: 5.0,
@@ -81,7 +81,7 @@ class Favorites extends StatelessWidget {
                               children: [
                                 Text(
                                   product.brand,
-                                  style: TextStyle(
+                                  style:const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     color: Colors.black54,
                                     fontSize: 13,
@@ -90,16 +90,16 @@ class Favorites extends StatelessWidget {
                                 ),
                                 Text(
                                   product.title,
-                                  style: TextStyle(
+                                  style:const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                SizedBox(height: 4),
+                               const SizedBox(height: 4),
                                 Text(
                                   "\$${product.price}",
-                                  style: TextStyle(
+                                  style:const TextStyle(
                                     color: AppColor.appMainColor,
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
@@ -112,7 +112,7 @@ class Favorites extends StatelessWidget {
                                     children: [
                                       ...List.generate(
                                         filledStars,
-                                        (index) => Icon(
+                                        (index) =>const Icon(
                                           Icons.star,
                                           color: Colors.amber,
                                           size: 18,
@@ -121,7 +121,7 @@ class Favorites extends StatelessWidget {
                                       // Outlined stars
                                       ...List.generate(
                                         outlinedStars,
-                                        (index) => Icon(
+                                        (index) =>const Icon(
                                           Icons.star_outline,
                                           color: Colors.amber,
                                           size: 18,
@@ -136,11 +136,10 @@ class Favorites extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            context
-                                .read<ProductData>()
+                            providerRead
                                 .deleteFavoriteCard(index);
                           },
-                          icon: Icon(
+                          icon:const Icon(
                             Icons.close,
                             color: AppColor.appMainColor,
                           ),
@@ -154,31 +153,11 @@ class Favorites extends StatelessWidget {
           },
         ),
       ),
-      bottomNavigationBar: BottemNavigation(),
     );
   }
 
-//   Widget _buildCategoryButton(String category) {
-//     return Container(
-//       width: 100,
-//       height: 35,
-//       decoration: BoxDecoration(
-//         color: Colors.black,
-//         borderRadius: BorderRadius.circular(15),
-//       ),
-//       child: Center(
-//         child: Text(
-//           category,
-//           style: TextStyle(
-//             color: AppColor.whiteColor,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
+
 }
 
 
-//  _buildCategoryButton("Fragrance"),
-//               _buildCategoryButton("Skincare"),
-//               _buildCategoryButton("Makeup"),
+

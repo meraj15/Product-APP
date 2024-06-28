@@ -51,7 +51,7 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                     context.read<ProductData>().totalProductCards.value++;
                     context.read<ProductData>().productSize = "";
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                     const SnackBar(
                         duration: Duration(microseconds: 500),
                         content: Text("Added Sucessfully"),
                       ),

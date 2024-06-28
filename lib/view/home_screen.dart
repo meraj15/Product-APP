@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/view/add_cart.dart';
 import 'package:product_app/view/product_detail.dart';
-import 'package:product_app/widget/bottom_navigation.dart';
+
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
@@ -35,14 +35,14 @@ class _HomeScreenState extends State<HomeScreen> {
           "Shopping App",
           style: TextStyle(color: AppColor.whiteColor),
         ),
-        iconTheme: IconThemeData(color: AppColor.whiteColor),
+        iconTheme:const IconThemeData(color: AppColor.whiteColor),
         actions: [
           IconButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) {
-                    return AddCard();
+                    return const AddCard();
                   },
                 ),
               );
@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 valueListenable: context.read<ProductData>().totalProductCards,
                 builder: (context, value, child) => Text("$value"),
               ),
-              child: Icon(
+              child:const Icon(
                 Icons.shopping_bag_outlined,
                 color: AppColor.whiteColor,
               ),
@@ -66,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
           : provider.error.isNotEmpty
               ? getError(provider.error)
               : getBody(provider.products),
-      bottomNavigationBar: BottemNavigation(),
     );
   }
 
@@ -93,12 +92,13 @@ class _HomeScreenState extends State<HomeScreen> {
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
+        final providerWatch = context.watch<ProductData>();
+        final providerRead = context.read<ProductData>();
         int rating = product.rating.ceil().toInt();
         if (rating > 5) {
           rating = 5;
         }
-        final isFavorite =
-            context.watch<ProductData>().favorite.contains(product);
+        final isFavorite = providerWatch.favorite.contains(product);
         int filledStars = rating;
         int outlinedStars = 5 - filledStars;
 
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             ...List.generate(
                               filledStars,
-                              (index) => Icon(
+                              (index) =>const Icon(
                                 Icons.star,
                                 color: Colors.amber,
                                 size: 18,
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             // Outlined stars
                             ...List.generate(
                               outlinedStars,
-                              (index) => Icon(
+                              (index) =>const Icon(
                                 Icons.star_outline,
                                 color: Colors.amber,
                                 size: 18,
@@ -180,11 +180,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(5.0),
+                        padding:const EdgeInsets.all(5.0),
                         child: Center(
                           child: Text(
                             "-${product.discountPercentage.toInt()}%",
-                            style: TextStyle(
+                            style:const TextStyle(
                               color: AppColor.whiteColor,
                               fontSize: 12,
                             ),
@@ -213,17 +213,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              if (isFavorite) {
-                                context
-                                    .read<ProductData>()
-                                    .favorite
-                                    .remove(product);
-                              } else {
-                                context
-                                    .read<ProductData>()
-                                    .favorite
-                                    .add(product);
-                              }
+                              isFavorite
+                                  ? providerRead.favorite.remove(product)
+                                  : providerRead.favorite.add(product);
                             });
                           },
                           child: Icon(
@@ -238,14 +230,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Text(
                 product.brand,
-                style: TextStyle(
+                style:const TextStyle(
                   color: Colors.grey,
                   fontSize: 12,
                 ),
               ),
               Text(
                 product.title,
-                style: TextStyle(
+                style:const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 15,
                   color: Colors.black54,
@@ -254,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Text(
                 "\$${product.price}",
-                style: TextStyle(
+                style:const TextStyle(
                   color: AppColor.appMainColor,
                   fontWeight: FontWeight.w500,
                 ),

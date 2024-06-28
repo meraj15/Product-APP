@@ -3,24 +3,25 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
 
-import '../model/model.dart';
 
 class AddCard extends StatelessWidget {
   const AddCard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final providerWatch = context.watch<ProductData>();
+        final providerRead = context.read<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "My Bag",
           style: TextStyle(
             color: AppColor.whiteColor,
           ),
         ),
         backgroundColor: AppColor.appMainColor,
-        iconTheme: IconThemeData(color: AppColor.whiteColor),
+        iconTheme:const IconThemeData(color: AppColor.whiteColor),
         centerTitle: true,
       ),
       body: Consumer<ProductData>(
@@ -29,8 +30,8 @@ class AddCard extends StatelessWidget {
           // final totalPrice = 0;
           // cartItems.fold(
           //     0, (sum, item) => sum + (item.price * productData.productQuantity));
-          if (context.watch<ProductData>().addCard.isEmpty) {
-            return Center(
+          if (providerWatch.addCard.isEmpty) {
+            return const Center(
               child: Text(
                 "Empty bag!!",
                 style: TextStyle(
@@ -45,7 +46,7 @@ class AddCard extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView.separated(
-              separatorBuilder: (context, index) => SizedBox(
+              separatorBuilder: (context, index) =>const SizedBox(
                 height: 17,
               ),
               itemCount: cartItems.length,
@@ -57,7 +58,7 @@ class AddCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColor.whiteColor,
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
+                    boxShadow:const [
                       BoxShadow(
                         blurRadius: 10.0,
                         color: Colors.black12,
@@ -77,13 +78,13 @@ class AddCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
+                           const SizedBox(
                               height: 4,
                             ),
                             Text(
                               product.title,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style:const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 15,
                                 color: Color(0xff222222),
@@ -103,7 +104,7 @@ class AddCard extends StatelessWidget {
                                 fontSize: 13,
                               ),
                             ),
-                            SizedBox(
+                           const SizedBox(
                               height: 4,
                             ),
                             Row(
@@ -118,8 +119,8 @@ class AddCard extends StatelessWidget {
                                           color: Colors.grey.shade300,
                                         ),
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4.0),
+                                      child:const Padding(
+                                        padding:  EdgeInsets.all(4.0),
                                         child: Icon(
                                           Icons.remove,
                                           color: Colors.grey,
@@ -132,7 +133,7 @@ class AddCard extends StatelessWidget {
                                           horizontal: 8.0),
                                       child: Text(
                                         product.productQuantity.toString(),
-                                        style: TextStyle(
+                                        style:const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -145,8 +146,8 @@ class AddCard extends StatelessWidget {
                                           color: Colors.grey.shade300,
                                         ),
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4.0),
+                                      child:const Padding(
+                                        padding:  EdgeInsets.all(4.0),
                                         child: Icon(
                                           Icons.add,
                                           color: Colors.grey,
@@ -158,7 +159,7 @@ class AddCard extends StatelessWidget {
                                 ),
                                 Text(
                                   "\$${product.price.toString()}",
-                                  style: TextStyle(
+                                  style:const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
                                     color: AppColor.appMainColor,
@@ -166,12 +167,12 @@ class AddCard extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                           const SizedBox(
                               height: 8,
                             ),
                             Text(
                               product.returnPolicy,
-                              style: TextStyle(
+                              style:const TextStyle(
                                 fontWeight: FontWeight.w500,
                               ),
                             )
@@ -181,7 +182,7 @@ class AddCard extends StatelessWidget {
                       PopupMenuButton(
                         color: Colors.white,
                         itemBuilder: (context) => [
-                          PopupMenuItem(
+                         const PopupMenuItem(
                             child: Row(
                               children: [
                                 Icon(Icons.favorite_border),
@@ -194,15 +195,14 @@ class AddCard extends StatelessWidget {
                           ),
                           PopupMenuItem(
                             onTap: () {
-                              context.read<ProductData>().deleteAddCard(index);
-                              context
-                                  .read<ProductData>()
+                              providerRead.deleteAddCard(index);
+                              providerRead
                                   .totalProductCards
                                   .value--;
                               product.productQuantity = 1;
-                              context.read<ProductData>().productSize = "";
+                              providerRead.productSize = "";
                             },
-                            child: Row(
+                            child:const Row(
                               children: [
                                 Icon(Icons.delete),
                                 SizedBox(
