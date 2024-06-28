@@ -11,12 +11,12 @@ class SizeSelector extends StatelessWidget {
                             height: 40,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color(0xffdb3022),
+                                color:const Color(0xffdb3022),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Row(
+                            child:const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Text(

@@ -45,4 +45,13 @@ class ProductData extends ChangeNotifier {
     favorite.removeAt(index);
     notifyListeners();
   }
+
+  void favorites(Product product) {
+    if (favorite.contains(product)) {
+      favorite.remove(product);
+    } else {
+      favorite.add(product);
+    }
+    notifyListeners();
+  }
 }

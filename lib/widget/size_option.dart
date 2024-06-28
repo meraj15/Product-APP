@@ -26,7 +26,7 @@ class SizeOption extends StatelessWidget {
           color: Colors.white,
           border: Border.all(
             color:
-                provider.productSize == size ? Color(0xffdb3022) : Colors.grey,
+                provider.productSize == size ? const Color(0xffdb3022) : Colors.grey,
             width: 1.0,
           ),
           borderRadius: BorderRadius.circular(10),

@@ -3,16 +3,15 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
 
-
 class Favorites extends StatelessWidget {
   const Favorites({super.key});
 
   @override
   Widget build(BuildContext context) {
-        final providerRead = context.read<ProductData>();
+    final providerRead = context.read<ProductData>();
     return Scaffold(
       appBar: AppBar(
-        title:const Text(
+        title: const Text(
           "Favorites",
           style: TextStyle(
             fontWeight: FontWeight.w500,
@@ -45,11 +44,11 @@ class Favorites extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Container(
-                    height: 116,
+                    height: 120,
                     decoration: BoxDecoration(
                       color: AppColor.whiteColor,
                       borderRadius: BorderRadius.circular(15),
-                      boxShadow:const [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.black12,
                           blurRadius: 5.0,
@@ -61,13 +60,13 @@ class Favorites extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          color: AppColor.imageBackgroundColor,
+                          // color: AppColor.imageBackgroundColor,/
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
                             child: Image.network(
                               product.thumbnail,
                               width: 120,
-                              height: 116,
+                              height: 120,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -81,7 +80,7 @@ class Favorites extends StatelessWidget {
                               children: [
                                 Text(
                                   product.brand,
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     color: Colors.black54,
                                     fontSize: 13,
@@ -90,44 +89,45 @@ class Favorites extends StatelessWidget {
                                 ),
                                 Text(
                                   product.title,
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                               const SizedBox(height: 4),
                                 Text(
                                   "\$${product.price}",
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                     color: AppColor.appMainColor,
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
                                   ),
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5.0),
-                                  child: Row(
-                                    children: [
-                                      ...List.generate(
-                                        filledStars,
-                                        (index) =>const Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                          size: 18,
-                                        ),
+                                Row(
+                                  children: [
+                                    ...List.generate(
+                                      filledStars,
+                                      (index) => const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                        size: 18,
                                       ),
-                                      // Outlined stars
-                                      ...List.generate(
-                                        outlinedStars,
-                                        (index) =>const Icon(
-                                          Icons.star_outline,
-                                          color: Colors.amber,
-                                          size: 18,
-                                        ),
+                                    ),
+                                    // Outlined stars
+                                    ...List.generate(
+                                      outlinedStars,
+                                      (index) => const Icon(
+                                        Icons.star_outline,
+                                        color: Colors.amber,
+                                        size: 18,
                                       ),
-                                    ],
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  product.warrantyInformation,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
@@ -136,10 +136,9 @@ class Favorites extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            providerRead
-                                .deleteFavoriteCard(index);
+                            providerRead.deleteFavoriteCard(index);
                           },
-                          icon:const Icon(
+                          icon: const Icon(
                             Icons.close,
                             color: AppColor.appMainColor,
                           ),
@@ -155,9 +154,4 @@ class Favorites extends StatelessWidget {
       ),
     );
   }
-
-
 }
-
-
-

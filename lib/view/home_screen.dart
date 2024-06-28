@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:product_app/constant/contant.dart';
@@ -35,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
           "Shopping App",
           style: TextStyle(color: AppColor.whiteColor),
         ),
-        iconTheme:const IconThemeData(color: AppColor.whiteColor),
+        iconTheme: const IconThemeData(color: AppColor.whiteColor),
         actions: [
           IconButton(
             onPressed: () {
@@ -52,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 valueListenable: context.read<ProductData>().totalProductCards,
                 builder: (context, value, child) => Text("$value"),
               ),
-              child:const Icon(
+              child: const Icon(
                 Icons.shopping_bag_outlined,
                 color: AppColor.whiteColor,
               ),
@@ -149,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             ...List.generate(
                               filledStars,
-                              (index) =>const Icon(
+                              (index) => const Icon(
                                 Icons.star,
                                 color: Colors.amber,
                                 size: 18,
@@ -158,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             // Outlined stars
                             ...List.generate(
                               outlinedStars,
-                              (index) =>const Icon(
+                              (index) => const Icon(
                                 Icons.star_outline,
                                 color: Colors.amber,
                                 size: 18,
@@ -180,11 +179,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Padding(
-                        padding:const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(5.0),
                         child: Center(
                           child: Text(
                             "-${product.discountPercentage.toInt()}%",
-                            style:const TextStyle(
+                            style: const TextStyle(
                               color: AppColor.whiteColor,
                               fontSize: 12,
                             ),
@@ -212,11 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         backgroundColor: AppColor.whiteColor,
                         child: GestureDetector(
                           onTap: () {
-                            setState(() {
-                              isFavorite
-                                  ? providerRead.favorite.remove(product)
-                                  : providerRead.favorite.add(product);
-                            });
+                            providerRead.favorites(product);
                           },
                           child: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -230,14 +225,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Text(
                 product.brand,
-                style:const TextStyle(
+                style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 12,
                 ),
               ),
               Text(
                 product.title,
-                style:const TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 15,
                   color: Colors.black54,
@@ -246,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Text(
                 "\$${product.price}",
-                style:const TextStyle(
+                style: const TextStyle(
                   color: AppColor.appMainColor,
                   fontWeight: FontWeight.w500,
                 ),

@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
+import 'package:product_app/provider/provider.dart';
 
 import 'package:product_app/widget/product_detail_bottomsheet.dart';
+import 'package:provider/provider.dart';
 
 
 import '../widget/size_show_model_sheet.dart';
@@ -25,7 +27,7 @@ class _ProductDetailState extends State<ProductDetail> {
   final CarouselController carouselController = CarouselController();
   @override
   Widget build(BuildContext context) {
-     
+     final isFavorite = context.watch<ProductData>().favorite.contains(widget.product);
     return Scaffold(
         backgroundColor: AppColor.scaffoldColor,
         appBar: AppBar(
@@ -141,11 +143,16 @@ class _ProductDetailState extends State<ProductDetail> {
                                   ),
                                 ],
                               ),
-                              child: const CircleAvatar(
-                                backgroundColor: AppColor.whiteColor,
-                                child: Icon(
-                                  Icons.favorite_border,
-                                  color: AppColor.appMainColor,
+                              child: GestureDetector(
+                                onTap: (){
+                                  context.read<ProductData>().favorites(widget.product);
+                                },
+                                child:  CircleAvatar(
+                                  backgroundColor: AppColor.whiteColor,
+                                  child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: AppColor.appMainColor,
+                          ),
                                 ),
                               ),
                             ),

@@ -1,16 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
 
-
-class AddCard extends StatelessWidget {
+class AddCard extends StatefulWidget {
   const AddCard({super.key});
 
   @override
+  State<AddCard> createState() => _AddCardState();
+}
+
+class _AddCardState extends State<AddCard> {
+  @override
   Widget build(BuildContext context) {
     final providerWatch = context.watch<ProductData>();
-        final providerRead = context.read<ProductData>();
+    final providerRead = context.read<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
@@ -21,7 +27,7 @@ class AddCard extends StatelessWidget {
           ),
         ),
         backgroundColor: AppColor.appMainColor,
-        iconTheme:const IconThemeData(color: AppColor.whiteColor),
+        iconTheme: const IconThemeData(color: AppColor.whiteColor),
         centerTitle: true,
       ),
       body: Consumer<ProductData>(
@@ -46,19 +52,20 @@ class AddCard extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView.separated(
-              separatorBuilder: (context, index) =>const SizedBox(
+              separatorBuilder: (context, index) => const SizedBox(
                 height: 17,
               ),
               itemCount: cartItems.length,
               itemBuilder: (context, index) {
                 final product = cartItems[index];
+                final isFavorite = providerWatch.favorite.contains(product);
 
                 return Container(
                   height: 140,
                   decoration: BoxDecoration(
                     color: AppColor.whiteColor,
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow:const [
+                    boxShadow: const [
                       BoxShadow(
                         blurRadius: 10.0,
                         color: Colors.black12,
@@ -78,13 +85,13 @@ class AddCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                           const SizedBox(
+                            const SizedBox(
                               height: 4,
                             ),
                             Text(
                               product.title,
                               overflow: TextOverflow.ellipsis,
-                              style:const TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 15,
                                 color: Color(0xff222222),
@@ -104,7 +111,7 @@ class AddCard extends StatelessWidget {
                                 fontSize: 13,
                               ),
                             ),
-                           const SizedBox(
+                            const SizedBox(
                               height: 4,
                             ),
                             Row(
@@ -112,19 +119,25 @@ class AddCard extends StatelessWidget {
                               children: [
                                 Row(
                                   children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.grey.shade300,
+                                    GestureDetector(
+                                      onTap: () {
+                                        product.productQuantity--;
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.grey.shade300,
+                                          ),
                                         ),
-                                      ),
-                                      child:const Padding(
-                                        padding:  EdgeInsets.all(4.0),
-                                        child: Icon(
-                                          Icons.remove,
-                                          color: Colors.grey,
-                                          size: 18.0,
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(4.0),
+                                          child: Icon(
+                                            Icons.remove,
+                                            color: Colors.grey,
+                                            size: 18.0,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -133,25 +146,31 @@ class AddCard extends StatelessWidget {
                                           horizontal: 8.0),
                                       child: Text(
                                         product.productQuantity.toString(),
-                                        style:const TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.grey.shade300,
+                                    GestureDetector(
+                                      onTap: () {
+                                        product.productQuantity++;
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.grey.shade300,
+                                          ),
                                         ),
-                                      ),
-                                      child:const Padding(
-                                        padding:  EdgeInsets.all(4.0),
-                                        child: Icon(
-                                          Icons.add,
-                                          color: Colors.grey,
-                                          size: 18.0,
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(4.0),
+                                          child: Icon(
+                                            Icons.add,
+                                            color: Colors.grey,
+                                            size: 18.0,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -159,7 +178,7 @@ class AddCard extends StatelessWidget {
                                 ),
                                 Text(
                                   "\$${product.price.toString()}",
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
                                     color: AppColor.appMainColor,
@@ -167,12 +186,12 @@ class AddCard extends StatelessWidget {
                                 ),
                               ],
                             ),
-                           const SizedBox(
+                            const SizedBox(
                               height: 8,
                             ),
                             Text(
                               product.returnPolicy,
-                              style:const TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                               ),
                             )
@@ -182,27 +201,33 @@ class AddCard extends StatelessWidget {
                       PopupMenuButton(
                         color: Colors.white,
                         itemBuilder: (context) => [
-                         const PopupMenuItem(
+                          PopupMenuItem(
+                            onTap: () {
+                              context.read<ProductData>().favorites(product);
+                            },
                             child: Row(
                               children: [
-                                Icon(Icons.favorite_border),
-                                SizedBox(
+                                Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: AppColor.appMainColor,
+                                ),
+                                const SizedBox(
                                   width: 8,
                                 ),
-                                Text("Favorites"),
+                                const Text("Favorites"),
                               ],
                             ),
                           ),
                           PopupMenuItem(
                             onTap: () {
                               providerRead.deleteAddCard(index);
-                              providerRead
-                                  .totalProductCards
-                                  .value--;
+                              providerRead.totalProductCards.value--;
                               product.productQuantity = 1;
                               providerRead.productSize = "";
                             },
-                            child:const Row(
+                            child: const Row(
                               children: [
                                 Icon(Icons.delete),
                                 SizedBox(

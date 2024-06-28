@@ -13,6 +13,7 @@ class Product {
   List<String> images;
   String returnPolicy;
   int productQuantity = 1;
+  String warrantyInformation;
 
   Product({
     required this.category,
@@ -28,6 +29,7 @@ class Product {
     required this.availabilityStatus,
     required this.images,
     required this.returnPolicy,
+    required this.warrantyInformation,
   });
 
   factory Product.fromJson(Map product) {
@@ -45,6 +47,7 @@ class Product {
       availabilityStatus: product["availabilityStatus"] ?? "",
       images: product["images"].cast<String>(),
       returnPolicy: product["returnPolicy"] ?? "30 days return policy",
+      warrantyInformation: product["warrantyInformation"],
     );
   }
 }

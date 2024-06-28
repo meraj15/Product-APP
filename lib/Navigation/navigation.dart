@@ -37,7 +37,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
               Icons.shop_outlined,
               color: AppColor.appMainColor,
             ),
-            icon: Icon(Icons.shop_outlined),
+            icon: Icon(Icons.shopping_cart),
             label: "Shop",
           ),
           NavigationDestination(
@@ -61,11 +61,11 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-          HomeScreen(),
+         const HomeScreen(),
           Container(
             color: AppColor.appMainColor,
           ),
-          Favorites(),
+         const Favorites(),
           Container(
             color: Colors.green,
           ),

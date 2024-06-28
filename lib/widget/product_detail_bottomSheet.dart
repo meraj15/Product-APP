@@ -20,13 +20,14 @@ class ProductDetailBottomSheet extends StatefulWidget {
 class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
   @override
   Widget build(BuildContext context) {
+    final providerRead = context.read<ProductData>();
     final isThereCard =
         context.watch<ProductData>().addCard.contains(widget.product);
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       height: 70,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Color(0xfff3f3f3),
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -41,25 +42,25 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return AddCard();
+                        return const AddCard();
                       },
                     ),
                   );
                 } else {
-                  if (context.read<ProductData>().productSize.isNotEmpty) {
-                    context.read<ProductData>().addCard.add(widget.product);
-                    context.read<ProductData>().totalProductCards.value++;
-                    context.read<ProductData>().productSize = "";
-                    ScaffoldMessenger.of(context).showSnackBar(
-                     const SnackBar(
-                        duration: Duration(microseconds: 500),
-                        content: Text("Added Sucessfully"),
-                      ),
-                    );
+                  if (providerRead.productSize.isNotEmpty) {
+                    providerRead.addCard.add(widget.product);
+                    providerRead.totalProductCards.value++;
+                    providerRead.productSize = "";
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //  const SnackBar(
+                    //     duration: Duration(microseconds: 500),
+                    //     content: Text("Added Sucessfully"),
+                    //   ),
+                    // );
                   } else {
                     showToastWidget(
                         Container(
-                          margin: EdgeInsets.symmetric(
+                          margin: const EdgeInsets.symmetric(
                               horizontal: 10.0, vertical: 60),
                           height: 40,
                           decoration: ShapeDecoration(
@@ -68,7 +69,7 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                             ),
                             color: AppColor.appMainColor,
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
@@ -84,24 +85,24 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                         ),
                         context: context,
                         isIgnoring: false,
-                        duration: Duration(seconds: 2),
+                        duration: const Duration(seconds: 2),
                         position: StyledToastPosition.top,
-                        animDuration: Duration(milliseconds: 600));
+                        animDuration: const Duration(milliseconds: 600));
                   }
                 }
               });
             },
             style: FilledButton.styleFrom(
-              backgroundColor: Color(0xffdb3022),
+              backgroundColor: const Color(0xffdb3022),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.shopping_bag_outlined, color: Colors.white),
-                SizedBox(width: 8),
+                const Icon(Icons.shopping_bag_outlined, color: Colors.white),
+                const SizedBox(width: 8),
                 Text(
                   isThereCard ? 'go to bag' : 'Add to Bag',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,
                   ),
