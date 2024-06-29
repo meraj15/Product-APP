@@ -10,7 +10,7 @@ class ProductData extends ChangeNotifier {
   List<Product> products = [];
   List<Product> addCard = [];
   List<Product> favorite = [];
-  // int productQuantity = 1;
+  String selectedFilter = "";
   String productSize = '';
   ValueNotifier<int> totalProductCards = ValueNotifier(0);
 
