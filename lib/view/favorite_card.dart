@@ -133,7 +133,7 @@ class Favorites extends StatelessWidget {
                 //     ),
                 //   ),
                 // ),
-                FilterCategoryProduct(selectedFilter: "all", title: "All"),
+                FilterCategoryProduct(selectedFilter: "", title: "All"),
                 FilterCategoryProduct(
                     selectedFilter: "beauty", title: "Beauty"),
                 FilterCategoryProduct(
@@ -161,7 +161,7 @@ class Favorites extends StatelessWidget {
                       : favorites
                           .where((element) =>
                               element.category.toLowerCase() ==
-                                  provider.selectedFilter.toLowerCase())
+                              provider.selectedFilter.toLowerCase())
                           .toList();
                   return ListView.builder(
                     itemCount: filterFavorites.length,
