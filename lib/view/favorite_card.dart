@@ -1,18 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
-import 'package:product_app/widget/filter_category_product.dart';
 import 'package:provider/provider.dart';
 
+import '../widget/filter_category_product.dart';
+
 class Favorites extends StatelessWidget {
-  const Favorites({super.key});
+  const Favorites({Key? key});
 
   @override
   Widget build(BuildContext context) {
     final providerRead = context.read<ProductData>();
     return Scaffold(
+      backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         title: const Text(
           "Favorites",
@@ -21,128 +21,43 @@ class Favorites extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        backgroundColor: AppColor.imageBackgroundColor,
+        backgroundColor: AppColor.scaffoldColor,
       ),
-      //groceries
       body: Column(
         children: [
           const SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                //   onTap: () {
-                //     Provider.of<ProductData>(context, listen: false)
-                //         .selectedFilter = "groceries";
-                //     providerRead.notifyListeners();
-                //   },
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Container(
-                //       height: 35,
-                //       width: 120,
-                //       decoration: BoxDecoration(
-                //         color: Colors.black87,
-                //         borderRadius: BorderRadius.circular(10),
-                //       ),
-                //       child: Center(
-                //         child: Text(
-                //           "Groceries",
-                //           style: TextStyle(
-                //             color: AppColor.whiteColor,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // GestureDetector(
-                //   onTap: () {
-                //     Provider.of<ProductData>(context, listen: false)
-                //         .selectedFilter = "furniture";
-                //     providerRead.notifyListeners();
-                //   },
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Container(
-                //       height: 35,
-                //       width: 120,
-                //       decoration: BoxDecoration(
-                //         color: Colors.black87,
-                //         borderRadius: BorderRadius.circular(10),
-                //       ),
-                //       child: Center(
-                //         child: Text(
-                //           "Furniture",
-                //           style: TextStyle(
-                //             color: AppColor.whiteColor,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // GestureDetector(
-                //   onTap: () {
-                //     Provider.of<ProductData>(context, listen: false)
-                //         .selectedFilter = "fragrances";
-                //     providerRead.notifyListeners();
-                //   },
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Container(
-                //       height: 35,
-                //       width: 120,
-                //       decoration: BoxDecoration(
-                //         color: Colors.black87,
-                //         borderRadius: BorderRadius.circular(10),
-                //       ),
-                //       child: Center(
-                //         child: Text(
-                //           "Fragrances",
-                //           style: TextStyle(
-                //             color: AppColor.whiteColor,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // GestureDetector(
-                //   onTap: () {
-                //     Provider.of<ProductData>(context, listen: false)
-                //         .selectedFilter = "Beauty";
-                //     providerRead.notifyListeners();
-                //   },
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Container(
-                //       height: 35,
-                //       width: 120,
-                //       decoration: BoxDecoration(
-                //         color: Colors.black87,
-                //         borderRadius: BorderRadius.circular(10),
-                //       ),
-                //       child: Center(
-                //         child: Text(
-                //           "Beauty",
-                //           style: TextStyle(
-                //             color: AppColor.whiteColor,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                FilterCategoryProduct(selectedFilter: "", title: "All"),
-                FilterCategoryProduct(
-                    selectedFilter: "beauty", title: "Beauty"),
-                FilterCategoryProduct(
-                    selectedFilter: "fragrances", title: "Fragrances"),
-                FilterCategoryProduct(
-                    selectedFilter: "furniture", title: "Furniture"),
-                FilterCategoryProduct(
-                    selectedFilter: "groceries", title: "Groceries"),
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                children: [
+                  FilterCategoryProduct(
+                    selectedFilter: "",
+                    title: "All",
+                    icon: Icons.all_inclusive,
+                  ),
+                  FilterCategoryProduct(
+                    selectedFilter: "beauty",
+                    title: "Beauty",
+                    icon: Icons.brush,
+                  ),
+                  FilterCategoryProduct(
+                    selectedFilter: "fragrances",
+                    title: "Fragrances",
+                    icon: Icons.spa,
+                  ),
+                  FilterCategoryProduct(
+                    selectedFilter: "furniture",
+                    title: "Furniture",
+                    icon: Icons.weekend,
+                  ),
+                  FilterCategoryProduct(
+                    selectedFilter: "groceries",
+                    title: "Groceries",
+                    icon: Icons.local_grocery_store,
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -156,17 +71,22 @@ class Favorites extends StatelessWidget {
                     );
                   }
                   final favorites = provider.favorite;
-                  final filterFavorites = provider.selectedFilter.isEmpty
+                  provider.filterFavorites = provider.selectedFilter.isEmpty
                       ? favorites
                       : favorites
                           .where((element) =>
                               element.category.toLowerCase() ==
                               provider.selectedFilter.toLowerCase())
                           .toList();
+                  if (provider.filterFavorites.isEmpty) {
+                    return const Center(
+                      child: Text("No Selected yet"),
+                    );
+                  }
                   return ListView.builder(
-                    itemCount: filterFavorites.length,
+                    itemCount: provider.filterFavorites.length,
                     itemBuilder: (context, index) {
-                      final favoritesProduct = filterFavorites[index];
+                      final favoritesProduct = provider.filterFavorites[index];
                       int rating = favoritesProduct.rating.ceil().toInt();
                       if (rating > 5) {
                         rating = 5;
@@ -256,8 +176,9 @@ class Favorites extends StatelessWidget {
                                       ),
                                       Text(
                                         favoritesProduct.warrantyInformation,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.w500,
+                                          color: Colors.black54,
                                         ),
                                       ),
                                     ],
@@ -267,6 +188,7 @@ class Favorites extends StatelessWidget {
                               IconButton(
                                 onPressed: () {
                                   providerRead.deleteFavoriteCard(index);
+                                  providerRead.deleteFilteredCard(index);
                                 },
                                 icon: const Icon(
                                   Icons.close,

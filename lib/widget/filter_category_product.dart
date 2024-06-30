@@ -7,38 +7,65 @@ import '../provider/provider.dart';
 class FilterCategoryProduct extends StatelessWidget {
   final String title;
   final String selectedFilter;
+  final IconData icon;
+
   const FilterCategoryProduct({
     super.key,
     required this.selectedFilter,
     required this.title,
+    required this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
-    final providerRead = context.read<ProductData>();
+    final isSelected =
+        context.watch<ProductData>().selectedFilter == selectedFilter;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final fontSize = screenWidth * 0.04;
 
     return GestureDetector(
       onTap: () {
-        Provider.of<ProductData>(context, listen: false).selectedFilter =
-            selectedFilter;
-        providerRead.notifyListeners();
+        context.read<ProductData>().updateFilter(selectedFilter);
       },
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Container(
-          height: 35,
+          height: 40,
           width: 120,
           decoration: BoxDecoration(
-            color: Colors.black87,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              title,
-              style:const TextStyle(
-                color: AppColor.whiteColor,
+            color: isSelected ? AppColor.appMainColor : Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 2,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
+            ],
+            border: Border.all(
+              color: isSelected ? AppColor.appMainColor : Colors.grey,
+              width: 1,
             ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : AppColor.appMainColor,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : AppColor.appMainColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -3,6 +3,8 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/view/favorite_card.dart';
 import 'package:product_app/view/home_screen.dart';
 
+import '../view/shop_screen.dart';
+
 class BottemNavigationBar extends StatefulWidget {
   const BottemNavigationBar({super.key});
 
@@ -17,6 +19,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
+        backgroundColor: AppColor.scaffoldColor,
         selectedIndex: selectedIndex,
         onDestinationSelected: (index) {
           setState(() {
@@ -61,11 +64,9 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-         const HomeScreen(),
-          Container(
-            color: AppColor.appMainColor,
-          ),
-         const Favorites(),
+          const HomeScreen(),
+          const ShopScreen(),
+          const Favorites(),
           Container(
             color: Colors.green,
           ),

@@ -10,12 +10,18 @@ class ProductData extends ChangeNotifier {
   List<Product> products = [];
   List<Product> addCard = [];
   List<Product> favorite = [];
+  List<Product> filterFavorites = [];
   String selectedFilter = "";
   String productSize = '';
   ValueNotifier<int> totalProductCards = ValueNotifier(0);
 
   void setProductSize(String size) {
     productSize = size;
+    notifyListeners();
+  }
+
+  void updateFilter(String filter) {
+    selectedFilter = filter;
     notifyListeners();
   }
 
@@ -43,6 +49,11 @@ class ProductData extends ChangeNotifier {
 
   void deleteFavoriteCard(int index) {
     favorite.removeAt(index);
+    notifyListeners();
+  }
+
+  void deleteFilteredCard(int index) {
+    filterFavorites.removeAt(index);
     notifyListeners();
   }
 
