@@ -20,6 +20,14 @@ class Favorites extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
+        leading: IconButton(
+          onPressed: () {
+            // Navigator.of(context).pop();
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: AppColor.scaffoldColor,
       ),
@@ -115,10 +123,9 @@ class Favorites extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
                                 child: Image.network(
-                                  favoritesProduct.thumbnail,
+                                  favoritesProduct.images.first,
                                   width: 120,
                                   height: 120,
-                                  fit: BoxFit.cover,
                                 ),
                               ),
                               Expanded(

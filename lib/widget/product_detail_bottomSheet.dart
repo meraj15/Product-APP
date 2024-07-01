@@ -10,7 +10,12 @@ import '../view/add_cart.dart';
 // ignore: must_be_immutable
 class ProductDetailBottomSheet extends StatefulWidget {
   Product product;
-  ProductDetailBottomSheet({super.key, required this.product});
+  final Color bgColor;
+  ProductDetailBottomSheet({
+    super.key,
+    required this.product,
+    required this.bgColor,
+  });
 
   @override
   State<ProductDetailBottomSheet> createState() =>
@@ -27,9 +32,9 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       height: 70,
-      decoration: const BoxDecoration(
-        color: Color(0xfff3f3f3),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration:  BoxDecoration(
+        color: widget.bgColor,
+        borderRadius:const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),

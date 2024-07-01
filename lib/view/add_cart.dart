@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
@@ -75,11 +73,12 @@ class _AddCardState extends State<AddCard> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(
-                        product.thumbnail,
-                        width: 115,
-                        height: 130,
-                        fit: BoxFit.cover,
+                      Center(
+                        child: Image.network(
+                          product.images.first,
+                          width: 115,
+                          height: 130,
+                        ),
                       ),
                       Expanded(
                         child: Column(

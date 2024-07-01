@@ -53,7 +53,9 @@ class ProductData extends ChangeNotifier {
   }
 
   void deleteFilteredCard(int index) {
-    filterFavorites.removeAt(index);
+    filterFavorites.removeWhere(
+      (element) => element.id == index,
+    );
     notifyListeners();
   }
 

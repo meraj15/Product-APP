@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/view/add_cart.dart';
-import 'package:product_app/view/product_detail.dart';
 
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
@@ -29,13 +28,16 @@ class _ShopScreenState extends State<ShopScreen> {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        backgroundColor: AppColor.appMainColor,
         centerTitle: true,
-        title: const Text(
-          "Shopping App",
-          style: TextStyle(color: AppColor.whiteColor),
+        title: Text("Sale"),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+          ),
         ),
-        iconTheme: const IconThemeData(color: AppColor.whiteColor),
         actions: [
           IconButton(
             onPressed: () {
@@ -54,7 +56,6 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
               child: const Icon(
                 Icons.shopping_bag_outlined,
-                color: AppColor.whiteColor,
               ),
             ),
           )

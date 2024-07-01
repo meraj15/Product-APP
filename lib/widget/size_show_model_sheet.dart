@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:product_app/widget/product_detail_bottomsheet.dart';
@@ -9,7 +10,7 @@ import 'size_selector.dart';
 
 class SizeShowModelBottomSheet extends StatefulWidget {
   final Product product;
- const SizeShowModelBottomSheet({super.key, required this.product});
+  const SizeShowModelBottomSheet({super.key, required this.product});
 
   @override
   State<SizeShowModelBottomSheet> createState() =>
@@ -31,11 +32,11 @@ class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
                 return Container(
                   height: 250,
                   decoration: BoxDecoration(
-                    color:const Color(0xfff3f3f3),
+                    color: const Color(0xfff3f3f3),
                     border: Border.all(
                       width: 1.0,
                     ),
-                    borderRadius:const BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16),
                     ),
@@ -48,13 +49,13 @@ class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
                           height: 5,
                           width: 60,
                           decoration: BoxDecoration(
-                            color:const Color(0xff9B9B9B),
+                            color: const Color(0xff9B9B9B),
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
                       ),
-                     const Padding(
-                        padding:  EdgeInsets.symmetric(vertical: 16.0),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
                         child: Text(
                           "Select size",
                           style: TextStyle(
@@ -85,7 +86,7 @@ class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
                                       size: "M"),
                                 ],
                               ),
-                             const SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
@@ -108,11 +109,12 @@ class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
                           );
                         },
                       ),
-                     const SizedBox(
+                      const SizedBox(
                         height: 19,
                       ),
                       ProductDetailBottomSheet(
                         product: widget.product,
+                        bgColor: const Color(0xfff3f3f3),
                       )
                     ],
                   ),
@@ -120,7 +122,7 @@ class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
               },
             );
           },
-          child:const SizeSelector(),
+          child: const SizeSelector(),
         ),
       ],
     );

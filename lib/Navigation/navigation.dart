@@ -37,7 +37,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
           ),
           NavigationDestination(
             selectedIcon: Icon(
-              Icons.shop_outlined,
+              Icons.shopping_cart,
               color: AppColor.appMainColor,
             ),
             icon: Icon(Icons.shopping_cart),

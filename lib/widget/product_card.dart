@@ -12,20 +12,19 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
     required this.product,
-   
   });
 
   @override
   Widget build(BuildContext context) {
-     final providerWatch = context.watch<ProductData>();
-        final providerRead = context.read<ProductData>();
-        final isFavorite = providerWatch.favorite.contains(product);
-         int rating = product.rating.ceil().toInt();
-        if (rating > 5) {
-          rating = 5;
-        }
-        int filledStars = rating;
-        int outlinedStars = 5 - filledStars;
+    final providerWatch = context.watch<ProductData>();
+    final providerRead = context.read<ProductData>();
+    final isFavorite = providerWatch.favorite.contains(product);
+    int rating = product.rating.ceil().toInt();
+    if (rating > 5) {
+      rating = 5;
+    }
+    int filledStars = rating;
+    int outlinedStars = 5 - filledStars;
 
     return Container(
       margin: const EdgeInsets.all(7),
@@ -58,10 +57,9 @@ class ProductCard extends StatelessWidget {
                       ),
                       child: SizedBox(
                         height: 200,
-                        child: Hero(
-                          tag: product.thumbnail,
+                        child: Center(
                           child: Image.network(
-                            product.thumbnail,
+                            product.images.first,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -165,16 +163,29 @@ class ProductCard extends StatelessWidget {
             ),
             overflow: TextOverflow.ellipsis,
           ),
-          Text(
-            "\$${product.price}",
-            style: const TextStyle(
-              color: AppColor.appMainColor,
-              fontWeight: FontWeight.w500,
-            ),
+          Row(
+            children: [
+              Text(
+                "\$${(product.price * (1 + product.discountPercentage / 100)).toStringAsFixed(2)}",
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                  decoration: TextDecoration.lineThrough,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "\$${product.price}",
+                style: const TextStyle(
+                  color: AppColor.appMainColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           )
         ],
       ),
     );
-  
   }
 }
