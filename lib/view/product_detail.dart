@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
@@ -49,7 +50,7 @@ class _ProductDetailState extends State<ProductDetail> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CarouselSlider(
               items: widget.product.images.map((image) {
@@ -89,18 +90,10 @@ class _ProductDetailState extends State<ProductDetail> {
               ),
             Container(
               padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                  color: AppColor.whiteColor,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(40)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                      offset: const Offset(0, 1),
-                    ),
-                  ]),
+              decoration: const BoxDecoration(
+                color: AppColor.whiteColor,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -113,20 +106,34 @@ class _ProductDetailState extends State<ProductDetail> {
                           children: [
                             Text(
                               widget.product.title,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black87,
                                 fontSize: 22,
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              "\$${widget.product.price.toString()}",
-                              style: const TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: AppColor.appMainColor,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  "\$${(widget.product.price * (1 + widget.product.discountPercentage / 100)).toStringAsFixed(2)}",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  "\$${widget.product.price.toString()}",
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.appMainColor,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -281,22 +288,25 @@ class _ProductDetailState extends State<ProductDetail> {
                   SizeShowModelBottomSheet(
                     product: widget.product,
                   ),
-                  ProductDetailBottomSheet(
-                    product: widget.product,
-                    bgColor: AppColor.whiteColor,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ProductDetailBottomSheet(
+                      product: widget.product,
+                      bgColor: AppColor.whiteColor,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  const Text(
+                    "Similar Products",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
                 ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "Similar Products",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
               ),
             ),
             SizedBox(
@@ -304,6 +314,8 @@ class _ProductDetailState extends State<ProductDetail> {
                 child: BuiltCategory(
                   category: widget.product.category,
                   context: context,
+                  color: AppColor.whiteColor,
+                  product: widget.product,
                 )),
           ],
         ),

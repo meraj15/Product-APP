@@ -13,10 +13,17 @@ class ProductData extends ChangeNotifier {
   List<Product> filterFavorites = [];
   String selectedFilter = "";
   String productSize = '';
+  String selectedSortFilter = "No Filter";
+
   ValueNotifier<int> totalProductCards = ValueNotifier(0);
 
   void setProductSize(String size) {
     productSize = size;
+    notifyListeners();
+  }
+
+  void setSort(String sort) {
+    selectedSortFilter = sort;
     notifyListeners();
   }
 
@@ -47,14 +54,9 @@ class ProductData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteFavoriteCard(int index) {
-    favorite.removeAt(index);
-    notifyListeners();
-  }
-
-  void deleteFilteredCard(int index) {
-    filterFavorites.removeWhere(
-      (element) => element.id == index,
+  void deleteProductCard(Product product) {
+    favorite.removeWhere(
+      (element) => element.id == product.id,
     );
     notifyListeners();
   }
@@ -64,6 +66,45 @@ class ProductData extends ChangeNotifier {
       favorite.remove(product);
     } else {
       favorite.add(product);
+    }
+    notifyListeners();
+  }
+
+  void productPriceHightoLow() {
+    for (int i = 0; i < products.length; i++) {
+      for (int j = 0; j < products.length - i - 1; j++) {
+        if (products[j].price < products[j + 1].price) {
+          final temp = products[j];
+          products[j] = products[j + 1];
+          products[j + 1] = temp;
+        }
+      }
+    }
+    notifyListeners();
+  }
+
+  void productPriceLowtoHigh() {
+    for (int i = 0; i < products.length; i++) {
+      for (int j = 0; j < products.length - i - 1; j++) {
+        if (products[j].price > products[j + 1].price) {
+          final temp = products[j];
+          products[j] = products[j + 1];
+          products[j + 1] = temp;
+        }
+      }
+    }
+    notifyListeners();
+  }
+
+  void productRatingHightoLow() {
+    for (int i = 0; i < products.length; i++) {
+      for (int j = 0; j < products.length - i - 1; j++) {
+        if (products[j].rating < products[j + 1].rating) {
+          final temp = products[j];
+          products[j] = products[j + 1];
+          products[j + 1] = temp;
+        }
+      }
     }
     notifyListeners();
   }

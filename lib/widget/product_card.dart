@@ -26,6 +26,8 @@ class ProductCard extends StatelessWidget {
     int filledStars = rating;
     int outlinedStars = 5 - filledStars;
 
+    
+
     return Container(
       margin: const EdgeInsets.all(7),
       decoration: BoxDecoration(

@@ -3,6 +3,7 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/view/favorite_card.dart';
 import 'package:product_app/view/home_screen.dart';
 
+import '../view/profile_screen.dart';
 import '../view/shop_screen.dart';
 
 class BottemNavigationBar extends StatefulWidget {
@@ -67,9 +68,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
           const HomeScreen(),
           const ShopScreen(),
           const Favorites(),
-          Container(
-            color: Colors.green,
-          ),
+          ProfileScreen(),
         ],
       ),
     );

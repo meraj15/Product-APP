@@ -20,6 +20,7 @@ class FilterCategoryProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSelected =
         context.watch<ProductData>().selectedFilter == selectedFilter;
+
     final screenWidth = MediaQuery.of(context).size.width;
 
     final fontSize = screenWidth * 0.04;

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:product_app/view/add_cart.dart';
 
-import '../view/add_cart.dart';
+import 'toast.dart';
 
-// ignore: must_be_immutable
 class ProductDetailBottomSheet extends StatefulWidget {
-  Product product;
+  final Product product;
   final Color bgColor;
-  ProductDetailBottomSheet({
+
+  const ProductDetailBottomSheet({
     super.key,
     required this.product,
     required this.bgColor,
@@ -32,9 +31,9 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       height: 70,
-      decoration:  BoxDecoration(
+      decoration: BoxDecoration(
         color: widget.bgColor,
-        borderRadius:const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -56,43 +55,10 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                     providerRead.addCard.add(widget.product);
                     providerRead.totalProductCards.value++;
                     providerRead.productSize = "";
-                    // ScaffoldMessenger.of(context).showSnackBar(
-                    //  const SnackBar(
-                    //     duration: Duration(microseconds: 500),
-                    //     content: Text("Added Sucessfully"),
-                    //   ),
-                    // );
+                    CustomToast.showCustomToast(context, "Added Successfully");
                   } else {
-                    showToastWidget(
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 60),
-                          height: 40,
-                          decoration: ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            color: AppColor.appMainColor,
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Please select the size',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        context: context,
-                        isIgnoring: false,
-                        duration: const Duration(seconds: 2),
-                        position: StyledToastPosition.top,
-                        animDuration: const Duration(milliseconds: 600));
+                    CustomToast.showCustomToast(
+                        context, 'Please select the size');
                   }
                 }
               });
@@ -106,7 +72,7 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                 const Icon(Icons.shopping_bag_outlined, color: Colors.white),
                 const SizedBox(width: 8),
                 Text(
-                  isThereCard ? 'go to bag' : 'Add to Bag',
+                  isThereCard ? 'Go to Bag' : 'Add to Bag',
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,

@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 import '../widget/filter_category_product.dart';
 
 class Favorites extends StatelessWidget {
-  const Favorites({Key? key});
+  const Favorites({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class Favorites extends StatelessWidget {
           onPressed: () {
             // Navigator.of(context).pop();
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
           ),
         ),
@@ -79,22 +81,22 @@ class Favorites extends StatelessWidget {
                     );
                   }
                   final favorites = provider.favorite;
-                  provider.filterFavorites = provider.selectedFilter.isEmpty
+                  final filterFavorites = provider.selectedFilter.isEmpty
                       ? favorites
                       : favorites
                           .where((element) =>
                               element.category.toLowerCase() ==
                               provider.selectedFilter.toLowerCase())
                           .toList();
-                  if (provider.filterFavorites.isEmpty) {
+                  if (filterFavorites.isEmpty) {
                     return const Center(
                       child: Text("No Selected yet"),
                     );
                   }
                   return ListView.builder(
-                    itemCount: provider.filterFavorites.length,
+                    itemCount: filterFavorites.length,
                     itemBuilder: (context, index) {
-                      final favoritesProduct = provider.filterFavorites[index];
+                      final favoritesProduct = filterFavorites[index];
                       int rating = favoritesProduct.rating.ceil().toInt();
                       if (rating > 5) {
                         rating = 5;
@@ -194,8 +196,8 @@ class Favorites extends StatelessWidget {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  providerRead.deleteFavoriteCard(index);
-                                  providerRead.deleteFilteredCard(index);
+                                  providerRead
+                                      .deleteProductCard(favoritesProduct);
                                 },
                                 icon: const Icon(
                                   Icons.close,

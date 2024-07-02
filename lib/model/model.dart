@@ -46,7 +46,7 @@ class Product {
       stock: product["stock"] ?? 0,
       availabilityStatus: product["availabilityStatus"] ?? "",
       images: product["images"].cast<String>(),
-      returnPolicy: product["returnPolicy"] ?? "30 days return policy",
+      returnPolicy: product["returnPolicy"],
       warrantyInformation: product["warrantyInformation"],
     );
   }

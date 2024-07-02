@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:product_app/widget/built_category.dart';
 import '../constant/contant.dart';
 
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -50,11 +49,13 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         SizedBox(
-            height: 320,
-            child: BuiltCategory(
-              category: category,
-              context: context,
-            )),
+          height: 320,
+          child: BuiltCategory(
+            category: category,
+            context: context,
+            color: AppColor.scaffoldColor,
+          ),
+        ),
       ],
     );
   }
