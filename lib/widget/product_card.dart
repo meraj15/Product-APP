@@ -26,8 +26,6 @@ class ProductCard extends StatelessWidget {
     int filledStars = rating;
     int outlinedStars = 5 - filledStars;
 
-    
-
     return Container(
       margin: const EdgeInsets.all(7),
       decoration: BoxDecoration(
@@ -61,8 +59,12 @@ class ProductCard extends StatelessWidget {
                         height: 200,
                         child: Center(
                           child: Image.network(
-                            product.images.first,
-                            fit: BoxFit.cover,
+                            product.id == 6 ||
+                                    product.id == 9 ||
+                                    product.id == 19
+                                ? product.images.first
+                                : product.thumbnail,
+                            fit: BoxFit.fitWidth,
                           ),
                         ),
                       ),

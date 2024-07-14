@@ -10,7 +10,14 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        title: Text(
+          'My profile',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
@@ -23,18 +30,11 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'My profile',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const Row(
               children: [
                 CircleAvatar(
@@ -63,14 +63,14 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
             Expanded(
               child: ListView(
                 children: const [
                   ProfileListItem(
                     icon: Icons.shopping_cart,
                     text: 'My orders',
-                    subText: 'Already have 12 orders',
+                    subText: 'Already have 4 orders',
                   ),
                   ProfileListItem(
                     icon: Icons.location_on,

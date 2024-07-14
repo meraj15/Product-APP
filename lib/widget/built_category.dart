@@ -80,7 +80,11 @@ class BuiltCategory extends StatelessWidget {
                               height: 200,
                               child: Center(
                                 child: Image.network(
-                                  product.images.first,
+                                  product.id == 6 ||
+                                          product.id == 9 ||
+                                          product.id == 19
+                                      ? product.images.first
+                                      : product.thumbnail,
                                   fit: BoxFit.fitWidth,
                                 ),
                               ),

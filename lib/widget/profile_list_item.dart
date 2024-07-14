@@ -27,7 +27,7 @@ class ProfileListItem extends StatelessWidget {
           subtitle: Text(
             subText,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 13,
               color: Colors.grey,
             ),
           ),
