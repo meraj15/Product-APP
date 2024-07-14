@@ -2,11 +2,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
+import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/built_category.dart';
 
 import 'package:product_app/widget/product_detail_bottomsheet.dart';
@@ -35,7 +35,7 @@ class _ProductDetailState extends State<ProductDetail> {
         backgroundColor: AppColor.appMainColor,
         leading: IconButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(AppRoutes.initialRoute);
           },
           icon: const Icon(
             Icons.arrow_back_ios,

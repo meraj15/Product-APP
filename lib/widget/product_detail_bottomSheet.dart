@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
+import 'package:product_app/routes/app_routes.dart';
 import 'package:provider/provider.dart';
-import 'package:product_app/view/add_cart.dart';
 
 import 'toast.dart';
 
@@ -43,13 +43,7 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
             onPressed: () {
               setState(() {
                 if (isThereCard) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const AddCard();
-                      },
-                    ),
-                  );
+                  Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
                 } else {
                   if (providerRead.productSize.isNotEmpty) {
                     providerRead.addCard.add(widget.product);

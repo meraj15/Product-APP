@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/view/add_cart.dart';
+import 'package:product_app/routes/app_routes.dart';
 
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
-import 'package:product_app/view/home_screen.dart';
 import 'package:product_app/widget/product_card.dart';
 import 'package:provider/provider.dart';
 
@@ -44,13 +43,7 @@ class _ShopScreenState extends State<ShopScreen> {
         backgroundColor: AppColor.scaffoldColor,
         leading: IconButton(
           onPressed: () {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) {
-            //       return const HomeScreen();
-            //     },
-            //   ),
-            // );
+            Navigator.of(context).pushNamed(AppRoutes.initialRoute);
           },
           icon: const Icon(
             Icons.arrow_back_ios,
@@ -60,20 +53,14 @@ class _ShopScreenState extends State<ShopScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const AddCard();
-                  },
-                ),
-              );
+              Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
             },
             icon: Badge(
               label: ValueListenableBuilder(
                 valueListenable: context.read<ProductData>().totalProductCards,
                 builder: (context, value, child) => Text(
                   "$value",
-                  style: TextStyle(
+                  style:const TextStyle(
                     color: Colors.white,
                   ),
                 ),
@@ -107,7 +94,7 @@ class _ShopScreenState extends State<ShopScreen> {
     return Center(
       child: Text(
         error,
-        style: TextStyle(
+        style:const TextStyle(
           fontSize: 18,
           color: Colors.red,
         ),

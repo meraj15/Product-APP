@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/widget/built_category.dart';
 import '../constant/contant.dart';
+import '../widget/drawer.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,7 +20,7 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: AppColor.appMainColor,
         iconTheme: const IconThemeData(color: AppColor.whiteColor),
       ),
-      drawer: const Drawer(),
+      drawer: const DrawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

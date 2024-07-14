@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
+import 'package:product_app/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
 import '../widget/filter_category_product.dart';
@@ -24,7 +25,7 @@ class Favorites extends StatelessWidget {
         ),
         leading: IconButton(
           onPressed: () {
-            // Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(AppRoutes.initialRoute);
           },
           icon: const Icon(
             Icons.arrow_back_ios,

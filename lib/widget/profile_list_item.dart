@@ -20,21 +20,21 @@ class ProfileListItem extends StatelessWidget {
           leading: Icon(icon, color: Colors.black),
           title: Text(
             text,
-            style: TextStyle(
+            style:const TextStyle(
               fontWeight: FontWeight.w500,
             ),
           ),
           subtitle: Text(
             subText,
-            style: TextStyle(
+            style:const TextStyle(
               fontSize: 13,
               color: Colors.grey,
             ),
           ),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.black),
+          trailing:const Icon(Icons.arrow_forward_ios, color: Colors.black),
           onTap: () {},
         ),
-        Divider(),
+       const Divider(),
       ],
     );
   }

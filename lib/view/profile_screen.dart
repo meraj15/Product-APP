@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/routes/app_routes.dart';
 
 import '../widget/profile_list_item.dart';
 
 class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title:const Text(
           'My profile',
           style: TextStyle(
             fontSize: 24,
@@ -20,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pushNamed(AppRoutes.initialRoute),
         ),
         actions: [
           IconButton(

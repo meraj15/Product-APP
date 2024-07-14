@@ -18,6 +18,12 @@ class _AddCardState extends State<AddCard> {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
         title: const Text(
           "My Bag",
           style: TextStyle(

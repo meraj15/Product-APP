@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/routes/app_routes.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
@@ -25,9 +26,9 @@ class DrawerWidget extends StatelessWidget {
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 50), // Add some space at the top
+                SizedBox(height: 50), 
                 CircleAvatar(
-                  backgroundImage: AssetImage("assets/profile.png"),
+                  backgroundImage: AssetImage("assets/profile.png",),
                   radius: 50,
                 ),
                 SizedBox(height: 10),
@@ -46,7 +47,7 @@ class DrawerWidget extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 16), // Add some space at the bottom
+                SizedBox(height: 16), 
               ],
             ),
           ),
@@ -58,14 +59,14 @@ class DrawerWidget extends StatelessWidget {
                   icon: Icons.home,
                   text: 'Home',
                   onTap: () {
-                    Navigator.of(context).pushNamed('home-screen');
+                    Navigator.of(context).pushNamed(AppRoutes.initialRoute);
                   },
                 ),
                 createDrawerItem(
                   icon: Icons.shopping_cart,
                   text: 'My Cart',
                   onTap: () {
-                    Navigator.of(context).pushNamed('add-card-screen');
+                    Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
                   },
                 ),
                 createDrawerItem(
@@ -79,14 +80,14 @@ class DrawerWidget extends StatelessWidget {
                   icon: Icons.person,
                   text: 'Profile',
                   onTap: () {
-                    Navigator.of(context).pushNamed('/profile');
+                    Navigator.of(context).pushNamed(AppRoutes.profileScreen);
                   },
                 ),
                 createDrawerItem(
                   icon: Icons.settings,
                   text: 'Settings',
                   onTap: () {
-                    Navigator.of(context).pushNamed('/settings');
+                  Navigator.of(context).pushNamed(AppRoutes.profileScreen);
                   },
                 ),
                 const Divider(),
@@ -101,7 +102,7 @@ class DrawerWidget extends StatelessWidget {
                   icon: Icons.logout,
                   text: 'Logout',
                   onTap: () {
-                    Navigator.of(context).pushNamed('/');
+                    Navigator.of(context).pushNamed('/lougout');
                   },
                 ),
               ],
