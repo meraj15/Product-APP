@@ -33,7 +33,6 @@ class FilterCategoryProduct extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Container(
           height: 40,
-          width: 120,
           decoration: BoxDecoration(
             color: isSelected ? AppColor.appMainColor : Colors.white,
             borderRadius: BorderRadius.circular(15),
@@ -50,23 +49,27 @@ class FilterCategoryProduct extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                color: isSelected ? Colors.white : AppColor.appMainColor,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: TextStyle(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
                   color: isSelected ? Colors.white : AppColor.appMainColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : AppColor.appMainColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

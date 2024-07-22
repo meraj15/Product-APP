@@ -60,7 +60,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 valueListenable: context.read<ProductData>().totalProductCards,
                 builder: (context, value, child) => Text(
                   "$value",
-                  style:const TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                   ),
                 ),
@@ -94,7 +94,7 @@ class _ShopScreenState extends State<ShopScreen> {
     return Center(
       child: Text(
         error,
-        style:const TextStyle(
+        style: const TextStyle(
           fontSize: 18,
           color: Colors.red,
         ),
@@ -146,10 +146,132 @@ class _ShopScreenState extends State<ShopScreen> {
                   title: "Groceries",
                   icon: Icons.local_grocery_store,
                 ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "home-decoration",
+                  title: "Decoration",
+                  icon: Icons.home,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "kitchen-accessories",
+                  title: "Kitchen",
+                  icon: Icons.kitchen,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "laptops",
+                  title: "Laptops",
+                  icon: Icons.laptop,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "mens-shirts",
+                  title: "Mens shirts",
+                  icon: Icons.checkroom,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "mens-shoes",
+                  title: "Mens Shoes",
+                  icon: Icons.run_circle,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "mens-watches",
+                  title: "Mens Watches",
+                  icon: Icons.watch,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "mobile-accessories",
+                  title: "Mobile Accessories",
+                  icon: Icons.mobile_friendly,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "motorcycle",
+                  title: "Motorcycle",
+                  icon: Icons.motorcycle,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "skin-care",
+                  title: "Skin Care",
+                  icon: Icons.face,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "smartphones",
+                  title: "Smartphones",
+                  icon: Icons.smartphone,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "sports-accessories",
+                  title: "Sports Accessories",
+                  icon: Icons.sports,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "sunglasses",
+                  title: "Sunglasses",
+                  icon: Icons.wb_sunny,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "tablets",
+                  title: "Tablets",
+                  icon: Icons.tablet,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "tops",
+                  title: "Tops",
+                  icon: Icons.emoji_people,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "vehicle",
+                  title: "Vehicle",
+                  icon: Icons.directions_car,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "womens-bags",
+                  title: "Womens Bags",
+                  icon: Icons.shopping_bag,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "womens-dresses",
+                  title: "Womens Dresses",
+                  icon: Icons.collections_sharp,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "womens-jewellery",
+                  title: "Womens Jewellery",
+                  icon: Icons.local_florist,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "womens-shoes",
+                  title: "Womens Shoes",
+                  icon: Icons.run_circle,
+                ),
+                SizedBox(width: 8),
+                FilterCategoryProduct(
+                  selectedFilter: "womens-watches",
+                  title: "Womens Watches",
+                  icon: Icons.watch,
+                ),
               ],
             ),
+          
           ),
         ),
+        
         SortProduct(),
         Expanded(
           child: GridView.builder(

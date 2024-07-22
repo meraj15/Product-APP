@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:product_app/model/model.dart';
 
 class ProductData extends ChangeNotifier {
-  String endPoint = "https://dummyjson.com/products";
+  String endPoint = "https://dummyjson.com/products?limit=194";
   bool isLoaded = true;
   String error = "";
   List<Product> products = [];

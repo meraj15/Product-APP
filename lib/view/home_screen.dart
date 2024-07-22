@@ -9,6 +9,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         title: const Text(
           "Shopping App",
@@ -29,6 +30,26 @@ class HomeScreen extends StatelessWidget {
             buildCategorySection(context, "fragrances"),
             buildCategorySection(context, "furniture"),
             buildCategorySection(context, "groceries"),
+            buildCategorySection(context, "home-decoration"),
+            buildCategorySection(context, "kitchen-accessories"),
+            buildCategorySection(context, "laptops"),
+            buildCategorySection(context, "mens-shirts"),
+            buildCategorySection(context, "mens-shoes"),
+            buildCategorySection(context, "mens-watches"),
+            buildCategorySection(context, "mobile-accessories"),
+            buildCategorySection(context, "motorcycle"),
+            buildCategorySection(context, "skin-care"),
+            buildCategorySection(context, "smartphones"),
+            buildCategorySection(context, "sports-accessories"),
+            buildCategorySection(context, "sunglasses"),
+            buildCategorySection(context, "tablets"),
+            buildCategorySection(context, "tops"),
+            buildCategorySection(context, "vehicle"),
+            buildCategorySection(context, "womens-bags"),
+            buildCategorySection(context, "womens-dresses"),
+            buildCategorySection(context, "womens-jewellery"),
+            buildCategorySection(context, "womens-shoes"),
+            buildCategorySection(context, "womens-watches"),
           ],
         ),
       ),

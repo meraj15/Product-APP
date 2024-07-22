@@ -82,7 +82,9 @@ class BuiltCategory extends StatelessWidget {
                                 child: Image.network(
                                   product.id == 6 ||
                                           product.id == 9 ||
-                                          product.id == 19
+                                          product.id == 19 ||
+                                          product.category == "smartphones" ||
+                                          product.category == "vehicle"
                                       ? product.images.first
                                       : product.thumbnail,
                                   fit: BoxFit.fitWidth,

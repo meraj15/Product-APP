@@ -64,10 +64,10 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
       ),
       body: IndexedStack(
         index: selectedIndex,
-        children: [
-          const HomeScreen(),
-          const ShopScreen(),
-          const Favorites(),
+        children: const [
+          HomeScreen(),
+          ShopScreen(),
+          Favorites(),
           ProfileScreen(),
         ],
       ),
