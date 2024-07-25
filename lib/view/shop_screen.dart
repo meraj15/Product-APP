@@ -9,6 +9,7 @@ import 'package:product_app/widget/drawer.dart';
 import 'package:product_app/widget/product_card.dart';
 import 'package:provider/provider.dart';
 
+import '../widget/circular_loader.dart';
 import '../widget/filter_category_product.dart';
 import '../widget/sort_product.dart';
 
@@ -67,20 +68,14 @@ class _ShopScreenState extends State<ShopScreen> {
       ),
       drawer: const DrawerWidget(),
       body: provider.isLoaded
-          ? getLoader()
+          ? const CircularLoader()
           : provider.error.isNotEmpty
               ? getError(provider.error)
               : getBody(provider.products),
     );
   }
 
-  Widget getLoader() {
-    return const Center(
-      child: CircularProgressIndicator(
-        color: AppColor.appMainColor,
-      ),
-    );
-  }
+ 
 
   Widget getError(String error) {
     return Center(
