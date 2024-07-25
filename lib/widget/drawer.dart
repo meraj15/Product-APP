@@ -26,9 +26,11 @@ class DrawerWidget extends StatelessWidget {
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 50), 
+                SizedBox(height: 50),
                 CircleAvatar(
-                  backgroundImage: AssetImage("assets/profile.png",),
+                  backgroundImage: AssetImage(
+                    "assets/profile.png",
+                  ),
                   radius: 50,
                 ),
                 SizedBox(height: 10),
@@ -47,7 +49,7 @@ class DrawerWidget extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 16), 
+                SizedBox(height: 16),
               ],
             ),
           ),
@@ -70,10 +72,17 @@ class DrawerWidget extends StatelessWidget {
                   },
                 ),
                 createDrawerItem(
+                  icon: Icons.favorite,
+                  text: 'Favorites',
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRoutes.favoriteScreen);
+                  },
+                ),
+                createDrawerItem(
                   icon: Icons.history,
                   text: 'Order History',
                   onTap: () {
-                    Navigator.of(context).pushNamed('/order-history');
+                    Navigator.of(context).pushNamed(AppRoutes.profileScreen);
                   },
                 ),
                 createDrawerItem(
@@ -87,7 +96,7 @@ class DrawerWidget extends StatelessWidget {
                   icon: Icons.settings,
                   text: 'Settings',
                   onTap: () {
-                  Navigator.of(context).pushNamed(AppRoutes.profileScreen);
+                    Navigator.of(context).pushNamed(AppRoutes.profileScreen);
                   },
                 ),
                 const Divider(),
@@ -102,7 +111,7 @@ class DrawerWidget extends StatelessWidget {
                   icon: Icons.logout,
                   text: 'Logout',
                   onTap: () {
-                    Navigator.of(context).pushNamed('/lougout');
+                    Navigator.of(context).pushNamed("/");
                   },
                 ),
               ],

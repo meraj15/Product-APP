@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/widget/built_category.dart';
 import '../constant/contant.dart';
 import '../widget/drawer.dart';
@@ -11,12 +12,11 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        title: const Text(
-          "Shopping App",
-          style: TextStyle(
-            color: AppColor.whiteColor,
-          ),
-        ),
+        title: Text("Flutter Market",
+            style: GoogleFonts.pacifico(
+              color: AppColor.whiteColor,
+              fontWeight: FontWeight.w200,
+            )),
         centerTitle: true,
         backgroundColor: AppColor.appMainColor,
         iconTheme: const IconThemeData(color: AppColor.whiteColor),

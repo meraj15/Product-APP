@@ -5,6 +5,7 @@ import 'package:product_app/routes/app_routes.dart';
 
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
+import 'package:product_app/widget/drawer.dart';
 import 'package:product_app/widget/product_card.dart';
 import 'package:provider/provider.dart';
 
@@ -41,15 +42,6 @@ class _ShopScreenState extends State<ShopScreen> {
           ),
         ),
         backgroundColor: AppColor.scaffoldColor,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(AppRoutes.initialRoute);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            // color: Colors.white,
-          ),
-        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -73,7 +65,7 @@ class _ShopScreenState extends State<ShopScreen> {
           )
         ],
       ),
-      drawer: const Drawer(),
+      drawer: const DrawerWidget(),
       body: provider.isLoaded
           ? getLoader()
           : provider.error.isNotEmpty
@@ -268,10 +260,8 @@ class _ShopScreenState extends State<ShopScreen> {
                 ),
               ],
             ),
-          
           ),
         ),
-        
         SortProduct(),
         Expanded(
           child: GridView.builder(

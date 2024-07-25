@@ -3,6 +3,8 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
 
+import '../widget/drawer.dart';
+
 class AddCard extends StatefulWidget {
   const AddCard({super.key});
 
@@ -13,17 +15,12 @@ class AddCard extends StatefulWidget {
 class _AddCardState extends State<AddCard> {
   @override
   Widget build(BuildContext context) {
-    final providerWatch = context.watch<ProductData>();
-    final providerRead = context.read<ProductData>();
+    final productData = context.watch<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
+      drawer:const DrawerWidget(),
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios),
-        ),
+        
         title: const Text(
           "My Bag",
           style: TextStyle(
@@ -37,10 +34,7 @@ class _AddCardState extends State<AddCard> {
       body: Consumer<ProductData>(
         builder: (context, productData, child) {
           final cartItems = productData.addCard;
-          // final totalPrice = 0;
-          // cartItems.fold(
-          //     0, (sum, item) => sum + (item.price * productData.productQuantity));
-          if (providerWatch.addCard.isEmpty) {
+          if (cartItems.isEmpty) {
             return const Center(
               child: Text(
                 "Empty bag!!",
@@ -56,13 +50,11 @@ class _AddCardState extends State<AddCard> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView.separated(
-              separatorBuilder: (context, index) => const SizedBox(
-                height: 17,
-              ),
+              separatorBuilder: (context, index) => const SizedBox(height: 17),
               itemCount: cartItems.length,
               itemBuilder: (context, index) {
                 final product = cartItems[index];
-                final isFavorite = providerWatch.favorite.contains(product);
+                final isFavorite = productData.favorite.contains(product);
 
                 return Container(
                   height: 140,
@@ -90,9 +82,7 @@ class _AddCardState extends State<AddCard> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(
-                              height: 4,
-                            ),
+                            const SizedBox(height: 4),
                             Text(
                               product.title,
                               overflow: TextOverflow.ellipsis,
@@ -110,15 +100,13 @@ class _AddCardState extends State<AddCard> {
                               ),
                             ),
                             Text(
-                              'Size: ${context.watch<ProductData>().productSize}',
+                              'Size: ${productData.productSize}',
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 13,
                               ),
                             ),
-                            const SizedBox(
-                              height: 4,
-                            ),
+                            const SizedBox(height: 4),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -126,8 +114,9 @@ class _AddCardState extends State<AddCard> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        product.productQuantity--;
-                                        setState(() {});
+                                        setState(() {
+                                          product.productQuantity--;
+                                        });
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
@@ -159,8 +148,9 @@ class _AddCardState extends State<AddCard> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        product.productQuantity++;
-                                        setState(() {});
+                                        setState(() {
+                                          product.productQuantity++;
+                                        });
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
@@ -191,9 +181,7 @@ class _AddCardState extends State<AddCard> {
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 8,
-                            ),
+                            const SizedBox(height: 8),
                             Text(
                               product.returnPolicy,
                               style: const TextStyle(
@@ -208,7 +196,7 @@ class _AddCardState extends State<AddCard> {
                         itemBuilder: (context) => [
                           PopupMenuItem(
                             onTap: () {
-                              context.read<ProductData>().favorites(product);
+                              productData.favorites(product);
                             },
                             child: Row(
                               children: [
@@ -218,26 +206,22 @@ class _AddCardState extends State<AddCard> {
                                       : Icons.favorite_border,
                                   color: AppColor.appMainColor,
                                 ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
+                                const SizedBox(width: 8),
                                 const Text("Favorites"),
                               ],
                             ),
                           ),
                           PopupMenuItem(
                             onTap: () {
-                              providerRead.deleteAddCard(index);
-                              providerRead.totalProductCards.value--;
+                              productData.deleteAddCard(index);
+                              productData.totalProductCards.value--;
                               product.productQuantity = 1;
-                              providerRead.productSize = "";
+                              productData.productSize = "";
                             },
                             child: const Row(
                               children: [
                                 Icon(Icons.delete),
-                                SizedBox(
-                                  width: 8,
-                                ),
+                                SizedBox(width: 8),
                                 Text("Delete"),
                               ],
                             ),

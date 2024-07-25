@@ -1,17 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/built_category.dart';
-
 import 'package:product_app/widget/product_detail_bottomsheet.dart';
 import 'package:provider/provider.dart';
-
 import '../widget/size_show_model_sheet.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -25,6 +21,7 @@ class ProductDetail extends StatefulWidget {
 class _ProductDetailState extends State<ProductDetail> {
   int currentIndex = 0;
   final CarouselController carouselController = CarouselController();
+
   @override
   Widget build(BuildContext context) {
     final isFavorite =
@@ -61,7 +58,7 @@ class _ProductDetailState extends State<ProductDetail> {
               }).toList(),
               options: CarouselOptions(
                 height: 300,
-                autoPlay: widget.product.images.length > 1 ? true : false,
+                autoPlay: widget.product.images.length > 1,
                 autoPlayAnimationDuration: const Duration(seconds: 1),
                 enlargeCenterPage: true,
                 onPageChanged: (index, reason) {
@@ -242,16 +239,19 @@ class _ProductDetailState extends State<ProductDetail> {
                               radius: 18,
                               backgroundColor: AppColor.whiteColor,
                               child: IconButton(
-                                  onPressed: () {
-                                    setState(() {
+                                onPressed: () {
+                                  setState(() {
+                                    if (widget.product.productQuantity > 1) {
                                       widget.product.productQuantity--;
-                                    });
-                                  },
-                                  icon: const Icon(
-                                    Icons.remove,
-                                    color: Colors.black,
-                                    size: 18,
-                                  )),
+                                    }
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.remove,
+                                  color: Colors.black,
+                                  size: 18,
+                                ),
+                              ),
                             ),
                             Padding(
                               padding:
@@ -268,16 +268,17 @@ class _ProductDetailState extends State<ProductDetail> {
                               radius: 18,
                               backgroundColor: Colors.black,
                               child: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      widget.product.productQuantity++;
-                                    });
-                                  },
-                                  icon: const Icon(
-                                    Icons.add,
-                                    color: AppColor.whiteColor,
-                                    size: 18,
-                                  )),
+                                onPressed: () {
+                                  setState(() {
+                                    widget.product.productQuantity++;
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.add,
+                                  color: AppColor.whiteColor,
+                                  size: 18,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -295,11 +296,9 @@ class _ProductDetailState extends State<ProductDetail> {
                       bgColor: AppColor.whiteColor,
                     ),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  const SizedBox(height: 5),
                   const Text(
-                    "Similar Products",
+                    "Related Products",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -310,13 +309,14 @@ class _ProductDetailState extends State<ProductDetail> {
               ),
             ),
             SizedBox(
-                height: 320,
-                child: BuiltCategory(
-                  category: widget.product.category,
-                  context: context,
-                  color: AppColor.whiteColor,
-                  product: widget.product,
-                )),
+              height: 320,
+              child: BuiltCategory(
+                category: widget.product.category,
+                context: context,
+                color: AppColor.whiteColor,
+                product: widget.product,
+              ),
+            ),
           ],
         ),
       ),

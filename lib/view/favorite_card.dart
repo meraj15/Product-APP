@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:product_app/routes/app_routes.dart';
+import 'package:product_app/widget/drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../widget/filter_category_product.dart';
 
 class Favorites extends StatelessWidget {
-  const Favorites({
-    super.key,
-  });
+  const Favorites({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final providerRead = context.read<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
+      drawer:const DrawerWidget(),
+
       appBar: AppBar(
         title: const Text(
           "Favorites",
@@ -23,14 +23,7 @@ class Favorites extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(AppRoutes.initialRoute);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-          ),
-        ),
+      
         centerTitle: true,
         backgroundColor: AppColor.scaffoldColor,
       ),
@@ -223,12 +216,8 @@ class Favorites extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final favoritesProduct = filterFavorites[index];
                       int rating = favoritesProduct.rating.ceil().toInt();
-                      if (rating > 5) {
-                        rating = 5;
-                      }
+                      rating = rating > 5 ? 5 : rating;
 
-                      int filledStars = rating;
-                      int outlinedStars = 5 - filledStars;
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Container(
@@ -291,7 +280,7 @@ class Favorites extends StatelessWidget {
                                       Row(
                                         children: [
                                           ...List.generate(
-                                            filledStars,
+                                            rating,
                                             (index) => const Icon(
                                               Icons.star,
                                               color: Colors.amber,
@@ -299,7 +288,7 @@ class Favorites extends StatelessWidget {
                                             ),
                                           ),
                                           ...List.generate(
-                                            outlinedStars,
+                                            5 - rating,
                                             (index) => const Icon(
                                               Icons.star_outline,
                                               color: Colors.amber,
@@ -321,8 +310,7 @@ class Favorites extends StatelessWidget {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  providerRead
-                                      .deleteProductCard(favoritesProduct);
+                                  provider.deleteProductCard(favoritesProduct);
                                 },
                                 icon: const Icon(
                                   Icons.close,
