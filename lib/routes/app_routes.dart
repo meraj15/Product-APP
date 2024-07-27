@@ -24,7 +24,7 @@ class AppRoutes {
     favoriteScreen: (_) => const Favorites(),
     addCardScreen: (_) => const AddCard(),
     profileScreen: (_) => const ProfileScreen(),
-    homeScreen: (_) => const HomeScreen(),
+    homeScreen: (_) =>  HomeScreen(),
     bottemNavigationBar: (_) => const BottemNavigationBar(),
   };
 }

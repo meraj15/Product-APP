@@ -11,9 +11,11 @@ class ProductData extends ChangeNotifier {
   List<Product> addCard = [];
   List<Product> favorite = [];
   List<Product> filterFavorites = [];
+  // List<Product> filteredProducts = [];
   String selectedFilter = "";
   String productSize = '';
   String selectedSortFilter = "No Filter";
+  TextEditingController userInput = TextEditingController();
 
   ValueNotifier<int> totalProductCards = ValueNotifier(0);
 
@@ -108,4 +110,17 @@ class ProductData extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+//  void filterProduct(String category){
+//          filteredProducts = userInput.text.isEmpty
+//         ? products
+//             .where((element) => element.category.toLowerCase() == category)
+//             .toList()
+//         : products
+//             .where((element) =>
+//                 element.category.toLowerCase() == category &&
+//                 element.title.toLowerCase().contains(userInput.text))
+//             .toList();
+//     notifyListeners();
+//   }
 }

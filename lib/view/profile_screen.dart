@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/drawer.dart';
@@ -15,18 +16,17 @@ class ProfileScreen extends StatelessWidget {
       drawer: const DrawerWidget(),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
+        title: Text(
           'My profile',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: GoogleFonts.pacifico(),
         ),
         centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
+            },
           ),
         ],
       ),
@@ -39,8 +39,9 @@ class ProfileScreen extends StatelessWidget {
             const Row(
               children: [
                 CircleAvatar(
-                  radius: 40,
+                  radius: 50,
                   backgroundImage: AssetImage("assets/profile.png"),
+                  backgroundColor: AppColor.scaffoldColor,
                 ),
                 SizedBox(width: 16),
                 Column(

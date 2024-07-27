@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/routes/app_routes.dart';
@@ -34,13 +35,9 @@ class _ShopScreenState extends State<ShopScreen> {
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "Big Sales",
-          style: TextStyle(
-            // fontSize: 24,
-            fontWeight: FontWeight.w500,
-            // color: Colors.white,
-          ),
+          style: GoogleFonts.pacifico(),
         ),
         backgroundColor: AppColor.scaffoldColor,
         actions: [
@@ -74,8 +71,6 @@ class _ShopScreenState extends State<ShopScreen> {
               : getBody(provider.products),
     );
   }
-
- 
 
   Widget getError(String error) {
     return Center(

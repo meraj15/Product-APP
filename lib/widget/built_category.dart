@@ -1,51 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
 
-import '../constant/contant.dart';
 import '../view/product_detail.dart';
 
 // ignore: must_be_immutable
 class BuiltCategory extends StatelessWidget {
-  final BuildContext context;
   final Color color;
   final String category;
-  Product? product;
-  BuiltCategory({
+  final Product? product;
+
+  const BuiltCategory({
     super.key,
     required this.category,
-    required this.context,
     required this.color,
     this.product,
   });
 
   @override
   Widget build(BuildContext context) {
-    final categories = context
-        .watch<ProductData>()
-        .products
-        .where((element) =>
-            element.category == category && element.id != product?.id)
-        .toList();
+    final providerWatch = context.watch<ProductData>();
+    final providerRead = context.read<ProductData>();
+
+    final userInput = providerRead.userInput.text.toLowerCase();
+
+    final filterProduct = userInput.isEmpty
+        ? providerWatch.products
+            .where((element) => element.category.toLowerCase() == category)
+            .toList()
+        : providerWatch.products
+            .where((element) =>
+                element.category.toLowerCase() == category &&
+                element.title.toLowerCase().contains(userInput))
+            .toList();
 
     return Scaffold(
       backgroundColor: color,
       body: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
+        itemCount: filterProduct.length,
         itemBuilder: (context, index) {
-          final product = categories[index];
-          final providerWatch = context.watch<ProductData>();
-
-          final providerRead = context.read<ProductData>();
+          final product = filterProduct[index];
           final isFavorite = providerWatch.favorite.contains(product);
-          int rating = product.rating.ceil().toInt();
+          int rating = product.rating.ceil();
           if (rating > 5) {
             rating = 5;
           }
           int filledStars = rating;
           int outlinedStars = 5 - filledStars;
+
           return Container(
             width: 200,
             margin: const EdgeInsets.all(7),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:provider/provider.dart';
@@ -15,15 +16,13 @@ class AddCard extends StatefulWidget {
 class _AddCardState extends State<AddCard> {
   @override
   Widget build(BuildContext context) {
-    final productData = context.watch<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
-      drawer:const DrawerWidget(),
+      drawer: const DrawerWidget(),
       appBar: AppBar(
-        
-        title: const Text(
+        title: Text(
           "My Bag",
-          style: TextStyle(
+          style: GoogleFonts.pacifico(
             color: AppColor.whiteColor,
           ),
         ),

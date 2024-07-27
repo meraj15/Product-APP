@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
-import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/drawer.dart';
 import 'package:provider/provider.dart';
 
@@ -14,16 +14,14 @@ class Favorites extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
-      drawer:const DrawerWidget(),
-
+      drawer: const DrawerWidget(),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Favorites",
-          style: TextStyle(
+          style: GoogleFonts.pacifico(
             fontWeight: FontWeight.w500,
           ),
         ),
-      
         centerTitle: true,
         backgroundColor: AppColor.scaffoldColor,
       ),
@@ -195,7 +193,12 @@ class Favorites extends StatelessWidget {
                 builder: (context, provider, child) {
                   if (provider.favorite.isEmpty) {
                     return const Center(
-                      child: Text("No favorites yet"),
+                      child: Text(
+                        "Not Selected item yet !!!",
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
                     );
                   }
                   final favorites = provider.favorite;
@@ -206,11 +209,7 @@ class Favorites extends StatelessWidget {
                               element.category.toLowerCase() ==
                               provider.selectedFilter.toLowerCase())
                           .toList();
-                  if (filterFavorites.isEmpty) {
-                    return const Center(
-                      child: Text("No Selected yet"),
-                    );
-                  }
+
                   return ListView.builder(
                     itemCount: filterFavorites.length,
                     itemBuilder: (context, index) {

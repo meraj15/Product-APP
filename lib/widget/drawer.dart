@@ -3,6 +3,8 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/routes/app_routes.dart';
 
 class DrawerWidget extends StatelessWidget {
+  final double avatarRadius = 60;
+
   const DrawerWidget({super.key});
 
   @override
@@ -14,27 +16,24 @@ class DrawerWidget extends StatelessWidget {
             height: 228,
             width: double.infinity,
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColor.appMainColor,
-                  Color.fromARGB(255, 224, 79, 66)
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: const Column(
+                // gradient: LinearGradient(
+                //   colors: [
+                //     AppColor.appMainColor,
+                //     Color.fromARGB(255, 224, 79, 66)
+                //   ],
+                //   begin: Alignment.topLeft,
+                //   end: Alignment.bottomRight,
+                // ),
+                color: AppColor.appMainColor),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 50),
-                CircleAvatar(
-                  backgroundImage: AssetImage(
-                    "assets/profile.png",
-                  ),
-                  radius: 50,
+                const SizedBox(height: 37),
+                SizedBox(
+                  height: 130,
+                  child: Image.asset("assets/profile.png"),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const Text(
                   "Khan Meraj",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -42,14 +41,16 @@ class DrawerWidget extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                Text(
+                const Text(
                   "khanmeraj1542005@gmail.com",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 16),
+               const SizedBox(
+                  height: 7,
+                ),
               ],
             ),
           ),

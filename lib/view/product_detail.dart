@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/model.dart';
 import 'package:product_app/provider/provider.dart';
@@ -32,16 +33,16 @@ class _ProductDetailState extends State<ProductDetail> {
         backgroundColor: AppColor.appMainColor,
         leading: IconButton(
           onPressed: () {
-            Navigator.of(context).pushNamed(AppRoutes.initialRoute);
+            Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
           },
           icon: const Icon(
             Icons.arrow_back_ios,
             color: AppColor.whiteColor,
           ),
         ),
-        title: const Text(
+        title:  Text(
           "Detail Product",
-          style: TextStyle(color: AppColor.whiteColor),
+          style: GoogleFonts.pacifico(color: AppColor.whiteColor),
         ),
         centerTitle: true,
       ),
@@ -165,6 +166,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                 ),
                               ),
                             ),
+                         
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -312,7 +314,7 @@ class _ProductDetailState extends State<ProductDetail> {
               height: 320,
               child: BuiltCategory(
                 category: widget.product.category,
-                context: context,
+                // context: context,
                 color: AppColor.whiteColor,
                 product: widget.product,
               ),
