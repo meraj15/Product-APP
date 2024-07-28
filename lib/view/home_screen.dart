@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/widget/built_category.dart';
 import 'package:product_app/widget/circular_loader.dart';
-import 'package:product_app/widget/promo_card.dart';
 import 'package:provider/provider.dart';
 import '../constant/contant.dart';
 import '../provider/provider.dart';
@@ -52,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: TextField(
                       controller: userInput,
                       decoration: InputDecoration(
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 12.0),
                         prefixIcon: const Icon(Icons.search),
                         suffixIcon: userInput.text.isNotEmpty
                             ? IconButton(
@@ -82,12 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   ),
-                 
-                  const SizedBox(
-                    height: 8.0,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset("assets/offer.png"),
                   ),
-                  // const PromoCard(),
-                  const SizedBox(height: 8.0),
                   if (userInput.text.isNotEmpty)
                     buildCategorySection(context, userInput.text.toLowerCase())
                   else
@@ -138,14 +137,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final isCategoryFound = filterProduct.isNotEmpty;
 
     if (userInput.text.isNotEmpty && !isCategoryFound) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
+      return const Padding(
+        padding:  EdgeInsets.symmetric(vertical: 160),
         child: Center(
           child: Text(
-            "Category '${userInput.text}' not found",
+            "Product not found !!!",
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: AppColor.appMainColor,
             ),
           ),

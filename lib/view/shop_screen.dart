@@ -22,6 +22,8 @@ class ShopScreen extends StatefulWidget {
 }
 
 class _ShopScreenState extends State<ShopScreen> {
+  final userInput = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +59,6 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
               child: const Icon(
                 Icons.shopping_bag_outlined,
-                // color: Colors.white,
               ),
             ),
           )
@@ -85,12 +86,23 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   Widget getBody(List<Product> products) {
-    final filterCategory = context.watch<ProductData>().selectedFilter.isEmpty
+    final providerRead = context.read<ProductData>();
+
+    final searchInput = userInput.text.toLowerCase();
+
+    final filteredProducts = providerRead.selectedFilter.isEmpty
         ? products
+            .where(
+                (product) => product.title.toLowerCase().contains(searchInput))
+            .toList()
         : products
-            .where((product) =>
-                product.category == context.watch<ProductData>().selectedFilter)
+            .where(
+              (product) =>
+                  product.title.toLowerCase().contains(searchInput) &&
+                  providerRead.selectedFilter == product.category,
+            )
             .toList();
+
     return Column(
       children: [
         const SingleChildScrollView(
@@ -253,19 +265,63 @@ class _ShopScreenState extends State<ShopScreen> {
           ),
         ),
         SortProduct(),
-        Expanded(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.55,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: userInput,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: userInput.text.isNotEmpty
+                  ? IconButton(
+                      onPressed: () {
+                        setState(() {
+                          userInput.clear();
+                        });
+                      },
+                      icon: const Icon(Icons.close, color: Colors.grey),
+                    )
+                  : null,
+              fillColor: AppColor.whiteColor,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              labelText: "Search product",
+              hintText: "Enter product name...",
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppColor.appMainColor),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
             ),
-            itemCount: filterCategory.length,
-            itemBuilder: (context, index) {
-              final product = filterCategory[index];
-
-              return ProductCard(product: product);
+            onChanged: (value) {
+              // providerRead.filterProduct();
+              setState(() {});
             },
           ),
+        ),
+        Expanded(
+          child: filteredProducts.isEmpty
+              ? const Center(
+                  child: Text(
+                    "Product not found!!!",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+              : GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.55,
+                  ),
+                  itemCount: filteredProducts.length,
+                  itemBuilder: (context, index) {
+                    final product = filteredProducts[index];
+                    return ProductCard(product: product);
+                  },
+                ),
         )
       ],
     );

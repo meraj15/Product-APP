@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
+import 'package:product_app/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
 import '../widget/drawer.dart';
@@ -18,7 +19,6 @@ class _AddCardState extends State<AddCard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
-      drawer: const DrawerWidget(),
       appBar: AppBar(
         title: Text(
           "My Bag",
@@ -29,6 +29,12 @@ class _AddCardState extends State<AddCard> {
         backgroundColor: AppColor.appMainColor,
         iconTheme: const IconThemeData(color: AppColor.whiteColor),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
+          },
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
       ),
       body: Consumer<ProductData>(
         builder: (context, productData, child) {
@@ -56,7 +62,7 @@ class _AddCardState extends State<AddCard> {
                 final isFavorite = productData.favorite.contains(product);
 
                 return Container(
-                  height: 140,
+                  height: 130,
                   decoration: BoxDecoration(
                     color: AppColor.whiteColor,
                     borderRadius: BorderRadius.circular(15),
@@ -91,15 +97,11 @@ class _AddCardState extends State<AddCard> {
                                 color: Color(0xff222222),
                               ),
                             ),
-                            Text(
-                              'Brand: ${product.brand}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 13,
-                              ),
+                            const SizedBox(
+                              height: 4.0,
                             ),
                             Text(
-                              'Size: ${productData.productSize}',
+                              'Brand: ${product.brand}',
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 13,

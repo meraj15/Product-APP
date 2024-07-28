@@ -111,16 +111,5 @@ class ProductData extends ChangeNotifier {
     notifyListeners();
   }
 
-//  void filterProduct(String category){
-//          filteredProducts = userInput.text.isEmpty
-//         ? products
-//             .where((element) => element.category.toLowerCase() == category)
-//             .toList()
-//         : products
-//             .where((element) =>
-//                 element.category.toLowerCase() == category &&
-//                 element.title.toLowerCase().contains(userInput.text))
-//             .toList();
-//     notifyListeners();
-//   }
+  
 }
