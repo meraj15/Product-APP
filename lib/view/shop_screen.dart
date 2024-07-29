@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/routes/app_routes.dart';
@@ -68,21 +69,16 @@ class _ShopScreenState extends State<ShopScreen> {
       body: provider.isLoaded
           ? const CircularLoader()
           : provider.error.isNotEmpty
-              ? getError(provider.error)
+              ? getError()
               : getBody(provider.products),
     );
   }
 
-  Widget getError(String error) {
+  Widget getError() {
     return Center(
-      child: Text(
-        error,
-        style: const TextStyle(
-          fontSize: 18,
-          color: Colors.red,
-        ),
-      ),
-    );
+              child: Lottie.asset(
+                  "assets/lottie_animation/api_call_error.json"),
+            );
   }
 
   Widget getBody(List<Product> products) {
@@ -302,14 +298,10 @@ class _ShopScreenState extends State<ShopScreen> {
         ),
         Expanded(
           child: filteredProducts.isEmpty
-              ? const Center(
-                  child: Text(
-                    "Product not found!!!",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 90),
+                  child: Lottie.asset(
+                      "assets/lottie_animation/product_not_found.json"),
                 )
               : GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

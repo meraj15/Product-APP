@@ -110,6 +110,4 @@ class ProductData extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-  
 }

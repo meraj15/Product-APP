@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:product_app/widget/drawer.dart';
 import 'package:provider/provider.dart';
-
 import '../widget/filter_category_product.dart';
 
 class Favorites extends StatelessWidget {
@@ -191,16 +191,6 @@ class Favorites extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Consumer<ProductData>(
                 builder: (context, provider, child) {
-                  if (provider.favorite.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        "Not Selected item yet !!!",
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                    );
-                  }
                   final favorites = provider.favorite;
                   final filterFavorites = provider.selectedFilter.isEmpty
                       ? favorites
@@ -209,7 +199,12 @@ class Favorites extends StatelessWidget {
                               element.category.toLowerCase() ==
                               provider.selectedFilter.toLowerCase())
                           .toList();
-
+                  if (filterFavorites.isEmpty) {
+                    return Center(
+                      child: Lottie.asset(
+                          "assets/lottie_animation/product_not_selected.json"),
+                    );
+                  }
                   return ListView.builder(
                     itemCount: filterFavorites.length,
                     itemBuilder: (context, index) {

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:product_app/widget/built_category.dart';
 import 'package:product_app/widget/circular_loader.dart';
 import 'package:provider/provider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import '../constant/contant.dart';
 import '../provider/provider.dart';
 import '../widget/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -16,6 +19,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController userInput = TextEditingController();
+  List<String> assets = [
+    'assets/images/beauty.png',
+    'assets/images/furniture.png',
+    'assets/images/offer.png',
+  ];
+
+  int _currentIndex = 0; // Track the current index
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: CircleAvatar(
-              backgroundImage: AssetImage("assets/profile.png"),
+              backgroundImage: AssetImage("assets/images/profile.png"),
               radius: 26,
             ),
           )
@@ -83,10 +93,53 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset("assets/offer.png"),
-                  ),
+                  if (userInput.text.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          CarouselSlider(
+                            options: CarouselOptions(
+                              height: 200.0,
+                              autoPlay: true,
+                              enlargeCenterPage: true,
+                              aspectRatio: 16 / 9,
+                              viewportFraction: 1.0,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  _currentIndex = index;
+                                });
+                              },
+                            ),
+                            items: assets.map((asset) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child:
+                                        Image.asset(asset, fit: BoxFit.cover),
+                                  );
+                                },
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 10),
+                          DotsIndicator(
+                            dotsCount: assets.length,
+                            position: _currentIndex,
+                            decorator: DotsDecorator(
+                              activeColor: AppColor.appMainColor,
+                              color: Colors.grey, // Inactive color
+                              size: const Size.square(9.0),
+                              activeSize: const Size(18.0, 9.0),
+                              activeShape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   if (userInput.text.isNotEmpty)
                     buildCategorySection(context, userInput.text.toLowerCase())
                   else
@@ -137,16 +190,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final isCategoryFound = filterProduct.isNotEmpty;
 
     if (userInput.text.isNotEmpty && !isCategoryFound) {
-      return const Padding(
-        padding:  EdgeInsets.symmetric(vertical: 160),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 90),
         child: Center(
-          child: Text(
-            "Product not found !!!",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColor.appMainColor,
-            ),
+          child: SizedBox(
+            height: 250,
+            width: 400,
+            child:
+                Lottie.asset("assets/lottie_animation/product_not_found.json"),
           ),
         ),
       );

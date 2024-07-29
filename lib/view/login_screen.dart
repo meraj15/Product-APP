@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide:
                           const BorderSide(color: AppColor.appMainColor),
                     ),
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    hintText: "Enter your email",
+                    hintText: "Email or Phone number",
                     labelText: "Email or Phone number",
                   ),
                   validator: (value) {
@@ -212,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     GestureDetector(
                       onTap: () {},
                       child: Image.asset(
-                        "assets/google_icon.png",
+                        "assets/images/google_icon.png",
                         width: 42,
                       ),
                     ),
@@ -220,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     GestureDetector(
                       onTap: () {},
                       child: Image.asset(
-                        "assets/facebook_icon.png",
+                        "assets/images/facebook_icon.png",
                         width: 38,
                       ),
                     ),
@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     GestureDetector(
                       onTap: () {},
                       child: Image.asset(
-                        "assets/twitter_icon.png",
+                        "assets/images/twitter_icon.png",
                         width: 38,
                       ),
                     ),

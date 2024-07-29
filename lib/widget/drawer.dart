@@ -31,7 +31,7 @@ class DrawerWidget extends StatelessWidget {
                 const SizedBox(height: 37),
                 SizedBox(
                   height: 130,
-                  child: Image.asset("assets/profile.png"),
+                  child: Image.asset("assets/images/profile.png"),
                 ),
                 const Text(
                   "Khan Meraj",

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/provider.dart';
 import 'package:product_app/routes/app_routes.dart';
@@ -40,16 +41,9 @@ class _AddCardState extends State<AddCard> {
         builder: (context, productData, child) {
           final cartItems = productData.addCard;
           if (cartItems.isEmpty) {
-            return const Center(
-              child: Text(
-                "Empty bag!!",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                  letterSpacing: 1.2,
-                ),
-              ),
+            return Center(
+              child: Lottie.asset(
+                  "assets/lottie_animation/product_not_selected.json"),
             );
           }
           return Padding(
