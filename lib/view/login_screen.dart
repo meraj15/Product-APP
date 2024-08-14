@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/routes/app_routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -159,11 +161,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 25),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: ()async {
                     if (_formKey.currentState!.validate()) {
                       Navigator.of(context)
                           .pushNamed(AppRoutes.bottemNavigationBar);
                     }
+                    isLogged = true;
+  final SharedPreferences logged = await SharedPreferences.getInstance();
+  logged.setBool("logged", isLogged);
+
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColor.appMainColor,

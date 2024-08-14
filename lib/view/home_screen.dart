@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/built_category.dart';
 import 'package:product_app/widget/circular_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import '../constant/contant.dart';
-import '../provider/provider.dart';
+import '../provider/product_provider.dart';
 import '../widget/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,26 +27,36 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/offer.png',
   ];
 
-  int _currentIndex = 0; // Track the current index
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
+        backgroundColor: AppColor.appMainColor,
+        iconTheme: const IconThemeData(color: AppColor.whiteColor),
+
         title: Text(
           "Flutter Market",
           style: GoogleFonts.pacifico(
             fontWeight: FontWeight.w200,
+            color: AppColor.whiteColor,
           ),
+          
         ),
         centerTitle: true,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundImage: AssetImage("assets/images/profile.png"),
-              radius: 26,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).pushNamed(AppRoutes.profileScreen);
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundImage: AssetImage("assets/images/profile.png"),
+                radius: 26,
+              ),
             ),
           )
         ],

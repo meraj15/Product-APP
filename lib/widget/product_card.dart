@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../constant/contant.dart';
-import '../model/model.dart';
-import '../provider/provider.dart';
+import '../model/product.dart';
+import '../provider/product_provider.dart';
 import '../view/product_detail.dart';
 
 class ProductCard extends StatelessWidget {

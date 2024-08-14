@@ -1,14 +1,29 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/provider/provider.dart';
+import 'package:product_app/model/product.dart';
+import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/widget/drawer.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widget/filter_category_product.dart';
 
-class Favorites extends StatelessWidget {
+class Favorites extends StatefulWidget {
   const Favorites({super.key});
+
+  @override
+  State<Favorites> createState() => _FavoritesState();
+}
+
+class _FavoritesState extends State<Favorites> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ProductData>().loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -305,6 +320,7 @@ class Favorites extends StatelessWidget {
                               IconButton(
                                 onPressed: () {
                                   provider.deleteProductCard(favoritesProduct);
+                                  context.read<ProductData>().saveData();
                                 },
                                 icon: const Icon(
                                   Icons.close,

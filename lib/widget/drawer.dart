@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/routes/app_routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerWidget extends StatelessWidget {
   final double avatarRadius = 60;
@@ -111,7 +113,10 @@ class DrawerWidget extends StatelessWidget {
                 createDrawerItem(
                   icon: Icons.logout,
                   text: 'Logout',
-                  onTap: () {
+                  onTap: ()async {
+                         isLogged = false;
+  final SharedPreferences logged = await SharedPreferences.getInstance();
+  logged.setBool("logged", isLogged);
                     Navigator.of(context).pushNamed("/");
                   },
                 ),

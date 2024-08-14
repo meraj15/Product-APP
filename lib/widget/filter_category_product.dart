@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../constant/contant.dart';
-import '../provider/provider.dart';
+import '../provider/product_provider.dart';
 
 class FilterCategoryProduct extends StatelessWidget {
   final String title;

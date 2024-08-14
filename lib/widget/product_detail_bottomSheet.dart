@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:product_app/model/model.dart';
-import 'package:product_app/provider/provider.dart';
+import 'package:product_app/model/product.dart';
+import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
@@ -47,14 +47,18 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                 } else {
                   if (providerRead.productSize.isNotEmpty) {
                     providerRead.addCard.add(widget.product);
+
                     providerRead.totalProductCards.value++;
                     providerRead.productSize = "";
+                   providerRead.addCardLength =providerRead.addCard.length;
+                  providerRead.updateBadgeCount();
                     CustomToast.showCustomToast(context, "Added Successfully");
                   } else {
                     CustomToast.showCustomToast(
                         context, 'Please select the size');
                   }
                 }
+                providerRead.saveData();
               });
             },
             style: FilledButton.styleFrom(
@@ -75,6 +79,7 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
               ],
             ),
           ),
+        
         ),
       ),
     );

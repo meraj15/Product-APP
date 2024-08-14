@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/model/model.dart';
-import 'package:product_app/provider/provider.dart';
+import 'package:product_app/model/product.dart';
+import 'package:product_app/provider/product_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../view/product_detail.dart';
@@ -21,16 +21,14 @@ class BuiltCategory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final providerWatch = context.watch<ProductData>();
     final providerRead = context.read<ProductData>();
-
+    final providerWatch = context.watch<ProductData>();
     final userInput = providerRead.userInput.text.toLowerCase();
-
     final filterProduct = userInput.isEmpty
-        ? providerWatch.products
+        ? providerRead.products
             .where((element) => element.category.toLowerCase() == category)
             .toList()
-        : providerWatch.products
+        : providerRead.products
             .where((element) =>
                 element.category.toLowerCase() == category &&
                 element.title.toLowerCase().contains(userInput))
@@ -43,7 +41,7 @@ class BuiltCategory extends StatelessWidget {
         itemCount: filterProduct.length,
         itemBuilder: (context, index) {
           final product = filterProduct[index];
-          final isFavorite = providerWatch.favorite.contains(product);
+          final isFavorite = providerRead.favorite.contains(product);
           int rating = product.rating.ceil();
           if (rating > 5) {
             rating = 5;
@@ -167,9 +165,10 @@ class BuiltCategory extends StatelessWidget {
                           child: GestureDetector(
                             onTap: () {
                               providerRead.favorites(product);
+                              providerRead.saveData();
                             },
                             child: Icon(
-                              isFavorite
+                              isFavorite 
                                   ? Icons.favorite
                                   : Icons.favorite_border,
                               color: AppColor.appMainColor,

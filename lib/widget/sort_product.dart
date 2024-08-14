@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/provider/provider.dart';
+import 'package:product_app/provider/product_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../model/model.dart';
+import '../model/product.dart';
 
 // ignore: must_be_immutable
 class SortProduct extends StatelessWidget {

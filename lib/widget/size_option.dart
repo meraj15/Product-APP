@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../provider/provider.dart';
+import '../provider/product_provider.dart';
 
 class SizeOption extends StatelessWidget {
   final BuildContext context;
