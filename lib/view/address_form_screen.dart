@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
@@ -6,6 +8,41 @@ import 'package:provider/provider.dart';
 
 class AddressForm extends StatelessWidget {
   const AddressForm({super.key});
+
+  Future<void> getCurrentLocation(BuildContext context) async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      debugPrint("Location Denied");
+      await Geolocator.requestPermission();
+    } else {
+      Position currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+      );
+
+      debugPrint("Latitude=${currentPosition.latitude.toString()}");
+      debugPrint("Longitude=${currentPosition.longitude.toString()}");
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[2];
+
+                final providerRead = context.read<ProductData>();
+
+                providerRead.userAddress.text = place.thoroughfare ?? '';
+        providerRead.userCity.text = place.locality ?? '';
+        providerRead.userState.text = place.administrativeArea ?? '';
+        providerRead.userZipCode.text = place.postalCode ?? '';
+        providerRead.userCountry.text = place.country ?? '';
+
+                debugPrint("Address: ${place.thoroughfare}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,165 +60,25 @@ class AddressForm extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: providerRead.userName,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: 'Full name',
-                    labelStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
+              _buildTextField(providerRead.userName, 'Full name'),
               SizedBox(height: 23.0),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: providerRead.userAddress,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: 'Address',
-                    labelStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
+              _buildTextField(providerRead.userAddress, 'Address'),
               SizedBox(height: 23.0),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: providerRead.userCity,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: 'City',
-                    labelStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
+              _buildTextField(providerRead.userCity, 'City'),
               SizedBox(height: 23.0),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: providerRead.userState,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: 'State/Province/Region',
-                    labelStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
+              _buildTextField(providerRead.userState, 'State/Province/Region'),
               SizedBox(height: 23.0),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: providerRead.userZipCode, // Corrected here
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: 'Zip Code (Postal Code)',
-                    labelStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
+              _buildTextField(providerRead.userZipCode, 'Zip Code (Postal Code)'),
               SizedBox(height: 23.0),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: providerRead.userCountry,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: 'Country',
-                    labelStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
+              _buildTextField(providerRead.userCountry, 'Country'),
               SizedBox(height: 32.0),
               ElevatedButton(
                 onPressed: () async {
                   providerRead.saveData();
-
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Ordered Successfully")));
                   Navigator.of(context)
                       .pushNamed(AppRoutes.bottemNavigationBar);
-
                   providerRead.loadData();
                 },
                 style: ElevatedButton.styleFrom(
@@ -196,11 +93,14 @@ class AddressForm extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15.0,
-              ),
+              SizedBox(height: 15.0),
               ElevatedButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  await getCurrentLocation(context);
+                   providerRead.saveData();
+                 
+                  providerRead.loadData();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColor.appMainColor,
                   padding: EdgeInsets.symmetric(vertical: 14.0),
@@ -214,6 +114,33 @@ class AddressForm extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+    Widget _buildTextField(TextEditingController controller, String labelText) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          labelText: labelText,
+          labelStyle: TextStyle(
+            color: Colors.grey,
           ),
         ),
       ),
