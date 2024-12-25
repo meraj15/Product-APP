@@ -59,13 +59,14 @@ class ProductCard extends StatelessWidget {
                         height: 200,
                         child: Center(
                           child: Image.network(
-                            product.id == 6 ||
-                                    product.id == 9 ||
-                                    product.id == 19 ||
-                                    product.category == "smartphones" ||
-                                    product.category == "vehicle"
-                                ? product.images.first
-                                : product.thumbnail,
+                            // product.id == 6 ||
+                            //         product.id == 9 ||
+                            //         product.id == 19 ||
+                            //         product.category == "smartphones" ||
+                            //         product.category == "vehicle"
+                            //     ? product.images.first
+                            //     : 
+                                product.thumbnail,
                             fit: BoxFit.fitWidth,
                           ),
                         ),

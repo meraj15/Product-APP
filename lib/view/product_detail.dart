@@ -50,42 +50,42 @@ class _ProductDetailState extends State<ProductDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CarouselSlider(
-              items: widget.product.images.map((image) {
-                return Image.network(
-                  image,
-                  fit: BoxFit.cover,
-                );
-              }).toList(),
-              options: CarouselOptions(
-                height: 300,
-                autoPlay: widget.product.images.length > 1,
-                autoPlayAnimationDuration: const Duration(seconds: 1),
-                enlargeCenterPage: true,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                },
-              ),
-            ),
-            if (widget.product.images.length > 1)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: DotsIndicator(
-                  dotsCount: widget.product.images.length,
-                  // position: currentIndex.toDouble(),
-                  decorator: const DotsDecorator(
-                    activeColor: AppColor.appMainColor,
-                    color: Colors.grey,
-                    size: Size.square(7.0),
-                    activeSize: Size(12.0, 12.0),
-                  ),
-                  onTap: (index) {
-                    carouselController.animateToPage(index.toInt());
-                  },
-                ),
-              ),
+            // CarouselSlider(
+            //   items: widget.product.images.map((image) {
+            //     return Image.network(
+            //       image,
+            //       fit: BoxFit.cover,
+            //     );
+            //   }).toList(),
+            //   options: CarouselOptions(
+            //     height: 300,
+            //     autoPlay: widget.product.images.length > 1,
+            //     autoPlayAnimationDuration: const Duration(seconds: 1),
+            //     enlargeCenterPage: true,
+            //     onPageChanged: (index, reason) {
+            //       setState(() {
+            //         currentIndex = index;
+            //       });
+            //     },
+            //   ),
+            // ),
+            // if (widget.product.images.length > 1)
+            //   Padding(
+            //     padding: const EdgeInsets.symmetric(vertical: 10.0),
+            //     child: DotsIndicator(
+            //       dotsCount: widget.product.images.length,
+            //       // position: currentIndex.toDouble(),
+            //       decorator: const DotsDecorator(
+            //         activeColor: AppColor.appMainColor,
+            //         color: Colors.grey,
+            //         size: Size.square(7.0),
+            //         activeSize: Size(12.0, 12.0),
+            //       ),
+            //       onTap: (index) {
+            //         // carouselController.animateToPage(index.toInt());
+            //       },
+            //     ),
+            //   ),
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: const BoxDecoration(

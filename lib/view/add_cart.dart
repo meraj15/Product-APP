@@ -90,14 +90,15 @@ class _AddCardState extends State<AddCard> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0),
                                     child: Image.network(
-                                      product.id == 6 ||
-                                              product.id == 9 ||
-                                              product.id == 19 ||
-                                              product.category ==
-                                                  "smartphones" ||
-                                              product.category == "vehicle"
-                                          ? product.images.first
-                                          : product.thumbnail,
+                                      // product.id == 6 ||
+                                      //         product.id == 9 ||
+                                      //         product.id == 19 ||
+                                      //         product.category ==
+                                      //             "smartphones" ||
+                                      //         product.category == "vehicle"
+                                      //     ? product.images.first
+                                      //     : 
+                                          product.thumbnail,
                                       width: 115,
                                       height: 130,
                                       fit: BoxFit.cover,

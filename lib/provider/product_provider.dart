@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:product_app/config/endpoint.dart';
 import 'package:product_app/model/product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductData extends ChangeNotifier {
-  String endPoint = "https://dummyjson.com/products?limit=194";
-
+  
   bool isLoaded = true;
   String error = "";
   List<Product> products = [];
@@ -30,10 +30,9 @@ class ProductData extends ChangeNotifier {
 
   ValueNotifier<int> totalProductCards = ValueNotifier(0);
 
-
-void updateBadgeCount() {
-  totalProductCards.value = addCardLength;
-}
+  void updateBadgeCount() {
+    totalProductCards.value = addCardLength;
+  }
 
   void setProductSize(String size) {
     productSize = size;
@@ -52,11 +51,10 @@ void updateBadgeCount() {
 
   Future<void> getData() async {
     try {
-      final response = await http.get(Uri.parse(endPoint));
+      final response = await http.get(Uri.parse(APIEndPoint.productEndPoint));
       if (response.statusCode == 200) {
-        final decodedJson = jsonDecode(response.body);
-        final productsList = decodedJson["products"] as List<dynamic>;
-        products = productsList.map((json) => Product.fromJson(json)).toList();
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+        products = decodeJson.map((json) => Product.fromJson(json)).toList();
         isLoaded = false;
         notifyListeners();
       } else {
@@ -174,8 +172,8 @@ void updateBadgeCount() {
       addCard = dbCards;
     }
 
-addCardLength = addCard.length;
-updateBadgeCount();
+    addCardLength = addCard.length;
+    updateBadgeCount();
     userName.text = data.getString("userName") ?? "Khan Meraj";
     userAddress.text = data.getString("userAddress") ?? "Hairan Gali";
     userCity.text = data.getString("userCity") ?? "Mumbai";

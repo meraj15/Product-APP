@@ -77,7 +77,8 @@ class _AddCardState extends State<AddCard> {
                     children: [
                       Center(
                         child: Image.network(
-                          product.images.first,
+                          // product.images.first,
+                          product.thumbnail,
                           width: 115,
                           height: 130,
                         ),

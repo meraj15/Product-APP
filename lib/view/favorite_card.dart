@@ -248,7 +248,8 @@ class _FavoritesState extends State<Favorites> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
                                 child: Image.network(
-                                  favoritesProduct.images.first,
+                                  // favoritesProduct.images.first,
+                                  favoritesProduct.thumbnail,
                                   width: 120,
                                   height: 120,
                                 ),

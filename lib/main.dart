@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool isLogged = false;
-
+String userID="";
 void main(List<String> args) async{
   WidgetsFlutterBinding.ensureInitialized();
   final SharedPreferences logged = await SharedPreferences.getInstance();

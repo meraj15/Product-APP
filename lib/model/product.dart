@@ -12,7 +12,7 @@ class Product {
   num rating;
   int stock;
   String availabilityStatus;
-  List<String> images;
+  // List<String> images;
   String returnPolicy;
   int productQuantity = 1;
   String warrantyInformation;
@@ -29,7 +29,7 @@ class Product {
     required this.rating,
     required this.stock,
     required this.availabilityStatus,
-    required this.images,
+    // required this.images,
     required this.returnPolicy,
      this.productQuantity = 1,
     required this.warrantyInformation,
@@ -47,13 +47,13 @@ class Product {
       price: product["price"] ?? 0,
       title: product["title"] ?? "",
       brand: product["brand"] ?? "Gloceries",
-      discountPercentage: product["discountPercentage"] ?? 0,
+      discountPercentage: product["discountpercentage"] ?? 0,
       rating: product["rating"] ?? 0,
       stock: product["stock"] ?? 0,
-      availabilityStatus: product["availabilityStatus"] ?? "",
-      images: product["images"].cast<String>(),
-      returnPolicy: product["returnPolicy"],
-      warrantyInformation: product["warrantyInformation"],
+      availabilityStatus: product["availabilitystatus"] ?? "",
+      // images: product["images"].cast<String>(),
+      returnPolicy: product["returnpolicy"],
+      warrantyInformation: product["warrantyinformation"],
       productQuantity: product["productQuantity"] ?? 1
     );
   }
@@ -71,13 +71,13 @@ Map productToMap(Product product){
       "price": product.price,
       "title": product.title,
       "brand": product.brand,
-      "discountPercentage": product.discountPercentage,
+      "discountpercentage": product.discountPercentage,
       "rating": product.rating,
       "stock": product.stock,
-      "availabilityStatus": product.availabilityStatus,
-      "images": product.images,
-      "returnPolicy": product.returnPolicy,
-      "warrantyInformation": product.warrantyInformation,
+      "availabilitystatus": product.availabilityStatus,
+      // "images": product.images,
+      "returnpolicy": product.returnPolicy,
+      "warrantyinformation": product.warrantyInformation,
       "productQuantity"  :product.productQuantity
   };
 }
@@ -90,13 +90,13 @@ Product mapToProduct(Map product){
       price: product["price"] ?? 0,
       title: product["title"] ?? "",
       brand: product["brand"] ?? "Gloceries",
-      discountPercentage: product["discountPercentage"] ?? 0,
+      discountPercentage: product["discountpercentage"] ?? 0,
       rating: product["rating"] ?? 0,
       stock: product["stock"] ?? 0,
-      availabilityStatus: product["availabilityStatus"] ?? "",
-      images: product["images"].cast<String>(),
-      returnPolicy: product["returnPolicy"],
-      warrantyInformation: product["warrantyInformation"],
+      availabilityStatus: product["availabilitystatus"] ?? "",
+      // images: product["images"].cast<String>(),
+      returnPolicy: product["returnpolicy"],
+      warrantyInformation: product["warrantyinformation"],
       productQuantity: product["productQuantity"] ?? 1,
       );
 }
