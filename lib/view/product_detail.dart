@@ -3,6 +3,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
@@ -40,7 +41,7 @@ class _ProductDetailState extends State<ProductDetail> {
             color: AppColor.whiteColor,
           ),
         ),
-        title:  Text(
+        title: Text(
           "Detail Product",
           style: GoogleFonts.pacifico(color: AppColor.whiteColor),
         ),
@@ -152,9 +153,19 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                             child: GestureDetector(
                               onTap: () {
-                                context
-                                    .read<ProductData>()
-                                    .favorites(widget.product);
+                               Map<String, dynamic> favoriteData = {
+                                'id': widget.product.id,
+                                'brand': widget.product.brand,
+                                'title': widget.product.title,
+                                'thumbnail': widget.product.thumbnail,
+                                'price': widget.product.price,
+                                'rating': widget.product.rating,
+                                'warrantyinformation':
+                                    widget.product.warrantyInformation,
+                                'userid': userID,
+                              };
+
+                              context.read<ProductData>().toggleFavorite(widget.product, favoriteData);
                               },
                               child: CircleAvatar(
                                 backgroundColor: AppColor.whiteColor,
@@ -166,7 +177,6 @@ class _ProductDetailState extends State<ProductDetail> {
                                 ),
                               ),
                             ),
-                         
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -296,6 +306,15 @@ class _ProductDetailState extends State<ProductDetail> {
                     child: ProductDetailBottomSheet(
                       product: widget.product,
                       bgColor: AppColor.whiteColor,
+                      pdata: {
+                        'id': widget.product.id,
+                        'title': widget.product.title,
+                        'thumbnail': widget.product.thumbnail,
+                        'brand': widget.product.brand,
+                        'price': widget.product.price,
+                        'userid': userID,
+                        'category':widget.product.category,
+                      },
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -316,7 +335,6 @@ class _ProductDetailState extends State<ProductDetail> {
                 category: widget.product.category,
                 // context: context,
                 color: AppColor.whiteColor,
-                product: widget.product,
               ),
             ),
           ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/checkout_button.dart';
@@ -19,7 +20,7 @@ class _AddCardState extends State<AddCard> {
   @override
   void initState() {
     super.initState();
-    context.read<ProductData>().loadData();
+    context.read<ProductData>().getCartsData(userID);
   }
 
   @override
@@ -69,8 +70,7 @@ class _AddCardState extends State<AddCard> {
                           children: [
                             SlidableAction(
                               onPressed: (context) {
-                                productData.deleteAddCard(index);
-                                productData.saveData();
+                              productData.deleteCartData(index);
                               },
                               backgroundColor: AppColor.whiteColor,
                               foregroundColor: AppColor.appMainColor,
@@ -90,14 +90,6 @@ class _AddCardState extends State<AddCard> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0),
                                     child: Image.network(
-                                      // product.id == 6 ||
-                                      //         product.id == 9 ||
-                                      //         product.id == 19 ||
-                                      //         product.category ==
-                                      //             "smartphones" ||
-                                      //         product.category == "vehicle"
-                                      //     ? product.images.first
-                                      //     : 
                                           product.thumbnail,
                                       width: 115,
                                       height: 130,
@@ -235,6 +227,7 @@ class _AddCardState extends State<AddCard> {
                                                   ),
                                                 ),
                                               ),
+                                             
                                               Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -327,7 +320,7 @@ class _AddCardState extends State<AddCard> {
                             ),
                           ),
                           Text(
-                            "\$${productData.totalPrice.toStringAsFixed(2)}",
+                            "",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 17,

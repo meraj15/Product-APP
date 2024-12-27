@@ -111,10 +111,10 @@ class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
                       const SizedBox(
                         height: 19,
                       ),
-                      ProductDetailBottomSheet(
-                        product: widget.product,
-                        bgColor: const Color(0xfff3f3f3),
-                      )
+                      // ProductDetailBottomSheet(
+                      //   product: widget.product,
+                      //   bgColor: const Color(0xfff3f3f3),
+                      // )
                     ],
                   ),
                 );

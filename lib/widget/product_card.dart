@@ -8,17 +8,22 @@ import '../view/product_detail.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
+  final Map<String, dynamic> pdata;
 
   const ProductCard({
     super.key,
     required this.product,
+    required this.pdata,
   });
 
   @override
   Widget build(BuildContext context) {
     final providerWatch = context.watch<ProductData>();
     final providerRead = context.read<ProductData>();
+
+    // Check if the product is marked as favorite
     final isFavorite = providerWatch.favorite.contains(product);
+
     int rating = product.rating.ceil().toInt();
     if (rating > 5) {
       rating = 5;
@@ -59,14 +64,7 @@ class ProductCard extends StatelessWidget {
                         height: 200,
                         child: Center(
                           child: Image.network(
-                            // product.id == 6 ||
-                            //         product.id == 9 ||
-                            //         product.id == 19 ||
-                            //         product.category == "smartphones" ||
-                            //         product.category == "vehicle"
-                            //     ? product.images.first
-                            //     : 
-                                product.thumbnail,
+                            product.thumbnail,
                             fit: BoxFit.fitWidth,
                           ),
                         ),
@@ -85,7 +83,6 @@ class ProductCard extends StatelessWidget {
                             size: 18,
                           ),
                         ),
-                        // Outlined stars
                         ...List.generate(
                           outlinedStars,
                           (index) => const Icon(
@@ -98,30 +95,6 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
-                child: Container(
-                  width: 40,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: AppColor.appMainColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Center(
-                      child: Text(
-                        "-${product.discountPercentage.toInt()}%",
-                        style: const TextStyle(
-                          color: AppColor.whiteColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
               ),
               Positioned(
                 top: 180,
@@ -141,8 +114,8 @@ class ProductCard extends StatelessWidget {
                   child: CircleAvatar(
                     backgroundColor: AppColor.whiteColor,
                     child: GestureDetector(
-                      onTap: () {
-                        providerRead.favorites(product);
+                      onTap: () async {
+                        providerRead.toggleFavorite(product, pdata);
                       },
                       child: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,

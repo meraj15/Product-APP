@@ -8,7 +8,6 @@ import 'package:product_app/view/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -130,15 +129,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelText: "Password",
                   ),
                   validator: (value) {
-  if (value == null || value.isEmpty) {
-    return 'Please enter your password';
-  } else if (message.isNotEmpty) {
-    final tempMessage = message;
-    message = ""; 
-    return tempMessage; 
-  }
-  return null;
-},
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    } else if (message.isNotEmpty) {
+                      final tempMessage = message;
+                      message = "";
+                      return tempMessage;
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -174,14 +173,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 25),
                 ElevatedButton(
-                  onPressed: ()async {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       login(userEmail.text, userPassword.text);
                     }
                     isLogged = true;
-  final SharedPreferences logged = await SharedPreferences.getInstance();
-  logged.setBool("logged", isLogged);
-
+                    final SharedPreferences logged =
+                        await SharedPreferences.getInstance();
+                    logged.setBool("logged", isLogged);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColor.appMainColor,
@@ -259,8 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text("Don't have an account?"),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed(AppRoutes.signupScreen);
+                        Navigator.of(context).pushNamed(AppRoutes.signupScreen);
                       },
                       child: const Text(
                         "Sign Up",
@@ -278,41 +276,38 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login(String email, String password) async {
-  const url = "http://192.168.0.110:3000/api/login";
-  try {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}),
-    );
+    const url = "http://192.168.0.110:3000/api/login";
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email, "password": password}),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      if (data['status'] == "success") {
-        userID = data['userId'] ?? "No User ID";
-        debugPrint("userIDss : $userID");
-        Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
-      } else if (data['status'] == "error") {
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == "success") {
+          userID = data['userId'] ?? "No User ID";
+          debugPrint("userID : $userID");
+          Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
+        } else if (data['status'] == "error") {
+          setState(() {
+            message = data['message'] ?? "Invalid email or password.";
+          });
+          _formKey.currentState!.validate();
+        }
+      } else {
         setState(() {
-          message = data['message'] ?? "Invalid email or password.";
+          message = "Server error: ${response.statusCode}";
         });
-        _formKey.currentState!.validate(); 
+        _formKey.currentState!.validate();
       }
-    } else {
+    } catch (e) {
       setState(() {
-        message = "Server error: ${response.statusCode}";
+        message = "An error occurred. Please try again.";
       });
-      _formKey.currentState!.validate(); 
+      _formKey.currentState!.validate();
+      debugPrint("Login Error: $e");
     }
-  } catch (e) {
-    setState(() {
-      message = "An error occurred. Please try again.";
-    });
-    _formKey.currentState!.validate(); 
-    debugPrint("Login Error: $e");
   }
-}
-
-
 }

@@ -28,6 +28,11 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   int _currentIndex = 0;
+    @override
+  void initState() {
+    super.initState();
+    context.read<ProductData>().getData();
+  }
 
   @override
   Widget build(BuildContext context) {

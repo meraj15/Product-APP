@@ -62,15 +62,13 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
           ),
         ],
       ),
-      body: IndexedStack(
-        index: selectedIndex,
-        children:  [
-          HomeScreen(),
-        const  ShopScreen(),
-         const Favorites(),
-         const ProfileScreen(),
-        ],
-      ),
+      body: switch(selectedIndex){
+       0 => HomeScreen(),
+       1 => ShopScreen(),
+       2 => Favorites(),
+       3 => ProfileScreen(),
+       _ => Scaffold(body: Center(child: Text('Naha Le'),),)
+      },
     );
   }
 }

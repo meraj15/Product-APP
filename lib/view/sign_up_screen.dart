@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/routes/app_routes.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -233,6 +234,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final jsonData = jsonDecode(res.body);
       if (jsonData['status'] == 'success') {
         debugPrint("User ID: ${jsonData['userId']}");
+        userID = jsonData['userId'];
       } else {
         setState(() {
           errorMessage = jsonData['message'] ?? "Sign-Up failed";

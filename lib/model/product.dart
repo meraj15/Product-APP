@@ -44,16 +44,16 @@ class Product {
       description: product["description"] ?? "",
       id: product['id'] ?? 0,
       thumbnail: product['thumbnail'] ?? "",
-      price: product["price"] ?? 0,
+      price: product["price"] ?? 0.0,
       title: product["title"] ?? "",
       brand: product["brand"] ?? "Gloceries",
-      discountPercentage: product["discountpercentage"] ?? 0,
-      rating: product["rating"] ?? 0,
+      discountPercentage: product["discountpercentage"] ?? 0.0,
+      rating: product["rating"] ?? 0.0,
       stock: product["stock"] ?? 0,
       availabilityStatus: product["availabilitystatus"] ?? "",
       // images: product["images"].cast<String>(),
-      returnPolicy: product["returnpolicy"],
-      warrantyInformation: product["warrantyinformation"],
+      returnPolicy: product["returnpolicy"]?? "",
+      warrantyInformation: product["warrantyinformation"]?? "",
       productQuantity: product["productQuantity"] ?? 1
     );
   }

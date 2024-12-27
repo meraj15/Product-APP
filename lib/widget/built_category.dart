@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../view/product_detail.dart';
 
-// ignore: must_be_immutable
 class BuiltCategory extends StatelessWidget {
   final Color color;
   final String category;
-  final Product? product;
 
   const BuiltCategory({
     super.key,
     required this.category,
     required this.color,
-    this.product,
   });
 
   @override
@@ -24,6 +22,8 @@ class BuiltCategory extends StatelessWidget {
     final providerRead = context.read<ProductData>();
     final providerWatch = context.watch<ProductData>();
     final userInput = providerRead.userInput.text.toLowerCase();
+
+    // Filter products based on the category and user input
     final filterProduct = userInput.isEmpty
         ? providerRead.products
             .where((element) => element.category.toLowerCase() == category)
@@ -41,7 +41,7 @@ class BuiltCategory extends StatelessWidget {
         itemCount: filterProduct.length,
         itemBuilder: (context, index) {
           final product = filterProduct[index];
-          final isFavorite = providerRead.favorite.contains(product);
+          final isFavorite = providerWatch.favorite.contains(product);
           int rating = product.rating.ceil();
           if (rating > 5) {
             rating = 5;
@@ -83,14 +83,7 @@ class BuiltCategory extends StatelessWidget {
                               height: 200,
                               child: Center(
                                 child: Image.network(
-                                  // product.id == 6 ||
-                                  //         product.id == 9 ||
-                                  //         product.id == 19 ||
-                                  //         product.category == "smartphones" ||
-                                  //         product.category == "vehicle"
-                                  //     ? product.images.first
-                                  //     :
-                                       product.thumbnail,
+                                  product.thumbnail,
                                   fit: BoxFit.fitWidth,
                                 ),
                               ),
@@ -165,11 +158,23 @@ class BuiltCategory extends StatelessWidget {
                           backgroundColor: AppColor.whiteColor,
                           child: GestureDetector(
                             onTap: () {
-                              providerRead.favorites(product);
-                              providerRead.saveData();
+                              Map<String, dynamic> favoriteData = {
+                                'id': product.id,
+                                'brand': product.brand,
+                                'title': product.title,
+                                'thumbnail': product.thumbnail,
+                                'price': product.price,
+                                'rating': product.rating,
+                                'warrantyinformation':
+                                    product.warrantyInformation,
+                                'userid': userID,
+                                'category':product.category,
+                              };
+
+                              providerRead.toggleFavorite(product, favoriteData);
                             },
                             child: Icon(
-                              isFavorite 
+                              isFavorite
                                   ? Icons.favorite
                                   : Icons.favorite_border,
                               color: AppColor.appMainColor,
@@ -190,9 +195,10 @@ class BuiltCategory extends StatelessWidget {
                 Text(
                   product.title,
                   style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                      color: Color.fromARGB(255, 28, 8, 8)),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
+                    color: Color.fromARGB(255, 28, 8, 8),
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 Row(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:product_app/main.dart';
 import 'package:provider/provider.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/product.dart';
@@ -42,23 +43,11 @@ class _ShopScreenState extends State<ShopScreen> {
         ),
         backgroundColor: AppColor.scaffoldColor,
         actions: [
-          Consumer<ProductData>(
-            builder: (context, productData, child) {
-              return IconButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
-                },
-                icon: Badge(
-                  label: Text(
-                    productData.addCardLength.toString(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  child: const Icon(
-                    Icons.shopping_bag_outlined,
-                  ),
-                ),
-              );
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
             },
+            icon: const Icon(Icons.shopping_cart_outlined),
           ),
         ],
       ),
@@ -84,7 +73,8 @@ class _ShopScreenState extends State<ShopScreen> {
 
     final filteredProducts = providerRead.selectedFilter.isEmpty
         ? products
-            .where((product) => product.title.toLowerCase().contains(searchInput))
+            .where(
+                (product) => product.title.toLowerCase().contains(searchInput))
             .toList()
         : products
             .where((product) =>
@@ -100,55 +90,130 @@ class _ShopScreenState extends State<ShopScreen> {
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
             child: Row(
               children: [
-                FilterCategoryProduct(selectedFilter: "", title: "All", icon: Icons.all_inclusive),
+                FilterCategoryProduct(
+                    selectedFilter: "",
+                    title: "All",
+                    icon: Icons.all_inclusive),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "beauty", title: "Beauty", icon: Icons.brush),
+                FilterCategoryProduct(
+                    selectedFilter: "beauty",
+                    title: "Beauty",
+                    icon: Icons.brush),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "fragrances", title: "Fragrances", icon: Icons.spa),
+                FilterCategoryProduct(
+                    selectedFilter: "fragrances",
+                    title: "Fragrances",
+                    icon: Icons.spa),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "furniture", title: "Furniture", icon: Icons.weekend),
+                FilterCategoryProduct(
+                    selectedFilter: "furniture",
+                    title: "Furniture",
+                    icon: Icons.weekend),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "groceries", title: "Groceries", icon: Icons.local_grocery_store),
+                FilterCategoryProduct(
+                    selectedFilter: "groceries",
+                    title: "Groceries",
+                    icon: Icons.local_grocery_store),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "home-decoration", title: "Decoration", icon: Icons.home),
+                FilterCategoryProduct(
+                    selectedFilter: "home-decoration",
+                    title: "Decoration",
+                    icon: Icons.home),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "kitchen-accessories", title: "Kitchen", icon: Icons.kitchen),
+                FilterCategoryProduct(
+                    selectedFilter: "kitchen-accessories",
+                    title: "Kitchen",
+                    icon: Icons.kitchen),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "laptops", title: "Laptops", icon: Icons.laptop),
+                FilterCategoryProduct(
+                    selectedFilter: "laptops",
+                    title: "Laptops",
+                    icon: Icons.laptop),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "mens-shirts", title: "Mens shirts", icon: Icons.checkroom),
+                FilterCategoryProduct(
+                    selectedFilter: "mens-shirts",
+                    title: "Mens shirts",
+                    icon: Icons.checkroom),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "mens-shoes", title: "Mens Shoes", icon: Icons.run_circle),
+                FilterCategoryProduct(
+                    selectedFilter: "mens-shoes",
+                    title: "Mens Shoes",
+                    icon: Icons.run_circle),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "mens-watches", title: "Mens Watches", icon: Icons.watch),
+                FilterCategoryProduct(
+                    selectedFilter: "mens-watches",
+                    title: "Mens Watches",
+                    icon: Icons.watch),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "mobile-accessories", title: "Mobile Accessories", icon: Icons.mobile_friendly),
+                FilterCategoryProduct(
+                    selectedFilter: "mobile-accessories",
+                    title: "Mobile Accessories",
+                    icon: Icons.mobile_friendly),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "motorcycle", title: "Motorcycle", icon: Icons.motorcycle),
+                FilterCategoryProduct(
+                    selectedFilter: "motorcycle",
+                    title: "Motorcycle",
+                    icon: Icons.motorcycle),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "skin-care", title: "Skin Care", icon: Icons.face),
+                FilterCategoryProduct(
+                    selectedFilter: "skin-care",
+                    title: "Skin Care",
+                    icon: Icons.face),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "smartphones", title: "Smartphones", icon: Icons.smartphone),
+                FilterCategoryProduct(
+                    selectedFilter: "smartphones",
+                    title: "Smartphones",
+                    icon: Icons.smartphone),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "sports-accessories", title: "Sports Accessories", icon: Icons.sports),
+                FilterCategoryProduct(
+                    selectedFilter: "sports-accessories",
+                    title: "Sports Accessories",
+                    icon: Icons.sports),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "sunglasses", title: "Sunglasses", icon: Icons.wb_sunny),
+                FilterCategoryProduct(
+                    selectedFilter: "sunglasses",
+                    title: "Sunglasses",
+                    icon: Icons.wb_sunny),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "tablets", title: "Tablets", icon: Icons.tablet),
+                FilterCategoryProduct(
+                    selectedFilter: "tablets",
+                    title: "Tablets",
+                    icon: Icons.tablet),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "tops", title: "Tops", icon: Icons.emoji_people),
+                FilterCategoryProduct(
+                    selectedFilter: "tops",
+                    title: "Tops",
+                    icon: Icons.emoji_people),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "vehicle", title: "Vehicle", icon: Icons.directions_car),
+                FilterCategoryProduct(
+                    selectedFilter: "vehicle",
+                    title: "Vehicle",
+                    icon: Icons.directions_car),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "womens-bags", title: "Womens Bags", icon: Icons.shopping_bag),
+                FilterCategoryProduct(
+                    selectedFilter: "womens-bags",
+                    title: "Womens Bags",
+                    icon: Icons.shopping_bag),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "womens-dresses", title: "Womens Dresses", icon: Icons.collections_sharp),
+                FilterCategoryProduct(
+                    selectedFilter: "womens-dresses",
+                    title: "Womens Dresses",
+                    icon: Icons.collections_sharp),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "womens-jewellery", title: "Womens Jewellery", icon: Icons.local_florist),
+                FilterCategoryProduct(
+                    selectedFilter: "womens-jewellery",
+                    title: "Womens Jewellery",
+                    icon: Icons.local_florist),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "womens-shoes", title: "Womens Shoes", icon: Icons.run_circle),
+                FilterCategoryProduct(
+                    selectedFilter: "womens-shoes",
+                    title: "Womens Shoes",
+                    icon: Icons.run_circle),
                 SizedBox(width: 8),
-                FilterCategoryProduct(selectedFilter: "womens-watches", title: "Womens Watches", icon: Icons.watch),
+                FilterCategoryProduct(
+                    selectedFilter: "womens-watches",
+                    title: "Womens Watches",
+                    icon: Icons.watch),
               ],
             ),
           ),
@@ -192,7 +257,8 @@ class _ShopScreenState extends State<ShopScreen> {
           child: filteredProducts.isEmpty
               ? Padding(
                   padding: const EdgeInsets.symmetric(vertical: 90),
-                  child: Lottie.asset("assets/lottie_animation/product_not_found.json"),
+                  child: Lottie.asset(
+                      "assets/lottie_animation/product_not_found.json"),
                 )
               : GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -202,7 +268,20 @@ class _ShopScreenState extends State<ShopScreen> {
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
                     final product = filteredProducts[index];
-                    return ProductCard(product: product);
+                    return ProductCard(
+                      product: product,
+                      pdata: {
+                        'id': product.id,
+                        'brand': product.brand,
+                        'title': product.title,
+                        'thumbnail': product.thumbnail,
+                        'price': product.price,
+                        'rating': product.rating,
+                        'warrantyinformation': product.warrantyInformation,
+                        'userid': userID,
+                        'category':product.category,
+                      },
+                    );
                   },
                 ),
         )

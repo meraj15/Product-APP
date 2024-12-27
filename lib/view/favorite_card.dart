@@ -1,15 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/model/product.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
+import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../widget/filter_category_product.dart';
+import 'package:badges/badges.dart' as badges;
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
@@ -22,7 +21,7 @@ class _FavoritesState extends State<Favorites> {
   @override
   void initState() {
     super.initState();
-    context.read<ProductData>().loadData();
+    context.read<ProductData>().getFavouriteData(userID);
   }
 
   @override
@@ -31,15 +30,44 @@ class _FavoritesState extends State<Favorites> {
       backgroundColor: AppColor.scaffoldColor,
       drawer: const DrawerWidget(),
       appBar: AppBar(
-        title: Text(
-          "Favorites",
-          style: GoogleFonts.pacifico(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: AppColor.scaffoldColor,
-      ),
+  title: Text(
+    "Favorites",
+    style: GoogleFonts.pacifico(
+      fontWeight: FontWeight.w500,
+    ),
+  ),
+  actions: [
+    Consumer<ProductData>(
+      builder: (context, provider, child) {
+        final cartCount = provider.addCard.length; 
+        return badges.Badge(
+  badgeContent: Text(
+    cartCount.toString(),
+    style: const TextStyle(
+      color: Colors.yellow,
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  badgeStyle: badges.BadgeStyle(
+    badgeColor: AppColor.appMainColor,
+    padding: const EdgeInsets.all(6),
+  ),
+  position: badges.BadgePosition.topEnd(top: 4, end: 4),
+  showBadge: cartCount > 0, // This will ensure the badge only shows when the count is > 0
+  child: IconButton(
+    onPressed: () {
+      Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
+    },
+    icon: const Icon(Icons.shopping_cart_outlined),
+  ),
+);
+      },
+    ),
+  ],
+  centerTitle: true,
+  backgroundColor: AppColor.scaffoldColor,
+),
       body: Column(
         children: [
           const SingleChildScrollView(
@@ -320,8 +348,8 @@ class _FavoritesState extends State<Favorites> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  provider.deleteProductCard(favoritesProduct);
-                                  context.read<ProductData>().saveData();
+                                  provider.deleteFavouriteData(index);
+                                  // context.read<ProductData>().saveData();
                                 },
                                 icon: const Icon(
                                   Icons.close,

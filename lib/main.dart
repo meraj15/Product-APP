@@ -9,7 +9,7 @@ String userID="";
 void main(List<String> args) async{
   WidgetsFlutterBinding.ensureInitialized();
   final SharedPreferences logged = await SharedPreferences.getInstance();
- isLogged = logged.getBool("logged") ?? true;
+//  isLogged = logged.getBool("logged") ?? true;
   runApp(
     ChangeNotifierProvider(
       create: (_) => ProductData(),
