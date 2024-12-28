@@ -14,15 +14,11 @@ class MyOrderScreen extends StatefulWidget {
 }
 
 class _MyOrderScreenState extends State<MyOrderScreen> {
-  
-
   @override
   void initState() {
     super.initState();
-   context.read<ProductData>().fetchMyAllOrders(userID);
+    context.read<ProductData>().fetchMyAllOrders(userID);
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -36,25 +32,55 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
           : providerRead.userAllOrders.isEmpty
               ? const Center(child: Text("No orders found."))
               : ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
                   itemCount: providerRead.userAllOrders.length,
                   itemBuilder: (context, index) {
                     final order = providerRead.userAllOrders[index];
                     return Card(
-                      margin: const EdgeInsets.all(8.0),
+                      elevation: 2,
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       child: ListTile(
+                        contentPadding: const EdgeInsets.all(16.0),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Name: ${order['name']}"),
-                            Text("Status: ${order['order_status']}"),
+                            Text(
+                              "Name: ${order['name']}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Text(
+                              "Status : ${order['order_status']}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: order['order_status'] == 'Delivered'
+                                    ? Colors.green
+                                    : Colors.red,
+                                    fontSize: 13,
+                              ),
+                            ),
                           ],
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Price: ₹${order['price']}"),
-                            Text("Address: ${order['address']}"),
-                            Text("Mobile: ${order['mobile']}"),
+                            const SizedBox(height: 8),
+                            Text("Price: ₹${order['price']}",
+                                style: const TextStyle(fontSize: 14,color: Colors.black54)),
+                            const SizedBox(height: 3),
+
+                            Text("Address: ${order['address']}",
+                                style: const TextStyle(fontSize: 14,color: Colors.black54)),
+                            const SizedBox(height: 3),
+
+                            Text("Mobile: ${order['mobile']}",
+                                style: const TextStyle(fontSize: 14,color: Colors.black54)),
                           ],
                         ),
                         trailing: const Icon(Icons.arrow_forward),
