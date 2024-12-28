@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:product_app/config/endpoint.dart';
 import 'package:product_app/main.dart';
@@ -20,9 +22,14 @@ class ProductData extends ChangeNotifier {
   String selectedSortFilter = "No Filter";
   TextEditingController userInput = TextEditingController();
   int addCardLength = 0;
+bool isAddressFetched = false;
+List<dynamic> userAllOrders = [];
+  bool isOrderAllLoading = true;
+   List<Product> orderedItems = [];
+  String orderUsername = "";
 
   TextEditingController userName = TextEditingController();
-  TextEditingController userAddress = TextEditingController();
+  TextEditingController userStreet= TextEditingController();
   TextEditingController userCity = TextEditingController();
   TextEditingController userState = TextEditingController();
   TextEditingController userZipCode = TextEditingController();
@@ -121,7 +128,7 @@ class ProductData extends ChangeNotifier {
     data.setStringList("Product", jsonProducts);
     data.setStringList("Card", jsonCards);
     data.setString("userName", userName.text);
-    data.setString("userAddress", userAddress.text);
+    // data.setString("userAddress", userAddress.text);
     data.setString("userCity", userCity.text);
     data.setString("userState", userState.text);
     data.setString("userZipCode", userZipCode.text);
@@ -151,7 +158,7 @@ class ProductData extends ChangeNotifier {
 
     addCardLength = addCard.length;
     userName.text = data.getString("userName") ?? "Khan Meraj";
-    userAddress.text = data.getString("userAddress") ?? "Hairan Gali";
+    // userAddress.text = data.getString("userAddress") ?? "Hairan Gali";
     userCity.text = data.getString("userCity") ?? "Mumbai";
     userState.text = data.getString("userState") ?? "Maharashtra";
     userZipCode.text = data.getString("userZipCode") ?? "400070";
@@ -277,4 +284,156 @@ void deleteFavouriteData(int index) async {
       debugPrint("Failed to load favourites: ${response.statusCode}");
     }
   }
+
+
+  void saveAddress(Map data) async {
+    final url = Uri.parse("http://192.168.0.110:3000/api/address");
+    await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(data),
+    );
+  }
+
+void updateData(String userId) async {
+    final url = Uri.parse("http://192.168.0.110:3000/api/address/$userId");
+    final response = await http.patch(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        'name': userName.text,
+        'street': userStreet.text,
+        'city': userCity.text,
+        'state': userState.text,
+        'zipcode': userZipCode.text.toString(),
+        'country': userCountry.text,
+      }),
+    );
+
+    // if (response.statusCode == 200) {
+    //   final resData = jsonDecode(response.body);
+    //   // ScaffoldMessenger.of(context).showSnackBar(
+    //   //   SnackBar(
+    //   //       content:
+    //   //           Text(resData['message'] ?? "Address updated successfully")),
+    //   // );
+    // }
+  }
+
+  void getAddressData() async {
+    final url = Uri.parse("http://192.168.0.110:3000/api/address/${userID}");
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      if (data['status'] == "success") {
+        final address = data['address'];
+        
+          userName.text = address['name'];
+          userStreet.text = address['street'];
+          userCity.text = address['city'];
+          userState.text = address['state'];
+          userZipCode.text = address['zipcode'].toString();
+          userCountry.text = address['country'];
+          isAddressFetched = true;
+       notifyListeners();
+      } else {
+        debugPrint("No address found for this user.");
+      }
+    } else {
+      debugPrint(
+          "Failed to fetch address. Status Code: ${response.statusCode}");
+    }
+  }
+
+  Future<void> getCurrentLocation(BuildContext context) async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      debugPrint("Location Denied");
+      await Geolocator.requestPermission();
+    } else {
+      Position currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+      );
+
+      debugPrint("Latitude=${currentPosition.latitude.toString()}");
+      debugPrint("Longitude=${currentPosition.longitude.toString()}");
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[2];
+
+
+       userStreet.text = place.thoroughfare ?? '';
+        userCity.text = place.locality ?? '';
+        userState.text = place.administrativeArea ?? '';
+        userZipCode.text = place.postalCode ?? '';
+      userCountry.text = place.country ?? '';
+
+                debugPrint("Address: ${place.thoroughfare}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}");
+      }
+    }
+  }
+
+
+
+void fetchMyAllOrders(String userId) async {
+    final url = "http://192.168.0.110:3000/api/myorders/$userId";
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+       
+          userAllOrders = decodeJson;
+
+          isOrderAllLoading = false;
+       notifyListeners();
+      } else {
+        throw Exception("Failed to load orders");
+      }
+    } catch (error) {
+      debugPrint("Error fetching user orders: $error");
+    
+        isOrderAllLoading = false;
+     notifyListeners();
+    }
+  }
+
+
+  void getOrderItems(String orderId) async {
+    final url = "http://192.168.0.110:3000/api/orderitems/$orderId";
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final decodedJson = jsonDecode(response.body) as List<dynamic>;
+    
+          orderedItems =
+              decodedJson.map((json) => Product.fromJson(json)).toList();
+              debugPrint("orderedItems : $orderedItems");
+       notifyListeners();
+      } else {
+        debugPrint(
+            "Failed to fetch order items. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error fetching order items: $e");
+    }
+  }
+
+  void fetchUserOrders(String userId) async {
+    final url = "http://192.168.0.110:3000/api/myorders/$userId";
+    final response = await http.get(Uri.parse(url));
+    final decodeJson = jsonDecode(response.body) as List<dynamic>;
+    debugPrint("decodeJson my order : $decodeJson");
+    orderUsername = decodeJson[0]["name"];
+  }
+
+  
 }

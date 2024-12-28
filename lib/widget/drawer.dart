@@ -69,9 +69,9 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 createDrawerItem(
                   icon: Icons.shopping_cart,
-                  text: 'My Cart',
+                  text: 'My Orders',
                   onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
+                    Navigator.of(context).pushNamed(AppRoutes.myorderScreen);
                   },
                 ),
                 createDrawerItem(

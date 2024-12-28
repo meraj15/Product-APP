@@ -2,47 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
-class AddressForm extends StatelessWidget {
-  const AddressForm({super.key});
+class AddressForm extends StatefulWidget {
+   AddressForm({super.key});
 
-  Future<void> getCurrentLocation(BuildContext context) async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      debugPrint("Location Denied");
-      await Geolocator.requestPermission();
-    } else {
-      Position currentPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-      );
+  @override
+  State<AddressForm> createState() => _AddressFormState();
+}
 
-      debugPrint("Latitude=${currentPosition.latitude.toString()}");
-      debugPrint("Longitude=${currentPosition.longitude.toString()}");
-
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        currentPosition.latitude,
-        currentPosition.longitude,
-      );
-
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[2];
-
-                final providerRead = context.read<ProductData>();
-
-                providerRead.userAddress.text = place.thoroughfare ?? '';
-        providerRead.userCity.text = place.locality ?? '';
-        providerRead.userState.text = place.administrativeArea ?? '';
-        providerRead.userZipCode.text = place.postalCode ?? '';
-        providerRead.userCountry.text = place.country ?? '';
-
-                debugPrint("Address: ${place.thoroughfare}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}");
-      }
-    }
+class _AddressFormState extends State<AddressForm> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ProductData>().getAddressData();
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +40,7 @@ class AddressForm extends StatelessWidget {
             children: [
               _buildTextField(providerRead.userName, 'Full name'),
               SizedBox(height: 23.0),
-              _buildTextField(providerRead.userAddress, 'Address'),
+              _buildTextField(providerRead.userStreet, 'Address'),
               SizedBox(height: 23.0),
               _buildTextField(providerRead.userCity, 'City'),
               SizedBox(height: 23.0),
@@ -74,19 +52,35 @@ class AddressForm extends StatelessWidget {
               SizedBox(height: 32.0),
               ElevatedButton(
                 onPressed: () async {
-                  providerRead.saveData();
+                 Map<String, dynamic> cardProduct = {
+                    'userid': userID,
+                    'name': providerRead.userName.text,
+                    'street': providerRead.userStreet.text,
+                    'city': providerRead.userCity.text,
+                    'state': providerRead.userState.text,
+                    'zipcode': providerRead.userZipCode.text.toString(),
+                    'country': providerRead.userCountry.text,
+                  };
+
+                  if (providerRead.isAddressFetched) {
+                    providerRead.updateData(userID);
+                  } else {
+                    providerRead.saveAddress(cardProduct);
+                  }
+                 
+                providerRead.addCard.clear();
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Ordered Successfully")));
                   Navigator.of(context)
-                      .pushNamed(AppRoutes.bottemNavigationBar);
-                  providerRead.loadData();
+                      .pushNamed(AppRoutes.orderScreen);
+                  
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColor.appMainColor,
                   padding: EdgeInsets.symmetric(vertical: 14.0),
                 ),
                 child: Text(
-                  'SAVE ADDRESS',
+                  providerRead.isAddressFetched ? "Confirm ADDRESS" : "SAVE ADDRESS",
                   style: TextStyle(
                     fontSize: 16.0,
                     color: AppColor.whiteColor,
@@ -96,7 +90,7 @@ class AddressForm extends StatelessWidget {
               SizedBox(height: 15.0),
               ElevatedButton(
                 onPressed: () async {
-                  await getCurrentLocation(context);
+                  await providerRead.getCurrentLocation(context);
                    providerRead.saveData();
                  
                   providerRead.loadData();
