@@ -244,7 +244,7 @@ class _ShopScreenState extends State<ShopScreen> {
               labelText: "Search product",
               hintText: "Enter product name...",
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: AppColor.appMainColor),
+                borderSide:  BorderSide(color: Theme.of(context).colorScheme.primary),
                 borderRadius: BorderRadius.circular(12.0),
               ),
             ),

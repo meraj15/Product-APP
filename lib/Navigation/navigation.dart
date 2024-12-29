@@ -27,11 +27,11 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
             selectedIndex = index;
           });
         },
-        destinations: const <NavigationDestination>[
+        destinations:  <NavigationDestination>[
           NavigationDestination(
             selectedIcon: Icon(
               Icons.home,
-              color: AppColor.appMainColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
             icon: Icon(Icons.home),
             label: "Home",
@@ -39,7 +39,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
           NavigationDestination(
             selectedIcon: Icon(
               Icons.shopping_cart,
-              color: AppColor.appMainColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
             icon: Icon(Icons.shopping_cart),
             label: "Shop",
@@ -47,7 +47,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
           NavigationDestination(
             selectedIcon: Icon(
               Icons.favorite,
-              color: AppColor.appMainColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
             icon: Icon(Icons.favorite),
             label: "Favorite",
@@ -55,7 +55,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
           NavigationDestination(
             selectedIcon: Icon(
               Icons.person,
-              color: AppColor.appMainColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
             icon: Icon(Icons.person),
             label: "Person",

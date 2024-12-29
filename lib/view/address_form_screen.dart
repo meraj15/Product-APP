@@ -76,7 +76,7 @@ class _AddressFormState extends State<AddressForm> {
                   
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.appMainColor,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: EdgeInsets.symmetric(vertical: 14.0),
                 ),
                 child: Text(
@@ -96,7 +96,7 @@ class _AddressFormState extends State<AddressForm> {
                   providerRead.loadData();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.appMainColor,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: EdgeInsets.symmetric(vertical: 14.0),
                 ),
                 child: Text(

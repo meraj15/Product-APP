@@ -11,7 +11,7 @@ class SizeSelector extends StatelessWidget {
       height: 40,
       decoration: BoxDecoration(
         border: Border.all(
-          color: const Color(0xffdb3022),
+          color: Theme.of(context).colorScheme.primary,
           width: 1.0,
         ),
         borderRadius: BorderRadius.circular(10),

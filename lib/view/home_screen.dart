@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        backgroundColor: AppColor.appMainColor,
+        // backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: AppColor.whiteColor),
 
         title: Text(
@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         hintText: "Enter product name...",
                         focusedBorder: OutlineInputBorder(
                           borderSide:
-                              const BorderSide(color: AppColor.appMainColor),
+                               BorderSide(color: Theme.of(context).colorScheme.primary),
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             dotsCount: assets.length,
                             position: _currentIndex,
                             decorator: DotsDecorator(
-                              activeColor: AppColor.appMainColor,
+                              activeColor: Theme.of(context).colorScheme.primary,
                               color: Colors.grey, // Inactive color
                               size: const Size.square(9.0),
                               activeSize: const Size(18.0, 9.0),

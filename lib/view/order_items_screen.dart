@@ -121,10 +121,10 @@ class _OrderItemsState extends State<OrderItems> {
                                   ),
                                   Text(
                                     "Price: \$${product.price.toString()}",
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColor.appMainColor,
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
                                   Text(
@@ -156,7 +156,7 @@ class _OrderItemsState extends State<OrderItems> {
         child: Container(
           width: double.infinity,
           height: 50,
-          decoration: const BoxDecoration(color: AppColor.appMainColor),
+          decoration:  BoxDecoration(color: Theme.of(context).colorScheme.primary),
           child: const Center(
             child: Text(
               "Download Invoice PDF",

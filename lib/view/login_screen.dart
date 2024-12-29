@@ -36,12 +36,12 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 80),
-                const Text(
+                 Text(
                   "Welcome Back",
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: AppColor.appMainColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide:
-                          const BorderSide(color: AppColor.appMainColor),
+                           BorderSide(color: Theme.of(context).colorScheme.primary),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 15),
@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide:
-                          const BorderSide(color: AppColor.appMainColor),
+                           BorderSide(color: Theme.of(context).colorScheme.primary),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 15),
@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       children: [
                         Checkbox(
-                          activeColor: AppColor.appMainColor,
+                          activeColor: Theme.of(context).colorScheme.primary,
                           value: isCheckBox,
                           onChanged: (value) {
                             setState(() {
@@ -162,10 +162,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.of(context)
                             .pushNamed(AppRoutes.bottemNavigationBar);
                       },
-                      child: const Text(
+                      child:  Text(
                         "Forgot Password",
                         style: TextStyle(
-                          color: AppColor.appMainColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     logged.setBool("logged", isLogged);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.appMainColor,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -260,9 +260,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         Navigator.of(context).pushNamed(AppRoutes.signupScreen);
                       },
-                      child: const Text(
+                      child:  Text(
                         "Sign Up",
-                        style: TextStyle(color: AppColor.appMainColor),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
                       ),
                     ),
                   ],

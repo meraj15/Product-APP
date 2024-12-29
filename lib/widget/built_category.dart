@@ -122,7 +122,7 @@ class BuiltCategory extends StatelessWidget {
                         width: 40,
                         height: 28,
                         decoration: BoxDecoration(
-                          color: AppColor.appMainColor,
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Padding(
@@ -177,7 +177,7 @@ class BuiltCategory extends StatelessWidget {
                               isFavorite
                                   ? Icons.favorite
                                   : Icons.favorite_border,
-                              color: AppColor.appMainColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),
@@ -215,8 +215,8 @@ class BuiltCategory extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       "\$${product.price}",
-                      style: const TextStyle(
-                        color: AppColor.appMainColor,
+                      style:  TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

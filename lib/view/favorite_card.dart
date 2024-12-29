@@ -50,7 +50,7 @@ class _FavoritesState extends State<Favorites> {
     ),
   ),
   badgeStyle: badges.BadgeStyle(
-    badgeColor: AppColor.appMainColor,
+    badgeColor: Theme.of(context).colorScheme.primary,
     padding: const EdgeInsets.all(6),
   ),
   position: badges.BadgePosition.topEnd(top: 4, end: 4),
@@ -309,8 +309,8 @@ class _FavoritesState extends State<Favorites> {
                                       ),
                                       Text(
                                         "\$${favoritesProduct.price}",
-                                        style: const TextStyle(
-                                          color: AppColor.appMainColor,
+                                        style:  TextStyle(
+                                          color: Theme.of(context).colorScheme.primary,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 16,
                                         ),
@@ -351,9 +351,11 @@ class _FavoritesState extends State<Favorites> {
                                   provider.deleteFavouriteData(index);
                                   // context.read<ProductData>().saveData();
                                 },
-                                icon: const Icon(
+                                icon:  Icon(
+
                                   Icons.close,
-                                  color: AppColor.appMainColor,
+                                  // color: Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).colorScheme.primary
                                 ),
                               ),
                             ],

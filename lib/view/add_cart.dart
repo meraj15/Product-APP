@@ -1,3 +1,4 @@
+// Import necessary packages
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -20,6 +21,7 @@ class _AddCardState extends State<AddCard> {
   @override
   void initState() {
     super.initState();
+    // Fetch the cart data for the logged-in user
     context.read<ProductData>().getCartsData(userID);
   }
 
@@ -34,7 +36,7 @@ class _AddCardState extends State<AddCard> {
             color: AppColor.scaffoldColor,
           ),
         ),
-        backgroundColor: AppColor.appMainColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: AppColor.whiteColor),
         centerTitle: true,
         leading: IconButton(
@@ -70,10 +72,12 @@ class _AddCardState extends State<AddCard> {
                           children: [
                             SlidableAction(
                               onPressed: (context) {
-                              productData.deleteCartData(index);
+                                // Delete product from cart
+                                productData.deleteCartData(product.id);
                               },
                               backgroundColor: AppColor.whiteColor,
-                              foregroundColor: AppColor.appMainColor,
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.primary,
                               icon: Icons.delete,
                               label: 'Delete',
                             ),
@@ -90,7 +94,7 @@ class _AddCardState extends State<AddCard> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0),
                                     child: Image.network(
-                                          product.thumbnail,
+                                      product.thumbnail,
                                       width: 115,
                                       height: 130,
                                       fit: BoxFit.cover,
@@ -118,14 +122,14 @@ class _AddCardState extends State<AddCard> {
                                           ),
                                           const SizedBox(height: 4),
                                           RichText(
-                                            text: TextSpan(
+                                            text: const TextSpan(
                                               text: 'Brand : ',
                                               style: TextStyle(
                                                 color: Colors.black,
                                               ),
                                               children: <TextSpan>[
                                                 TextSpan(
-                                                  text: '${product.brand}',
+                                                  text: '',
                                                   style: TextStyle(
                                                     color: Colors.black45,
                                                   ),
@@ -140,7 +144,8 @@ class _AddCardState extends State<AddCard> {
                                             children: [
                                               Container(
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xffEEEEEE),
+                                                  color: const Color(
+                                                      0xffEEEEEE),
                                                   borderRadius:
                                                       BorderRadius.circular(20),
                                                 ),
@@ -227,12 +232,11 @@ class _AddCardState extends State<AddCard> {
                                                   ),
                                                 ),
                                               ),
-                                             
                                               Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
+                                                  const Text(
                                                     "\$",
                                                   ),
                                                   Text(
@@ -254,18 +258,16 @@ class _AddCardState extends State<AddCard> {
                                 ],
                               ),
                             ),
-                            Divider(
+                            const Divider(
                               thickness: 2,
                               color: Color(0xffEEEEEE),
                             ),
                           ],
                         ),
                       );
-                   
                     },
                   ),
                 );
-              
               },
             ),
           ),
@@ -278,35 +280,13 @@ class _AddCardState extends State<AddCard> {
                   color: Colors.black.withOpacity(0.2),
                   spreadRadius: 5,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0, vertical: 8.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
-                      hintText: 'Enter your promo code',
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: Colors.black,
-                            child: Icon(
-                              Icons.arrow_forward,
-                              color: AppColor.whiteColor,
-                            )),
-                      ),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Consumer<ProductData>(
@@ -314,7 +294,7 @@ class _AddCardState extends State<AddCard> {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'Total amount : ',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
@@ -323,7 +303,8 @@ class _AddCardState extends State<AddCard> {
                           ),
                           Text(
                             "",
-                            style: TextStyle(
+                            // "\$${productData.totalAmount.toStringAsFixed(2)}",
+                            style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 17,
                             ),
@@ -333,7 +314,7 @@ class _AddCardState extends State<AddCard> {
                     },
                   ),
                 ),
-                CheckoutButton()
+                 CheckoutButton(),
               ],
             ),
           ),

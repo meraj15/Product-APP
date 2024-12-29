@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:product_app/constant/contant.dart';
 
 class CustomToast {
   static void showCustomToast(BuildContext context, String message) {
     showToastWidget(
-      _buildToastWidget(message),
+      _buildToastWidget(message,context),
       context: context,
       isIgnoring: false,
       duration: const Duration(seconds: 2),
@@ -16,13 +15,13 @@ class CustomToast {
     );
   }
 
-  static Widget _buildToastWidget(String message) {
+  static Widget _buildToastWidget(String message,BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 60),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        color: AppColor.appMainColor,
+        color: Theme.of(context).colorScheme.primary,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),

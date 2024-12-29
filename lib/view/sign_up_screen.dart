@@ -40,12 +40,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Column(
             children: [
               const SizedBox(height: 40),
-              const Text(
+               Text(
                 "Create Account",
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppColor.appMainColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -143,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.appMainColor,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -177,10 +177,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text(
+                    child:  Text(
                       "Log In",
                       style: TextStyle(
-                        color: AppColor.appMainColor,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -211,7 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       decoration: InputDecoration(
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColor.appMainColor),
+          borderSide:  BorderSide(color: Theme.of(context).colorScheme.primary),
         ),
         prefixIcon: Icon(icon, color: Colors.grey),
         labelText: labelText,

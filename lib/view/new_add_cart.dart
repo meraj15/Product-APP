@@ -32,7 +32,7 @@
 //             color: AppColor.whiteColor,
 //           ),
 //         ),
-//         backgroundColor: AppColor.appMainColor,
+//         backgroundColor: Theme.of(context).colorScheme.primary,
 //         iconTheme: const IconThemeData(color: AppColor.whiteColor),
 //         centerTitle: true,
 //         leading: IconButton(
@@ -177,7 +177,7 @@
 //                                   style: const TextStyle(
 //                                     fontSize: 18,
 //                                     fontWeight: FontWeight.w500,
-//                                     color: AppColor.appMainColor,
+//                                     color: Theme.of(context).colorScheme.primary,
 //                                   ),
 //                                 ),
 //                               ],
@@ -205,7 +205,7 @@
 //                                   isFavorite
 //                                       ? Icons.favorite
 //                                       : Icons.favorite_border,
-//                                   color: AppColor.appMainColor,
+//                                   color: Theme.of(context).colorScheme.primary,
 //                                 ),
 //                                 const SizedBox(width: 8),
 //                                 const Text("Favorites"),

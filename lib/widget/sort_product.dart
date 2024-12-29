@@ -58,8 +58,8 @@ class SortProduct extends StatelessWidget {
                         return ListView(
                           children: [
                             ListTile(
-                              leading:const Icon(Icons.price_change,
-                                  color: AppColor.appMainColor),
+                              leading: Icon(Icons.price_change,
+                                  color: Theme.of(context).colorScheme.primary),
                               title: const Text('Price: High to Low'),
                               onTap: () {
                                 context
@@ -73,8 +73,8 @@ class SortProduct extends StatelessWidget {
                               },
                             ),
                             ListTile(
-                              leading:const Icon(Icons.price_change,
-                                  color: AppColor.appMainColor),
+                              leading: Icon(Icons.price_change,
+                                  color: Theme.of(context).colorScheme.primary),
                               title: const Text('Price: Low to High'),
                               onTap: () {
                                 context

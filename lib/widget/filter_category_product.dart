@@ -34,7 +34,7 @@ class FilterCategoryProduct extends StatelessWidget {
         child: Container(
           height: 40,
           decoration: BoxDecoration(
-            color: isSelected ? AppColor.appMainColor : Colors.white,
+            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white,
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
@@ -45,7 +45,7 @@ class FilterCategoryProduct extends StatelessWidget {
               ),
             ],
             border: Border.all(
-              color: isSelected ? AppColor.appMainColor : Colors.grey,
+              color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey,
               width: 1,
             ),
           ),
@@ -57,13 +57,13 @@ class FilterCategoryProduct extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  color: isSelected ? Colors.white : AppColor.appMainColor,
+                  color: isSelected ? Colors.white : Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   title,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : AppColor.appMainColor,
+                    color: isSelected ? Colors.white : Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
                   ),

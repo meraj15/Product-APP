@@ -22,14 +22,16 @@ class ProductData extends ChangeNotifier {
   String selectedSortFilter = "No Filter";
   TextEditingController userInput = TextEditingController();
   int addCardLength = 0;
-bool isAddressFetched = false;
-List<dynamic> userAllOrders = [];
+  bool isAddressFetched = false;
+  List<dynamic> userAllOrders = [];
   bool isOrderAllLoading = true;
-   List<Product> orderedItems = [];
+  List<Product> orderedItems = [];
   String orderUsername = "";
 
+
+
   TextEditingController userName = TextEditingController();
-  TextEditingController userStreet= TextEditingController();
+  TextEditingController userStreet = TextEditingController();
   TextEditingController userCity = TextEditingController();
   TextEditingController userState = TextEditingController();
   TextEditingController userZipCode = TextEditingController();
@@ -54,8 +56,6 @@ List<dynamic> userAllOrders = [];
     notifyListeners();
   }
 
- 
-
   Future<void> getData() async {
     try {
       final response = await http.get(Uri.parse(APIEndPoint.productEndPoint));
@@ -72,13 +72,13 @@ List<dynamic> userAllOrders = [];
     }
   }
 
-  double get totalPrice {
-    double total = 0.0;
-    for (var product in addCard) {
-      total += product.price * product.productQuantity;
-    }
-    return total;
-  }
+  // double get totalPrice {
+  //   double total = 0.0;
+  //   for (var product in addCard) {
+  //     total += product.price * product.productQuantity;
+  //   }
+  //   return total;
+  // }
 
   void productPriceHightoLow() {
     for (int i = 0; i < products.length; i++) {
@@ -168,20 +168,33 @@ List<dynamic> userAllOrders = [];
   }
 
 
- 
-  
+  // void postcartsData(Map<String, dynamic> pdata) async {
+  //   pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
+
+  //   var url = Uri.parse("http://192.168.0.110:3000/api/carts");
+  //    await http.post(
+  //     url,
+  //     headers: {"Content-Type": "application/json"},
+  //     body: jsonEncode(pdata),
+  //   );
+  //   getData();
+  // }
+
   void postcartsData(Map<String, dynamic> pdata) async {
-    pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
+  pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
 
-    var url = Uri.parse("http://192.168.0.110:3000/api/carts");
-    await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(pdata),
-    );
+  var url = Uri.parse("http://192.168.0.110:3000/api/carts");
+  
+  pdata['quantity'] = pdata['quantity'] ?? 1; 
 
-    getData();
-  }
+  await http.post(
+    url,
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode(pdata),
+  );
+  getData();
+}
+
 
   void getCartsData(String userid) async {
     final url = "http://192.168.0.110:3000/api/carts/$userid";
@@ -191,6 +204,7 @@ List<dynamic> userAllOrders = [];
       if (response.statusCode == 200) {
         final decodeJson = jsonDecode(response.body) as List<dynamic>;
         addCard = decodeJson.map((json) => Product.fromJson(json)).toList();
+
         notifyListeners();
       }
     } catch (e) {
@@ -218,57 +232,58 @@ List<dynamic> userAllOrders = [];
   }
 
   void toggleFavorite(Product product, Map<String, dynamic> pdata) async {
-  if (favorite.contains(product)) {
-    final index = favorite.indexOf(product);
-    deleteFavouriteData(index);
-  } else {
-    favorites(product); 
-    postfavouriteData(pdata); 
-  }
-  notifyListeners();
-}
-
-void favorites(Product product) {
-  if (favorite.contains(product)) {
-    favorite.remove(product);
-  } else {
-    favorite.add(product);
-  }
-  notifyListeners(); 
-}
-
-void postfavouriteData(Map<String, dynamic> pdata) async {
-  pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
-
-  var url = Uri.parse("http://192.168.0.110:3000/api/favourites");
-  try {
-    final res = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(pdata),
-    );
-    debugPrint("Data posted successfully in favourites: ${res.body}");
-  } catch (e) {
-    debugPrint("Error posting data: $e");
-  }
-}
-
-void deleteFavouriteData(int index) async {
-  final idToDelete = favorite[index].id;
-  final url = Uri.parse("http://192.168.0.110:3000/api/favourites/$idToDelete");
-  try {
-    final response = await http.delete(url);
-    if (response.statusCode == 200) {
-      favorite.removeAt(index);
-      notifyListeners(); 
-      debugPrint("Data removed successfully from favorites.");
+    if (favorite.contains(product)) {
+      final index = favorite.indexOf(product);
+      deleteFavouriteData(index);
     } else {
-      debugPrint("Failed to delete item: ${response.statusCode}");
+      favorites(product);
+      postfavouriteData(pdata);
     }
-  } catch (e) {
-    debugPrint("Error deleting item: $e");
+    notifyListeners();
   }
-}
+
+  void favorites(Product product) {
+    if (favorite.contains(product)) {
+      favorite.remove(product);
+    } else {
+      favorite.add(product);
+    }
+    notifyListeners();
+  }
+
+  void postfavouriteData(Map<String, dynamic> pdata) async {
+    pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
+
+    var url = Uri.parse("http://192.168.0.110:3000/api/favourites");
+    try {
+      final res = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(pdata),
+      );
+      debugPrint("Data posted successfully in favourites: ${res.body}");
+    } catch (e) {
+      debugPrint("Error posting data: $e");
+    }
+  }
+
+  void deleteFavouriteData(int index) async {
+    final idToDelete = favorite[index].id;
+    final url =
+        Uri.parse("http://192.168.0.110:3000/api/favourites/$idToDelete");
+    try {
+      final response = await http.delete(url);
+      if (response.statusCode == 200) {
+        favorite.removeAt(index);
+        notifyListeners();
+        debugPrint("Data removed successfully from favorites.");
+      } else {
+        debugPrint("Failed to delete item: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error deleting item: $e");
+    }
+  }
 
   void getFavouriteData(String userId) async {
     final url = "http://192.168.0.110:3000/api/favourites/$userId";
@@ -285,7 +300,6 @@ void deleteFavouriteData(int index) async {
     }
   }
 
-
   void saveAddress(Map data) async {
     final url = Uri.parse("http://192.168.0.110:3000/api/address");
     await http.post(
@@ -295,7 +309,7 @@ void deleteFavouriteData(int index) async {
     );
   }
 
-void updateData(String userId) async {
+  void updateData(String userId) async {
     final url = Uri.parse("http://192.168.0.110:3000/api/address/$userId");
     final response = await http.patch(
       url,
@@ -330,15 +344,15 @@ void updateData(String userId) async {
 
       if (data['status'] == "success") {
         final address = data['address'];
-        
-          userName.text = address['name'];
-          userStreet.text = address['street'];
-          userCity.text = address['city'];
-          userState.text = address['state'];
-          userZipCode.text = address['zipcode'].toString();
-          userCountry.text = address['country'];
-          isAddressFetched = true;
-       notifyListeners();
+
+        userName.text = address['name'];
+        userStreet.text = address['street'];
+        userCity.text = address['city'];
+        userState.text = address['state'];
+        userZipCode.text = address['zipcode'].toString();
+        userCountry.text = address['country'];
+        isAddressFetched = true;
+        notifyListeners();
       } else {
         debugPrint("No address found for this user.");
       }
@@ -370,42 +384,39 @@ void updateData(String userId) async {
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[2];
 
-
-       userStreet.text = place.thoroughfare ?? '';
+        userStreet.text = place.thoroughfare ?? '';
         userCity.text = place.locality ?? '';
         userState.text = place.administrativeArea ?? '';
         userZipCode.text = place.postalCode ?? '';
-      userCountry.text = place.country ?? '';
+        userCountry.text = place.country ?? '';
 
-                debugPrint("Address: ${place.thoroughfare}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}");
+        debugPrint(
+            "Address: ${place.thoroughfare}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}");
       }
     }
   }
 
-
-
-void fetchMyAllOrders(String userId) async {
+  void fetchMyAllOrders(String userId) async {
     final url = "http://192.168.0.110:3000/api/myorders/$userId";
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final decodeJson = jsonDecode(response.body) as List<dynamic>;
-       
-          userAllOrders = decodeJson;
 
-          isOrderAllLoading = false;
-       notifyListeners();
+        userAllOrders = decodeJson;
+
+        isOrderAllLoading = false;
+        notifyListeners();
       } else {
         throw Exception("Failed to load orders");
       }
     } catch (error) {
       debugPrint("Error fetching user orders: $error");
-    
-        isOrderAllLoading = false;
-     notifyListeners();
+
+      isOrderAllLoading = false;
+      notifyListeners();
     }
   }
-
 
   void getOrderItems(String orderId) async {
     final url = "http://192.168.0.110:3000/api/orderitems/$orderId";
@@ -413,11 +424,11 @@ void fetchMyAllOrders(String userId) async {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final decodedJson = jsonDecode(response.body) as List<dynamic>;
-    
-          orderedItems =
-              decodedJson.map((json) => Product.fromJson(json)).toList();
-              debugPrint("orderedItems : $orderedItems");
-       notifyListeners();
+
+        orderedItems =
+            decodedJson.map((json) => Product.fromJson(json)).toList();
+        debugPrint("orderedItems : $orderedItems");
+        notifyListeners();
       } else {
         debugPrint(
             "Failed to fetch order items. Status code: ${response.statusCode}");
@@ -434,6 +445,4 @@ void fetchMyAllOrders(String userId) async {
     debugPrint("decodeJson my order : $decodeJson");
     orderUsername = decodeJson[0]["name"];
   }
-
-  
 }

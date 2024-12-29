@@ -60,7 +60,7 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
               }
             },
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xffdb3022),
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

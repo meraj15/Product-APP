@@ -31,7 +31,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        backgroundColor: AppColor.appMainColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
@@ -77,7 +77,7 @@ class _ProductDetailState extends State<ProductDetail> {
             //       dotsCount: widget.product.images.length,
             //       // position: currentIndex.toDouble(),
             //       decorator: const DotsDecorator(
-            //         activeColor: AppColor.appMainColor,
+            //         activeColor: Theme.of(context).colorScheme.primary,
             //         color: Colors.grey,
             //         size: Size.square(7.0),
             //         activeSize: Size(12.0, 12.0),
@@ -126,10 +126,10 @@ class _ProductDetailState extends State<ProductDetail> {
                                 const SizedBox(width: 6),
                                 Text(
                                   "\$${widget.product.price.toString()}",
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w500,
-                                    color: AppColor.appMainColor,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ],
@@ -173,7 +173,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   isFavorite
                                       ? Icons.favorite
                                       : Icons.favorite_border,
-                                  color: AppColor.appMainColor,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -186,7 +186,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               fontWeight: FontWeight.w500,
                               color: widget.product.availabilityStatus ==
                                       "Low Stock"
-                                  ? AppColor.appMainColor
+                                  ? Theme.of(context).colorScheme.primary
                                   : Colors.green,
                             ),
                           ),
@@ -217,10 +217,10 @@ class _ProductDetailState extends State<ProductDetail> {
                       ),
                       Text(
                         "Discount: ${widget.product.discountPercentage}%",
-                        style: const TextStyle(
+                        style:  TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          color: AppColor.appMainColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
@@ -252,7 +252,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               backgroundColor: AppColor.whiteColor,
                               child: IconButton(
                                 onPressed: () {
-                                  setState(() {
+                                setState(() {
                                     if (widget.product.productQuantity > 1) {
                                       widget.product.productQuantity--;
                                     }
@@ -267,9 +267,9 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                                  const EdgeInsets.symmetric(horizontal: 5.0),
                               child: Text(
-                                widget.product.productQuantity.toString(),
+                               widget.product.productQuantity.toString(),
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -292,6 +292,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                 ),
                               ),
                             ),
+                          
                           ],
                         ),
                       )
@@ -313,7 +314,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         'brand': widget.product.brand,
                         'price': widget.product.price,
                         'userid': userID,
-                        'category':widget.product.category,
+                        'quantity':widget.product.productQuantity,
                       },
                     ),
                   ),
