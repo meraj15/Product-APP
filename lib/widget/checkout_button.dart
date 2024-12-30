@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:product_app/main.dart';
+import 'package:product_app/provider/product_provider.dart';
+import 'package:provider/provider.dart';
 
 class CheckoutButton extends StatelessWidget {
+  final Map<String,dynamic> pdata;
+  
+  const CheckoutButton({super.key,required this.pdata,});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
       child: FilledButton(
         onPressed: () {
+          context.read<ProductData>().updateCartQuantity(pdata);
           Navigator.of(context).pushNamed("address_form");
         },
         style: FilledButton.styleFrom(
@@ -32,7 +40,7 @@ class CheckoutButton extends StatelessWidget {
   }
 }
 
-void showCustomBottomSheet(BuildContext context) {
+void showCustomBottomSheet(BuildContext context, Map<String,dynamic> pdata) {
   showModalBottomSheet(
     context: context,
     builder: (context) {
@@ -73,7 +81,7 @@ void showCustomBottomSheet(BuildContext context) {
             ),
           ),
           SizedBox(height: 30),
-          CheckoutButton(),
+          CheckoutButton(pdata: pdata,),
         ],
       );
     },

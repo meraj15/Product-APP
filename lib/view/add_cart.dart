@@ -6,6 +6,7 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
+import 'package:product_app/view/product_detail.dart';
 import 'package:product_app/widget/checkout_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -21,12 +22,12 @@ class _AddCardState extends State<AddCard> {
   @override
   void initState() {
     super.initState();
-    // Fetch the cart data for the logged-in user
     context.read<ProductData>().getCartsData(userID);
   }
 
   @override
   Widget build(BuildContext context) {
+    final providerRead = context.read<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       appBar: AppBar(
@@ -43,7 +44,7 @@ class _AddCardState extends State<AddCard> {
           onPressed: () {
             Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
       body: Column(
@@ -72,8 +73,7 @@ class _AddCardState extends State<AddCard> {
                           children: [
                             SlidableAction(
                               onPressed: (context) {
-                                // Delete product from cart
-                                productData.deleteCartData(product.id);
+                                productData.deleteCartData(index);
                               },
                               backgroundColor: AppColor.whiteColor,
                               foregroundColor:
@@ -140,18 +140,21 @@ class _AddCardState extends State<AddCard> {
                                           const SizedBox(height: 6),
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment
+                                                    .spaceBetween,
                                             children: [
                                               Container(
                                                 decoration: BoxDecoration(
-                                                  color: const Color(
-                                                      0xffEEEEEE),
+                                                  color:
+                                                      const Color(0xffEEEEEE),
                                                   borderRadius:
-                                                      BorderRadius.circular(20),
+                                                      BorderRadius.circular(
+                                                          20),
                                                 ),
                                                 child: Padding(
                                                   padding:
-                                                      const EdgeInsets.all(5.0),
+                                                      const EdgeInsets.all(
+                                                          5.0),
                                                   child: Row(
                                                     children: [
                                                       GestureDetector(
@@ -162,8 +165,14 @@ class _AddCardState extends State<AddCard> {
                                                                 1) {
                                                               product
                                                                   .productQuantity--;
-                                                                  context.read<ProductData>().saveData();
-                                                                  
+                                                              providerRead
+                                                                  .upadateQuantity = {
+                                                                'id': product
+                                                                    .id,
+                                                                'quantity':
+                                                                    product
+                                                                        .productQuantity
+                                                              };
                                                             }
                                                           });
                                                         },
@@ -174,13 +183,13 @@ class _AddCardState extends State<AddCard> {
                                                               BoxDecoration(
                                                             color: AppColor
                                                                 .whiteColor,
-                                                            shape:
-                                                                BoxShape.circle,
+                                                            shape: BoxShape
+                                                                .circle,
                                                           ),
                                                           child: const Icon(
                                                             Icons.remove,
-                                                            color:
-                                                                Colors.black54,
+                                                            color: Colors
+                                                                .black54,
                                                             size: 18.0,
                                                           ),
                                                         ),
@@ -199,7 +208,8 @@ class _AddCardState extends State<AddCard> {
                                                               const TextStyle(
                                                             fontSize: 16,
                                                             fontWeight:
-                                                                FontWeight.w500,
+                                                                FontWeight
+                                                                    .w500,
                                                           ),
                                                         ),
                                                       ),
@@ -208,7 +218,14 @@ class _AddCardState extends State<AddCard> {
                                                           setState(() {
                                                             product
                                                                 .productQuantity++;
-                                                                  context.read<ProductData>().saveData();
+                      
+                                                            providerRead
+                                                                .upadateQuantity = {
+                                                              'id':
+                                                                  product.id,
+                                                              'quantity': product
+                                                                  .productQuantity
+                                                            };
                                                           });
                                                         },
                                                         child: Container(
@@ -218,12 +235,13 @@ class _AddCardState extends State<AddCard> {
                                                               BoxDecoration(
                                                             color: AppColor
                                                                 .whiteColor,
-                                                            shape:
-                                                                BoxShape.circle,
+                                                            shape: BoxShape
+                                                                .circle,
                                                           ),
                                                           child: const Icon(
                                                             Icons.add,
-                                                            color: Colors.grey,
+                                                            color:
+                                                                Colors.grey,
                                                             size: 18.0,
                                                           ),
                                                         ),
@@ -291,6 +309,11 @@ class _AddCardState extends State<AddCard> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Consumer<ProductData>(
                     builder: (context, productData, child) {
+                      double totalAmount = 0.0;
+                      productData.addCard.forEach((product) {
+                        totalAmount += product.productQuantity * product.price;
+                      });
+
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -302,8 +325,7 @@ class _AddCardState extends State<AddCard> {
                             ),
                           ),
                           Text(
-                            "",
-                            // "\$${productData.totalAmount.toStringAsFixed(2)}",
+                            "\$${totalAmount.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 17,
@@ -314,7 +336,9 @@ class _AddCardState extends State<AddCard> {
                     },
                   ),
                 ),
-                 CheckoutButton(),
+                CheckoutButton(
+                  pdata: providerRead.upadateQuantity,
+                ),
               ],
             ),
           ),

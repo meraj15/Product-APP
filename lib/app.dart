@@ -10,7 +10,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
 navigationBarTheme: NavigationBarThemeData(indicatorColor: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
-
           colorScheme: ColorScheme.light(primary: AppColor.appMainColor, ),
           appBarTheme: AppBarTheme(backgroundColor: AppColor.appMainColor)),
       debugShowCheckedModeBanner: false,

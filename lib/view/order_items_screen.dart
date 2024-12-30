@@ -21,7 +21,8 @@ class OrderItems extends StatefulWidget {
       {super.key,
       required this.orderId,
       required this.orderstatus,
-      required this.userAddress});
+      required this.userAddress,
+     });
 
   @override
   State<OrderItems> createState() => _OrderItemsState();
@@ -43,7 +44,7 @@ class _OrderItemsState extends State<OrderItems> {
       appBar: AppBar(
         title: const Text(
           "Order Details",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500,color: Colors.white),
         ),
       ),
       body: providerRead.orderedItems.isEmpty
@@ -72,7 +73,7 @@ class _OrderItemsState extends State<OrderItems> {
                     itemCount: cartItems.length,
                     itemBuilder: (context, index) {
                       final product = cartItems[index];
-
+                      final orderQuantity = providerRead.orderItemsQuantityList;
                       return Container(
                         height: 110,
                         decoration: BoxDecoration(
@@ -128,7 +129,7 @@ class _OrderItemsState extends State<OrderItems> {
                                     ),
                                   ),
                                   Text(
-                                    "Quantity : 1",
+                                    "Quantity :${orderQuantity[index]['quantity']}",
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.green,

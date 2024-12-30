@@ -12,6 +12,8 @@ import 'package:product_app/widget/filter_category_product.dart';
 import 'package:product_app/widget/product_card.dart';
 import 'package:product_app/widget/sort_product.dart';
 import 'package:product_app/widget/drawer.dart';
+import 'package:badges/badges.dart' as badges;
+
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -43,13 +45,34 @@ class _ShopScreenState extends State<ShopScreen> {
         ),
         backgroundColor: AppColor.scaffoldColor,
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
-            },
-            icon: const Icon(Icons.shopping_cart_outlined),
-          ),
-        ],
+    Consumer<ProductData>(
+      builder: (context, provider, child) {
+        final cartCount = provider.addCard.length; 
+        return badges.Badge(
+  badgeContent: Text(
+    cartCount.toString(),
+    style: const TextStyle(
+      color: Colors.yellow,
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  badgeStyle: badges.BadgeStyle(
+    badgeColor: Theme.of(context).colorScheme.primary,
+    padding: const EdgeInsets.all(6),
+  ),
+  position: badges.BadgePosition.topEnd(top: 4, end: 4),
+  showBadge: cartCount > 0,
+  child: IconButton(
+    onPressed: () {
+      Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
+    },
+    icon: const Icon(Icons.shopping_cart_outlined),
+  ),
+);
+      },
+    ),
+  ],
       ),
       drawer: const DrawerWidget(),
       body: provider.isLoaded

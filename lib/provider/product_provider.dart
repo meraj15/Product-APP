@@ -26,8 +26,9 @@ class ProductData extends ChangeNotifier {
   List<dynamic> userAllOrders = [];
   bool isOrderAllLoading = true;
   List<Product> orderedItems = [];
+  List<dynamic> orderItemsQuantityList=[];
   String orderUsername = "";
-
+  Map<String,dynamic> upadateQuantity = {};
 
 
   TextEditingController userName = TextEditingController();
@@ -168,18 +169,6 @@ class ProductData extends ChangeNotifier {
   }
 
 
-  // void postcartsData(Map<String, dynamic> pdata) async {
-  //   pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
-
-  //   var url = Uri.parse("http://192.168.0.110:3000/api/carts");
-  //    await http.post(
-  //     url,
-  //     headers: {"Content-Type": "application/json"},
-  //     body: jsonEncode(pdata),
-  //   );
-  //   getData();
-  // }
-
   void postcartsData(Map<String, dynamic> pdata) async {
   pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
 
@@ -195,6 +184,17 @@ class ProductData extends ChangeNotifier {
   getData();
 }
 
+void updateCartQuantity(Map<String, dynamic> pdata) async {
+  var url = Uri.parse("http://192.168.0.110:3000/api/update-card-quantity");
+    await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(pdata),
+    );
+}
+
+
+
 
   void getCartsData(String userid) async {
     final url = "http://192.168.0.110:3000/api/carts/$userid";
@@ -204,7 +204,7 @@ class ProductData extends ChangeNotifier {
       if (response.statusCode == 200) {
         final decodeJson = jsonDecode(response.body) as List<dynamic>;
         addCard = decodeJson.map((json) => Product.fromJson(json)).toList();
-
+        debugPrint(" addCard : $addCard");
         notifyListeners();
       }
     } catch (e) {
@@ -427,6 +427,7 @@ class ProductData extends ChangeNotifier {
 
         orderedItems =
             decodedJson.map((json) => Product.fromJson(json)).toList();
+            orderItemsQuantityList = decodedJson;
         debugPrint("orderedItems : $orderedItems");
         notifyListeners();
       } else {

@@ -25,14 +25,14 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
     final providerRead = context.watch<ProductData>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Orders"),
+        title: const Text("My Orders",style: TextStyle(color: Colors.white),),
       ),
       body: providerRead.isOrderAllLoading
           ? const Center(child: CircularProgressIndicator())
           : providerRead.userAllOrders.isEmpty
               ? const Center(child: Text("No orders found."))
               : ListView.builder(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(8.0),
                   itemCount: providerRead.userAllOrders.length,
                   itemBuilder: (context, index) {
                     final order = providerRead.userAllOrders[index];
