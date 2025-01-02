@@ -18,11 +18,7 @@ class Favorites extends StatefulWidget {
 }
 
 class _FavoritesState extends State<Favorites> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<ProductData>().getFavouriteData(userID);
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,33 +33,23 @@ class _FavoritesState extends State<Favorites> {
     ),
   ),
   actions: [
-    Consumer<ProductData>(
-      builder: (context, provider, child) {
-        final cartCount = provider.addCard.length; 
-        return badges.Badge(
-  badgeContent: Text(
-    cartCount.toString(),
-    style: const TextStyle(
-      color: Colors.yellow,
-      fontSize: 12,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-  badgeStyle: badges.BadgeStyle(
-    badgeColor: Theme.of(context).colorScheme.primary,
-    padding: const EdgeInsets.all(6),
-  ),
-  position: badges.BadgePosition.topEnd(top: 4, end: 4),
-  showBadge: cartCount > 0, // This will ensure the badge only shows when the count is > 0
-  child: IconButton(
-    onPressed: () {
-      Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
-    },
-    icon: const Icon(Icons.shopping_cart_outlined),
-  ),
-);
-      },
-    ),
+     IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
+            },
+            icon: Badge(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              label: Text(
+                '${context.watch<ProductData>().addCard.length}',
+                style: TextStyle(
+                  color: AppColor.whiteColor,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              child: const Icon(Icons.shopping_cart_outlined),
+            ),
+            
+          ),
   ],
   centerTitle: true,
   backgroundColor: AppColor.scaffoldColor,

@@ -15,12 +15,6 @@ class AddressForm extends StatefulWidget {
 }
 
 class _AddressFormState extends State<AddressForm> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<ProductData>().getAddressData();
-  }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +63,7 @@ class _AddressFormState extends State<AddressForm> {
                   }
                  
                 providerRead.addCard.clear();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Ordered Successfully")));
+                  
                   Navigator.of(context)
                       .pushNamed(AppRoutes.orderScreen);
                   
@@ -91,9 +84,6 @@ class _AddressFormState extends State<AddressForm> {
               ElevatedButton(
                 onPressed: () async {
                   await providerRead.getCurrentLocation(context);
-                   providerRead.saveData();
-                 
-                  providerRead.loadData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,

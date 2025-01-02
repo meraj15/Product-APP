@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
-import 'package:product_app/widget/product_detail_bottomsheet.dart';
 import 'package:provider/provider.dart';
 
 import 'size_option.dart';
@@ -29,7 +28,7 @@ class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
               context: context,
               builder: (BuildContext context) {
                 return Container(
-                  height: 250,
+                  height: 200,
                   decoration: BoxDecoration(
                     color: const Color(0xfff3f3f3),
                     border: Border.all(
@@ -108,12 +107,21 @@ class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
                           );
                         },
                       ),
-                      const SizedBox(
-                        height: 19,
-                      ),
+                      // const SizedBox(
+                      //   height: 19,
+                      // ),
                       // ProductDetailBottomSheet(
                       //   product: widget.product,
                       //   bgColor: const Color(0xfff3f3f3),
+                      //   pdata: {
+                      //   'id': widget.product.id,
+                      //   'title': widget.product.title,
+                      //   'thumbnail': widget.product.thumbnail,
+                      //   'brand': widget.product.brand,
+                      //   'price': widget.product.price,
+                      //   'userid': userID,
+                      //   'quantity':1,
+                      // },
                       // )
                     ],
                   ),

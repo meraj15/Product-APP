@@ -12,7 +12,7 @@ class Product {
   num rating;
   int stock;
   String availabilityStatus;
-  // List<String> images;
+  List<String> images;
   String returnPolicy;
   int productQuantity = 1;
   String warrantyInformation;
@@ -29,7 +29,7 @@ class Product {
     required this.rating,
     required this.stock,
     required this.availabilityStatus,
-    // required this.images,
+    required this.images,
     required this.returnPolicy,
      this.productQuantity = 1,
     required this.warrantyInformation,
@@ -51,15 +51,12 @@ class Product {
       rating: product["rating"] ?? 0.0,
       stock: product["stock"] ?? 0,
       availabilityStatus: product["availabilitystatus"] ?? "",
-      // images: product["images"].cast<String>(),
+      images: List<String>.from(product["images"] ?? []),
       returnPolicy: product["returnpolicy"]?? "",
       warrantyInformation: product["warrantyinformation"]?? "",
       productQuantity: product["productQuantity"] ?? 1
     );
   }
-
-
-  
 }
 
 Map productToMap(Product product){
@@ -75,7 +72,7 @@ Map productToMap(Product product){
       "rating": product.rating,
       "stock": product.stock,
       "availabilitystatus": product.availabilityStatus,
-      // "images": product.images,
+      "images": product.images,
       "returnpolicy": product.returnPolicy,
       "warrantyinformation": product.warrantyInformation,
       "productQuantity"  :product.productQuantity
@@ -94,7 +91,7 @@ Product mapToProduct(Map product){
       rating: product["rating"] ?? 0,
       stock: product["stock"] ?? 0,
       availabilityStatus: product["availabilitystatus"] ?? "",
-      // images: product["images"].cast<String>(),
+      images: product["images"] ?? [],
       returnPolicy: product["returnpolicy"],
       warrantyInformation: product["warrantyinformation"],
       productQuantity: product["productQuantity"] ?? 1,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
-import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +22,6 @@ class BuiltCategory extends StatelessWidget {
     final providerWatch = context.watch<ProductData>();
     final userInput = providerRead.userInput.text.toLowerCase();
 
-    // Filter products based on the category and user input
     final filterProduct = userInput.isEmpty
         ? providerRead.products
             .where((element) => element.category.toLowerCase() == category)
@@ -83,6 +81,8 @@ class BuiltCategory extends StatelessWidget {
                               height: 200,
                               child: Center(
                                 child: Image.network(
+                                  product.category == "smartphones" || product.category == "vehicle"?
+                                  product.images.first :
                                   product.thumbnail,
                                   fit: BoxFit.fitWidth,
                                 ),

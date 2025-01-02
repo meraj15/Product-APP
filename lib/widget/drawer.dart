@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,7 +65,7 @@ class DrawerWidget extends StatelessWidget {
 
                   text: 'Home',
                   onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.initialRoute);
+                    Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
                   },
                 ),
                 createDrawerItem(
@@ -132,7 +131,7 @@ class DrawerWidget extends StatelessWidget {
                          isLogged = false;
   final SharedPreferences logged = await SharedPreferences.getInstance();
   logged.setBool("logged", isLogged);
-                    Navigator.of(context).pushNamed("/");
+                    Navigator.of(context).pushNamed(AppRoutes.initialRoute);
                   },
                 ),
               ],

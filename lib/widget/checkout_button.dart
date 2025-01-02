@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:provider/provider.dart';
 
 class CheckoutButton extends StatelessWidget {
-  final Map<String,dynamic> pdata;
+  final List<Map<String, dynamic>> pdata;
   
   const CheckoutButton({super.key,required this.pdata,});
 
@@ -40,50 +39,50 @@ class CheckoutButton extends StatelessWidget {
   }
 }
 
-void showCustomBottomSheet(BuildContext context, Map<String,dynamic> pdata) {
-  showModalBottomSheet(
-    context: context,
-    builder: (context) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Enter your promo code',
-                suffixIcon: Icon(Icons.arrow_forward),
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Total amount : ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 15,
-                  ),
-                ),
-                Text(
-                  "124\$",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 17,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 30),
-          CheckoutButton(pdata: pdata,),
-        ],
-      );
-    },
-  );
-}
+// void showCustomBottomSheet(BuildContext context, List<Map<String, dynamic>> pdata) {
+  // showModalBottomSheet(
+  //   context: context,
+  //   builder: (context) {
+  //     return Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Padding(
+  //           padding: const EdgeInsets.all(16.0),
+  //           child: TextField(
+  //             decoration: InputDecoration(
+  //               hintText: 'Enter your promo code',
+  //               suffixIcon: Icon(Icons.arrow_forward),
+  //               border: OutlineInputBorder(),
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(height: 20),
+  //         Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //           child: Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: [
+  //                       const Text(
+  //                         'Total amount : ',
+  //                         style: TextStyle(
+  //                           fontWeight: FontWeight.w500,
+  //                           fontSize: 15,
+  //                         ),
+  //                       ),
+  //                       Text(
+  //                         "\$${totalAmount.toStringAsFixed(2)}",
+  //                         style: const TextStyle(
+  //                           fontWeight: FontWeight.w500,
+  //                           fontSize: 17,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   );
+  //         ),
+  //         SizedBox(height: 30),
+        
+  //       ],
+  //     );
+  //   },
+//   );
+// }

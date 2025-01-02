@@ -64,7 +64,9 @@ class ProductCard extends StatelessWidget {
                         height: 200,
                         child: Center(
                           child: Image.network(
-                            product.thumbnail,
+                            product.category == "smartphones" || product.category == "vehicle"?
+                                  product.images.first :
+                                  product.thumbnail,
                             fit: BoxFit.fitWidth,
                           ),
                         ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constant/contant.dart';
 
 class CircularLoader extends StatelessWidget {
   const CircularLoader({super.key});

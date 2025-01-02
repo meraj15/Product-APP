@@ -14,7 +14,6 @@ import 'package:product_app/widget/sort_product.dart';
 import 'package:product_app/widget/drawer.dart';
 import 'package:badges/badges.dart' as badges;
 
-
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
 
@@ -24,12 +23,6 @@ class ShopScreen extends StatefulWidget {
 
 class _ShopScreenState extends State<ShopScreen> {
   final userInput = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<ProductData>().getData();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,34 +38,41 @@ class _ShopScreenState extends State<ShopScreen> {
         ),
         backgroundColor: AppColor.scaffoldColor,
         actions: [
-    Consumer<ProductData>(
-      builder: (context, provider, child) {
-        final cartCount = provider.addCard.length; 
-        return badges.Badge(
-  badgeContent: Text(
-    cartCount.toString(),
-    style: const TextStyle(
-      color: Colors.yellow,
-      fontSize: 12,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-  badgeStyle: badges.BadgeStyle(
-    badgeColor: Theme.of(context).colorScheme.primary,
-    padding: const EdgeInsets.all(6),
-  ),
-  position: badges.BadgePosition.topEnd(top: 4, end: 4),
-  showBadge: cartCount > 0,
-  child: IconButton(
-    onPressed: () {
-      Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
-    },
-    icon: const Icon(Icons.shopping_cart_outlined),
-  ),
-);
-      },
-    ),
-  ],
+          // Badge(
+          //   backgroundColor: AppColor.appMainColor,
+          //   label: Text(
+          //     '${context.watch<ProductData>().addCard.length}',
+          //     style: TextStyle(
+          //       color: Colors.red,
+          //       fontWeight: FontWeight.w900,
+          //     ),
+          //   ),
+          //   child: IconButton(
+          //     onPressed: () {
+          //       Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
+          //     },
+          //     icon: const Icon(Icons.shopping_cart_outlined),
+          //   ),
+          // )
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
+            },
+            icon: Badge(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              label: Text(
+                '${context.watch<ProductData>().addCard.length}',
+                style: TextStyle(
+                  color: AppColor.whiteColor,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              child: const Icon(Icons.shopping_cart_outlined),
+            ),
+            
+          ),
+          
+        ], 
       ),
       drawer: const DrawerWidget(),
       body: provider.isLoaded
@@ -267,7 +267,8 @@ class _ShopScreenState extends State<ShopScreen> {
               labelText: "Search product",
               hintText: "Enter product name...",
               focusedBorder: OutlineInputBorder(
-                borderSide:  BorderSide(color: Theme.of(context).colorScheme.primary),
+                borderSide:
+                    BorderSide(color: Theme.of(context).colorScheme.primary),
                 borderRadius: BorderRadius.circular(12.0),
               ),
             ),
@@ -302,7 +303,7 @@ class _ShopScreenState extends State<ShopScreen> {
                         'rating': product.rating,
                         'warrantyinformation': product.warrantyInformation,
                         'userid': userID,
-                        'category':product.category,
+                        'category': product.category,
                       },
                     );
                   },

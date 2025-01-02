@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:product_app/config/endpoint.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/model/product.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductData extends ChangeNotifier {
   bool isLoaded = true;
@@ -53,25 +52,29 @@ class ProductData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateUI() {
-    notifyListeners();
-  }
+
+
+ 
 
   Future<void> getData() async {
-    try {
-      final response = await http.get(Uri.parse(APIEndPoint.productEndPoint));
-      if (response.statusCode == 200) {
-        final decodeJson = jsonDecode(response.body) as List<dynamic>;
-        products = decodeJson.map((json) => Product.fromJson(json)).toList();
-        isLoaded = false;
-        notifyListeners();
-      } else {
-        throw Exception('Failed to load products');
-      }
-    } catch (e) {
-      error = e.toString();
+  try {
+    final response = await http.get(Uri.parse(APIEndPoint.productGetEndPoint));
+    if (response.statusCode == 200) {
+      final decodeJson = jsonDecode(response.body) as List<dynamic>;
+      products = decodeJson.map((json) => Product.fromJson(json)).toList();
+      isLoaded = false;
+      notifyListeners();
+    } else {
+      debugPrint("Failed to load products: ${response.body}");
+      throw Exception('Failed to load products');
     }
+  } catch (e) {
+    debugPrint("Error fetching products: $e");
+    error = e.toString();
   }
+}
+
+
 
   // double get totalPrice {
   //   double total = 0.0;
@@ -120,97 +123,90 @@ class ProductData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveData() async {
-    // final List<Map> mapProducts = favorite.map((p) => productToMap(p)).toList();
-    final List<Map> mapCards = addCard.map((c) => productToMap(c)).toList();
-    // jsonProducts = mapProducts.map((mp) => jsonEncode(mp)).toList();
-    jsonCards = mapCards.map((mc) => jsonEncode(mc)).toList();
-    final SharedPreferences data = await SharedPreferences.getInstance();
-    data.setStringList("Product", jsonProducts);
-    data.setStringList("Card", jsonCards);
-    data.setString("userName", userName.text);
-    // data.setString("userAddress", userAddress.text);
-    data.setString("userCity", userCity.text);
-    data.setString("userState", userState.text);
-    data.setString("userZipCode", userZipCode.text);
-    data.setString("userCountry", userCountry.text);
-  }
+  // void saveData() async {
+  //   // final List<Map> mapProducts = favorite.map((p) => productToMap(p)).toList();
+  //   final List<Map> mapCards = addCard.map((c) => productToMap(c)).toList();
+  //   // jsonProducts = mapProducts.map((mp) => jsonEncode(mp)).toList();
+  //   jsonCards = mapCards.map((mc) => jsonEncode(mc)).toList();
+  //   final SharedPreferences data = await SharedPreferences.getInstance();
+  //   data.setStringList("Product", jsonProducts);
+  //   data.setStringList("Card", jsonCards);
+  //   data.setString("userName", userName.text);
+  //   // data.setString("userAddress", userAddress.text);
+  //   data.setString("userCity", userCity.text);
+  //   data.setString("userState", userState.text);
+  //   data.setString("userZipCode", userZipCode.text);
+  //   data.setString("userCountry", userCountry.text);
+  // }
 
-  void loadData() async {
-    final SharedPreferences data = await SharedPreferences.getInstance();
+  // void loadData() async {
+  //   final SharedPreferences data = await SharedPreferences.getInstance();
 
-    final List<String>? jsonProducts = data.getStringList("Product");
-    final List<String>? jsonCards = data.getStringList("Card");
-    if (jsonProducts != null) {
-      final List<Map> mapDBData =
-          jsonProducts.map((json) => jsonDecode(json)).toList().cast<Map>();
-      // final List<Product> dbProducts =
-      mapDBData.map((m) => mapToProduct(m)).toList();
-      // favorite = dbProducts;
-    }
+  //   final List<String>? jsonProducts = data.getStringList("Product");
+  //   final List<String>? jsonCards = data.getStringList("Card");
+  //   if (jsonProducts != null) {
+  //     final List<Map> mapDBData =
+  //         jsonProducts.map((json) => jsonDecode(json)).toList().cast<Map>();
+  //     // final List<Product> dbProducts =
+  //     mapDBData.map((m) => mapToProduct(m)).toList();
+  //     // favorite = dbProducts;
+  //   }
 
-    if (jsonCards != null) {
-      final List<Map> mapCardDBData =
-          jsonCards.map((json) => jsonDecode(json)).toList().cast<Map>();
-      final List<Product> dbCards =
-          mapCardDBData.map((m) => mapToProduct(m)).toList();
-      addCard = dbCards;
-    }
+  //   if (jsonCards != null) {
+  //     final List<Map> mapCardDBData =
+  //         jsonCards.map((json) => jsonDecode(json)).toList().cast<Map>();
+  //     final List<Product> dbCards =
+  //         mapCardDBData.map((m) => mapToProduct(m)).toList();
+  //     addCard = dbCards;
+  //   }
 
-    addCardLength = addCard.length;
-    userName.text = data.getString("userName") ?? "Khan Meraj";
-    // userAddress.text = data.getString("userAddress") ?? "Hairan Gali";
-    userCity.text = data.getString("userCity") ?? "Mumbai";
-    userState.text = data.getString("userState") ?? "Maharashtra";
-    userZipCode.text = data.getString("userZipCode") ?? "400070";
-    userCountry.text = data.getString("userCountry") ?? "India";
+  //   addCardLength = addCard.length;
+  //   userName.text = data.getString("userName") ?? "Khan Meraj";
+  //   // userAddress.text = data.getString("userAddress") ?? "Hairan Gali";
+  //   userCity.text = data.getString("userCity") ?? "Mumbai";
+  //   userState.text = data.getString("userState") ?? "Maharashtra";
+  //   userZipCode.text = data.getString("userZipCode") ?? "400070";
+  //   userCountry.text = data.getString("userCountry") ?? "India";
 
-    notifyListeners();
-  }
-
+  //   notifyListeners();
+  // }
 
   void postcartsData(Map<String, dynamic> pdata) async {
-  pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
-
-  var url = Uri.parse("http://192.168.0.110:3000/api/carts");
-  
-  pdata['quantity'] = pdata['quantity'] ?? 1; 
-
+  pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;  
+  var url = Uri.parse(APIEndPoint.postcartsDataEndPoint);
+  pdata['quantity'] = pdata['quantity'] ?? 1;
   await http.post(
     url,
     headers: {"Content-Type": "application/json"},
-    body: jsonEncode(pdata),
+    body: jsonEncode(pdata), 
   );
-  getData();
+  getData();  
 }
 
-void updateCartQuantity(Map<String, dynamic> pdata) async {
-  var url = Uri.parse("http://192.168.0.110:3000/api/update-card-quantity");
-    await http.post(
+void updateCartQuantity(List<Map<String, dynamic>> updatedQuantities) async {
+  var url = Uri.parse(APIEndPoint.updateCartQuantity);
+await http.post(
       url,
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode(pdata),
+      body: jsonEncode(updatedQuantities),
     );
 }
 
+void getCartsData(String userid) async {
+  final url = "http://192.168.0.110:3000/api/carts/$userid";
+  try {
+    final response = await http.get(Uri.parse(url));
 
-
-
-  void getCartsData(String userid) async {
-    final url = "http://192.168.0.110:3000/api/carts/$userid";
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final decodeJson = jsonDecode(response.body) as List<dynamic>;
-        addCard = decodeJson.map((json) => Product.fromJson(json)).toList();
-        debugPrint(" addCard : $addCard");
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint("Error fetching cart data: $e");
+    if (response.statusCode == 200) {
+      final decodeJson = jsonDecode(response.body) as List<dynamic>;
+      addCard = decodeJson.map((json) => Product.fromJson(json)).toList();
+      // debugPrint(" addCard : $addCard");
+      notifyListeners(); 
     }
+  } catch (e) {
+    debugPrint("Error fetching cart data: $e");
   }
+}
 
   void deleteCartData(int index) async {
     final idToDelete = addCard[index].id;
@@ -254,14 +250,14 @@ void updateCartQuantity(Map<String, dynamic> pdata) async {
   void postfavouriteData(Map<String, dynamic> pdata) async {
     pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
 
-    var url = Uri.parse("http://192.168.0.110:3000/api/favourites");
+    var url = Uri.parse(APIEndPoint.postfavouriteData);
     try {
       final res = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(pdata),
       );
-      debugPrint("Data posted successfully in favourites: ${res.body}");
+      // debugPrint("Data posted successfully in favourites: ${res.body}");
     } catch (e) {
       debugPrint("Error posting data: $e");
     }
@@ -287,13 +283,12 @@ void updateCartQuantity(Map<String, dynamic> pdata) async {
 
   void getFavouriteData(String userId) async {
     final url = "http://192.168.0.110:3000/api/favourites/$userId";
-    debugPrint("favorite jfjxjbhfkbk");
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final decodeJson = jsonDecode(response.body) as List<dynamic>;
 
       favorite = decodeJson.map((json) => Product.fromJson(json)).toList();
-      debugPrint("favorite  :$favorite");
+      // debugPrint("favorite  :$favorite");
       notifyListeners();
     } else {
       debugPrint("Failed to load favourites: ${response.statusCode}");
@@ -301,7 +296,7 @@ void updateCartQuantity(Map<String, dynamic> pdata) async {
   }
 
   void saveAddress(Map data) async {
-    final url = Uri.parse("http://192.168.0.110:3000/api/address");
+    final url = Uri.parse(APIEndPoint.saveAddress);
     await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -311,7 +306,7 @@ void updateCartQuantity(Map<String, dynamic> pdata) async {
 
   void updateData(String userId) async {
     final url = Uri.parse("http://192.168.0.110:3000/api/address/$userId");
-    final response = await http.patch(
+     await http.patch(
       url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
@@ -335,7 +330,7 @@ void updateCartQuantity(Map<String, dynamic> pdata) async {
   }
 
   void getAddressData() async {
-    final url = Uri.parse("http://192.168.0.110:3000/api/address/${userID}");
+    final url = Uri.parse("http://192.168.0.110:3000/api/address/$userID");
 
     final response = await http.get(url);
 
@@ -390,8 +385,7 @@ void updateCartQuantity(Map<String, dynamic> pdata) async {
         userZipCode.text = place.postalCode ?? '';
         userCountry.text = place.country ?? '';
 
-        debugPrint(
-            "Address: ${place.thoroughfare}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}");
+        
       }
     }
   }
@@ -428,7 +422,7 @@ void updateCartQuantity(Map<String, dynamic> pdata) async {
         orderedItems =
             decodedJson.map((json) => Product.fromJson(json)).toList();
             orderItemsQuantityList = decodedJson;
-        debugPrint("orderedItems : $orderedItems");
+        // debugPrint("orderedItems : $orderedItems");
         notifyListeners();
       } else {
         debugPrint(
@@ -443,7 +437,7 @@ void updateCartQuantity(Map<String, dynamic> pdata) async {
     final url = "http://192.168.0.110:3000/api/myorders/$userId";
     final response = await http.get(Uri.parse(url));
     final decodeJson = jsonDecode(response.body) as List<dynamic>;
-    debugPrint("decodeJson my order : $decodeJson");
+    // debugPrint("decodeJson my order : $decodeJson");
     orderUsername = decodeJson[0]["name"];
   }
 }

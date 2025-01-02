@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/built_category.dart';
 import 'package:product_app/widget/circular_loader.dart';
@@ -27,19 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/offer.png',
   ];
 
+
   int _currentIndex = 0;
-    @override
-  void initState() {
-    super.initState();
-    context.read<ProductData>().getData();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: AppColor.whiteColor),
 
         title: Text(

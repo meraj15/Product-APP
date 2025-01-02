@@ -79,6 +79,7 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
           ),
         ),
       ),
+   
     );
   }
 }

@@ -22,7 +22,10 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   int currentIndex = 0;
-  final CarouselController carouselController = CarouselController();
+  late final CarouselController carouselController;
+  void initstate() {
+    carouselController = CarouselController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,43 +54,46 @@ class _ProductDetailState extends State<ProductDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // CarouselSlider(
-            //   items: widget.product.images.map((image) {
-            //     return Image.network(
-            //       image,
-            //       fit: BoxFit.cover,
-            //     );
-            //   }).toList(),
-            //   options: CarouselOptions(
-            //     height: 300,
-            //     autoPlay: widget.product.images.length > 1,
-            //     autoPlayAnimationDuration: const Duration(seconds: 1),
-            //     enlargeCenterPage: true,
-            //     onPageChanged: (index, reason) {
-            //       setState(() {
-            //         currentIndex = index;
-            //       });
-            //     },
-            //   ),
-            // ),
-            // if (widget.product.images.length > 1)
-            //   Padding(
-            //     padding: const EdgeInsets.symmetric(vertical: 10.0),
-            //     child: DotsIndicator(
-            //       dotsCount: widget.product.images.length,
-            //       // position: currentIndex.toDouble(),
-            //       decorator: const DotsDecorator(
-            //         activeColor: Theme.of(context).colorScheme.primary,
-            //         color: Colors.grey,
-            //         size: Size.square(7.0),
-            //         activeSize: Size(12.0, 12.0),
-            //       ),
-            //       onTap: (index) {
-            //         // carouselController.animateToPage(index.toInt());
-            //       },
-            //     ),
-            //   ),
-           Image.network(widget.product.thumbnail),
+            CarouselSlider(
+              items: widget.product.images.map((image) {
+                return Image.network(
+                  image,
+                  fit: BoxFit.cover,
+                );
+              }).toList(),
+              options: CarouselOptions(
+                height: 300,
+                autoPlay: widget.product.images.length > 1,
+                autoPlayAnimationDuration: const Duration(seconds: 1),
+                enlargeCenterPage: true,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+              ),
+            ),
+            if (widget.product.images.length > 1)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: DotsIndicator(
+                  dotsCount: widget.product.images.length,
+                  position: currentIndex,
+                  decorator: DotsDecorator(
+                    activeColor: Theme.of(context).colorScheme.primary,
+                    color: Colors.grey,
+                    size: const Size.square(7.0),
+                    activeSize: const Size(12.0, 12.0),
+                  ),
+                  onTap: (index) {
+                    carouselController.animateTo(
+                      index.toDouble(),
+                      duration: Duration(seconds: 1),
+                      curve: Curves.easeIn,
+                    );
+                  },
+                ),
+              ),
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: const BoxDecoration(
@@ -127,10 +133,11 @@ class _ProductDetailState extends State<ProductDetail> {
                                 const SizedBox(width: 6),
                                 Text(
                                   "\$${widget.product.price.toString()}",
-                                  style:  TextStyle(
+                                  style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w500,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ],
@@ -154,19 +161,20 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                             child: GestureDetector(
                               onTap: () {
-                               Map<String, dynamic> favoriteData = {
-                                'id': widget.product.id,
-                                'brand': widget.product.brand,
-                                'title': widget.product.title,
-                                'thumbnail': widget.product.thumbnail,
-                                'price': widget.product.price,
-                                'rating': widget.product.rating,
-                                'warrantyinformation':
-                                    widget.product.warrantyInformation,
-                                'userid': userID,
-                              };
+                                Map<String, dynamic> favoriteData = {
+                                  'id': widget.product.id,
+                                  'brand': widget.product.brand,
+                                  'title': widget.product.title,
+                                  'thumbnail': widget.product.thumbnail,
+                                  'price': widget.product.price,
+                                  'rating': widget.product.rating,
+                                  'warrantyinformation':
+                                      widget.product.warrantyInformation,
+                                  'userid': userID,
+                                };
 
-                              context.read<ProductData>().toggleFavorite(widget.product, favoriteData);
+                                context.read<ProductData>().toggleFavorite(
+                                    widget.product, favoriteData);
                               },
                               child: CircleAvatar(
                                 backgroundColor: AppColor.whiteColor,
@@ -218,7 +226,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       ),
                       Text(
                         "Discount: ${widget.product.discountPercentage}%",
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: Theme.of(context).colorScheme.primary,
@@ -293,14 +301,14 @@ class _ProductDetailState extends State<ProductDetail> {
                   //               ),
                   //             ),
                   //           ),
-                          
+
                   //         ],
                   //       ),
                   //     )
-                    
+
                   //   ],
                   // ),
-                 
+
                   const SizedBox(height: 12),
                   SizeShowModelBottomSheet(
                     product: widget.product,
@@ -317,7 +325,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         'brand': widget.product.brand,
                         'price': widget.product.price,
                         'userid': userID,
-                        'quantity':1,
+                        'quantity': 1,
                       },
                     ),
                   ),
