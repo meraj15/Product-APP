@@ -4,10 +4,19 @@ import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/view/order_items_screen.dart';
 import 'package:provider/provider.dart';
 
-class MyOrderScreen extends StatelessWidget {
+class MyOrderScreen extends StatefulWidget {
   const MyOrderScreen({super.key});
 
   @override
+  State<MyOrderScreen> createState() => _MyOrderScreenState();
+}
+
+class _MyOrderScreenState extends State<MyOrderScreen> {
+ @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final providerRead = context.watch<ProductData>();
@@ -22,7 +31,6 @@ class MyOrderScreen extends StatelessWidget {
           "My Orders",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
-      
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -33,11 +41,7 @@ class MyOrderScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final order = providerRead.userAllOrders[index];
 
-                  final orderQuantity = (providerRead
-                              .orderItemsQuantityList.isNotEmpty &&
-                          index < providerRead.orderItemsQuantityList.length)
-                      ? providerRead.orderItemsQuantityList[index]['quantity']
-                      : 0;
+                 
 
                   return Container(
                     width: 334,
@@ -88,7 +92,7 @@ class MyOrderScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Quantity : $orderQuantity",
+                              "No. of Products: : ${context.read<ProductData>().orderedItems.length}",
                               style: TextStyle(
                                   fontSize: 14, color: Color(0xff9B9B9B)),
                             ),

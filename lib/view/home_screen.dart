@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:product_app/main.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/built_category.dart';
 import 'package:product_app/widget/circular_loader.dart';
@@ -12,6 +10,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import '../constant/contant.dart';
 import '../provider/product_provider.dart';
 import '../widget/drawer.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

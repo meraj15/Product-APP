@@ -7,7 +7,7 @@ import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/checkout_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
+double totalAmount = 0.0;
 class AddCard extends StatefulWidget {
   const AddCard({super.key});
 
@@ -255,7 +255,7 @@ class _AddCardState extends State<AddCard> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Consumer<ProductData>(builder: (context, productData, child) {
-                    double totalAmount = 0.0;
+                    
                     productData.addCard.forEach((product) {
                       totalAmount += product.productQuantity * product.price;
                     });

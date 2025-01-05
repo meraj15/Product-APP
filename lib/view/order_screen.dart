@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
+import 'package:product_app/view/add_cart.dart';
 
 import '../routes/app_routes.dart';
 
@@ -88,6 +89,7 @@ Widget build(BuildContext context) {
       body: jsonEncode({
         "id": 101,
         "userid": userID,
+        'price':totalAmount,
       }),
     );
     final data = jsonDecode(response.body);

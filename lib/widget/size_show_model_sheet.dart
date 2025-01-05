@@ -18,10 +18,12 @@ class SizeShowModelBottomSheet extends StatefulWidget {
 class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
   @override
   Widget build(BuildContext context) {
+    final providerWatch = context.watch<ProductData>();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("⭐ ${widget.product.rating} (320 reviews)"),
+
+        Text("⭐ ${providerWatch.averageRating.toStringAsFixed(1)} (${providerWatch.productReviews.length} reviews)"),
         GestureDetector(
           onTap: () {
             showModalBottomSheet(

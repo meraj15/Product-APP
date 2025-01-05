@@ -46,7 +46,6 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                
                 Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
               } else {
-               
                 if (providerRead.productSize.isNotEmpty) {
                   providerRead.postcartsData(widget.pdata);
                   providerRead.addCard.add(widget.product); 

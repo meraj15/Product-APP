@@ -4,6 +4,7 @@ import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/view/favorite_card.dart';
 import 'package:product_app/view/home_screen.dart';
+import 'package:product_app/view/my_order_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../view/profile_screen.dart';
@@ -25,8 +26,6 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
     context.read<ProductData>().getData();
     context.read<ProductData>().getAddressData();
     context.read<ProductData>().fetchMyAllOrders(userID);
-
-
     super.initState();
   }
   @override

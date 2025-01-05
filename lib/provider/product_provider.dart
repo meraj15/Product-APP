@@ -25,10 +25,12 @@ class ProductData extends ChangeNotifier {
   List<dynamic> userAllOrders = [];
   bool isOrderAllLoading = true;
   List<Product> orderedItems = [];
-  List<dynamic> orderItemsQuantityList=[];
+  List<dynamic> productReviews = [];
+  List<dynamic> orderItemsQuantityList = [];
   String orderUsername = "";
-  Map<String,dynamic> upadateQuantity = {};
-
+  Map<String, dynamic> upadateQuantity = {};
+  List<Map<String, dynamic>> productFirstReviews = [];
+    double averageRating = 0.0;
 
   TextEditingController userName = TextEditingController();
   TextEditingController userStreet = TextEditingController();
@@ -52,29 +54,24 @@ class ProductData extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
- 
-
   Future<void> getData() async {
-  try {
-    final response = await http.get(Uri.parse(APIEndPoint.productGetEndPoint));
-    if (response.statusCode == 200) {
-      final decodeJson = jsonDecode(response.body) as List<dynamic>;
-      products = decodeJson.map((json) => Product.fromJson(json)).toList();
-      isLoaded = false;
-      notifyListeners();
-    } else {
-      debugPrint("Failed to load products: ${response.body}");
-      throw Exception('Failed to load products');
+    try {
+      final response =
+          await http.get(Uri.parse(APIEndPoint.productGetEndPoint));
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+        products = decodeJson.map((json) => Product.fromJson(json)).toList();
+        isLoaded = false;
+        notifyListeners();
+      } else {
+        debugPrint("Failed to load products: ${response.body}");
+        throw Exception('Failed to load products');
+      }
+    } catch (e) {
+      debugPrint("Error fetching products: $e");
+      error = e.toString();
     }
-  } catch (e) {
-    debugPrint("Error fetching products: $e");
-    error = e.toString();
   }
-}
-
-
 
   // double get totalPrice {
   //   double total = 0.0;
@@ -172,41 +169,41 @@ class ProductData extends ChangeNotifier {
   // }
 
   void postcartsData(Map<String, dynamic> pdata) async {
-  pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;  
-  var url = Uri.parse(APIEndPoint.postcartsDataEndPoint);
-  pdata['quantity'] = pdata['quantity'] ?? 1;
-  await http.post(
-    url,
-    headers: {"Content-Type": "application/json"},
-    body: jsonEncode(pdata), 
-  );
-  getData();  
-}
+    pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
+    var url = Uri.parse(APIEndPoint.postcartsDataEndPoint);
+    pdata['quantity'] = pdata['quantity'] ?? 1;
+    await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(pdata),
+    );
+    getData();
+  }
 
-void updateCartQuantity(List<Map<String, dynamic>> updatedQuantities) async {
-  var url = Uri.parse(APIEndPoint.updateCartQuantity);
-await http.post(
+  void updateCartQuantity(List<Map<String, dynamic>> updatedQuantities) async {
+    var url = Uri.parse(APIEndPoint.updateCartQuantity);
+    await http.post(
       url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(updatedQuantities),
     );
-}
-
-void getCartsData(String userid) async {
-  final url = "http://192.168.0.110:3000/api/carts/$userid";
-  try {
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final decodeJson = jsonDecode(response.body) as List<dynamic>;
-      addCard = decodeJson.map((json) => Product.fromJson(json)).toList();
-      // debugPrint(" addCard : $addCard");
-      notifyListeners(); 
-    }
-  } catch (e) {
-    debugPrint("Error fetching cart data: $e");
   }
-}
+
+  void getCartsData(String userid) async {
+    final url = "http://192.168.0.110:3000/api/carts/$userid";
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+        addCard = decodeJson.map((json) => Product.fromJson(json)).toList();
+        // debugPrint(" addCard : $addCard");
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Error fetching cart data: $e");
+    }
+  }
 
   void deleteCartData(int index) async {
     final idToDelete = addCard[index].id;
@@ -306,7 +303,7 @@ void getCartsData(String userid) async {
 
   void updateData(String userId) async {
     final url = Uri.parse("http://192.168.0.110:3000/api/address/$userId");
-     await http.patch(
+    await http.patch(
       url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
@@ -384,8 +381,6 @@ void getCartsData(String userid) async {
         userState.text = place.administrativeArea ?? '';
         userZipCode.text = place.postalCode ?? '';
         userCountry.text = place.country ?? '';
-
-        
       }
     }
   }
@@ -418,11 +413,12 @@ void getCartsData(String userid) async {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final decodedJson = jsonDecode(response.body) as List<dynamic>;
+        debugPrint("decodedJson item : $response");
 
         orderedItems =
             decodedJson.map((json) => Product.fromJson(json)).toList();
-            orderItemsQuantityList = decodedJson;
-        // debugPrint("orderedItems : $orderedItems");
+        orderItemsQuantityList = decodedJson;
+        debugPrint("orderedItems : $orderedItems");
         notifyListeners();
       } else {
         debugPrint(
@@ -437,7 +433,60 @@ void getCartsData(String userid) async {
     final url = "http://192.168.0.110:3000/api/myorders/$userId";
     final response = await http.get(Uri.parse(url));
     final decodeJson = jsonDecode(response.body) as List<dynamic>;
-    // debugPrint("decodeJson my order : $decodeJson");
     orderUsername = decodeJson[0]["name"];
   }
+
+  void postReviews(BuildContext context, Map reviewData, int productId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.0.110:3000/api/products/$productId/reviews'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reviewData),
+      );
+
+      if (response.statusCode == 201) {
+        // Success message
+        Navigator.pop(context); // Close the bottom sheet
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Review submitted successfully!"),
+          ),
+        );
+      } else {
+        // Handle failure
+        debugPrint("Failed to submit review. Error: ${response.body}");
+      }
+    } catch (e) {
+      // Handle exceptions
+      debugPrint("An error occurred: $e");
+    }
+  }
+
+   
+
+  void getReviews(int productId) async {
+  final url = 'http://192.168.0.110:3000/api/products/$productId/reviews';
+  try {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final decodeJson = jsonDecode(response.body) as List<dynamic>;
+      productFirstReviews = List<Map<String, dynamic>>.from(decodeJson);
+      productReviews = decodeJson;
+      notifyListeners(); 
+    } else {
+      throw Exception("Failed to load reviews");
+    }
+  } catch (error) {
+    debugPrint("Error fetching reviews: $error");
+  }
+
+}
+
+Map<String, dynamic>? getLatestReview() {
+    if (productReviews.isNotEmpty) {
+      return productReviews.first; 
+    }
+    return null;
+  }
+
 }

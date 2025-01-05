@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
@@ -9,9 +9,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
-import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
-import 'package:product_app/widget/review_bottemSheet.dart';
+import 'package:product_app/view/reviews_screen.dart';
 import 'package:provider/provider.dart';
 // import 'package:image_picker/image_picker.dart';
 
@@ -34,8 +33,6 @@ class OrderItems extends StatefulWidget {
 }
 
 class _OrderItemsState extends State<OrderItems> {
-  
-
   @override
   void initState() {
     super.initState();
@@ -43,21 +40,30 @@ class _OrderItemsState extends State<OrderItems> {
     context.read<ProductData>().fetchUserOrders(userID);
   }
 
- int selectedStars = 0;
+  int selectedStars = 0;
   final TextEditingController _reviewController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  XFile? _selectedImage;
+  XFile? _imageFile;
+  Future<void> _openCamera() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.camera, 
+        preferredCameraDevice:
+            CameraDevice.rear, 
+      );
 
-  void _openCamera() async {
-    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    if (photo != null) {
-      setState(() {
-        _selectedImage = photo;
-      });
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = pickedFile; 
+        });
+      }
+    } catch (e) {
+      debugPrint("Error picking image: $e");
     }
   }
 
-  void _showReviewBottomSheet(BuildContext context) {
+  void _showReviewBottomSheet(BuildContext context, int productId,
+      String productTitle, String productThumbnail) {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColor.scaffoldColor,
@@ -68,75 +74,113 @@ class _OrderItemsState extends State<OrderItems> {
       builder: (context) {
         return DraggableScrollableSheet(
           expand: false,
-          initialChildSize: 0.76,
+          initialChildSize: 0.72,
           maxChildSize: 0.95,
           minChildSize: 0.5,
           builder: (_, controller) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 100),
+                    padding: const EdgeInsets.symmetric(horizontal: 130.0),
                     child: Container(
-                      width: 70,
                       height: 6,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
                         color: Color(0xff9b9b9b),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                   ),
-                  const Text(
-                    "What is you rate?",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xff222222)),
+                  SizedBox(
+                    height: 5,
                   ),
-                  const SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(5, (index) {
-                      return IconButton(
-                        icon: Icon(
-                          index < selectedStars
-                              ? Icons.star
-                              : Icons.star_border_outlined,
-                          color: index < selectedStars
-                              ? Colors.yellow
-                              : Colors.grey,
-                          size: 32,
+                    children: [
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 100,
+                                  width: 90,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      8,
+                                    ),
+                                    child: Image.network(
+                                      productThumbnail,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          productTitle,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Row(
+                                          children: List.generate(5, (index) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedStars = index + 1;
+                                                });
+                                              },
+                                              child: Icon(
+                                                index < selectedStars
+                                                    ? Icons.star
+                                                    : Icons
+                                                        .star_border_outlined,
+                                                color: index < selectedStars
+                                                    ? Colors.amber
+                                                    : Colors.grey,
+                                                size: 30,
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        onPressed: () {
-                          setState(() {
-                            selectedStars = index + 1;
-                          });
-                        },
-                      );
-                    }),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 15),
-                  const Text(
-                    "Please share your opinion \nabout the product",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xff222222)),
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        4.0,
+                      ),
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withOpacity(0.1),
                           spreadRadius: 2,
                           blurRadius: 2,
+                          offset: const Offset(1, 1.5),
                         ),
                       ],
                     ),
@@ -144,63 +188,87 @@ class _OrderItemsState extends State<OrderItems> {
                       controller: _reviewController,
                       maxLines: 6,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
-                        filled: true,
-                        fillColor: AppColor.whiteColor,
-                        hintText: "Your review",
                         hintStyle: TextStyle(
-                          color: Color(0xff9b9b9b),
-                          fontWeight: FontWeight.w400,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w300,
                         ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(16),
+                        hintText: "Your review",
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: _openCamera,
-                        child: Container(
-                          height: 122,
-                          width: 133,
+                  const SizedBox(height: 16),
+                  Text(
+                    "Add your photos",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                        4.0,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 2,
+                          offset: const Offset(1, 1.5),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(8.0),
+                          height: 90,
+                          width: 90,
                           decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
                             borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade300,
-                                blurRadius: 1,
-                                spreadRadius: 1,
-                              ),
-                            ],
+                            border: Border.all(color: Colors.grey),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.camera_alt,
-                                  color: Colors.red, size: 50),
-                              const SizedBox(height: 8),
-                              Text(
-                                _selectedImage == null
-                                    ? "Add your photos"
-                                    : "Photo Added",
-                                style: const TextStyle(),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                          child: IconButton(
+                            onPressed: _openCamera,
+                            icon: Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 30,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        if (_imageFile != null)
+                          ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.file(
+                                File(_imageFile!.path),
+                                key: ValueKey(_imageFile!.path),
+                                height: 90,
+                                width: 90,
+                                fit: BoxFit.cover,
+                              ))
+                        else
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              'https://via.placeholder.com/60',
+                              height: 90,
+                              width: 90,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 24),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           final reviewText = _reviewController.text.trim();
                           if (reviewText.isEmpty || selectedStars == 0) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -211,12 +279,17 @@ class _OrderItemsState extends State<OrderItems> {
                             );
                             return;
                           }
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Review submitted successfully!"),
-                            ),
-                          );
+
+                          // Preparing the data to be sent
+                          final reviewData = {
+                            "rating": selectedStars,
+                            "comment": reviewText,
+                            "userid": userID,
+                          };
+
+                          context
+                              .read<ProductData>()
+                              .postReviews(context, reviewData, productId);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
@@ -245,7 +318,6 @@ class _OrderItemsState extends State<OrderItems> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -316,8 +388,6 @@ class _OrderItemsState extends State<OrderItems> {
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                // mainAxisAlignment:
-                                //     MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     product.title,
@@ -352,26 +422,24 @@ class _OrderItemsState extends State<OrderItems> {
                                       children: [
                                         TextButton.icon(
                                           onPressed: () {
-                                           _showReviewBottomSheet(context);
+                                            _showReviewBottomSheet(
+                                                context,
+                                                product.id,
+                                                product.title,
+                                                product.thumbnail);
                                           },
-                                          icon: const Icon(
-                                            Icons.edit,
-                                            size: 16, 
-                                              color: Colors.blue
-
-                                          ),
+                                          icon: const Icon(Icons.edit,
+                                              size: 16, color: Colors.blue),
                                           label: const Text(
                                             'Write a review',
                                             style: TextStyle(
-                                              fontSize: 12, 
-                                              color: Colors.blue
-                                            ),
+                                                fontSize: 12,
+                                                color: Colors.blue),
                                           ),
                                           style: TextButton.styleFrom(
-                                            padding: const EdgeInsets.only(
-                                               top: 0), 
-                                            minimumSize: const Size(
-                                                0, 0), 
+                                            padding:
+                                                const EdgeInsets.only(top: 0),
+                                            minimumSize: const Size(0, 0),
                                           ),
                                         ),
                                         Text(
@@ -546,9 +614,6 @@ class _OrderItemsState extends State<OrderItems> {
         ],
       ),
     );
-
     return pdf;
   }
-
-  
 }

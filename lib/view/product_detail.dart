@@ -8,6 +8,7 @@ import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/built_category.dart';
+import 'package:product_app/widget/first_review_product.dart';
 import 'package:product_app/widget/product_detail_bottomsheet.dart';
 import 'package:provider/provider.dart';
 import '../widget/size_show_model_sheet.dart';
@@ -52,7 +53,7 @@ class _ProductDetailState extends State<ProductDetail> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CarouselSlider(
               items: widget.product.images.map((image) {
@@ -234,81 +235,6 @@ class _ProductDetailState extends State<ProductDetail> {
                       ),
                     ],
                   ),
-                  // const SizedBox(height: 12),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     const Text(
-                  //       "Choose amount:",
-                  //       style: TextStyle(
-                  //         fontSize: 15,
-                  //         color: Colors.black54,
-                  //         fontWeight: FontWeight.w500,
-                  //       ),
-                  //     ),
-                  //     Container(
-                  //       height: 40,
-                  //       width: 120,
-                  //       decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(20),
-                  //         color: AppColor.imageBackgroundColor,
-                  //       ),
-                  //       child: Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //         children: [
-                  //           CircleAvatar(
-                  //             radius: 18,
-                  //             backgroundColor: AppColor.whiteColor,
-                  //             child: IconButton(
-                  //               onPressed: () {
-                  //               setState(() {
-                  //                   if (widget.product.productQuantity > 1) {
-                  //                     widget.product.productQuantity--;
-                  //                   }
-                  //                 });
-                  //               },
-                  //               icon: const Icon(
-                  //                 Icons.remove,
-                  //                 color: Colors.black,
-                  //                 size: 18,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //           Padding(
-                  //             padding:
-                  //                 const EdgeInsets.symmetric(horizontal: 5.0),
-                  //             child: Text(
-                  //              widget.product.productQuantity.toString(),
-                  //               style: const TextStyle(
-                  //                 fontSize: 16,
-                  //                 fontWeight: FontWeight.w500,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //           CircleAvatar(
-                  //             radius: 18,
-                  //             backgroundColor: Colors.black,
-                  //             child: IconButton(
-                  //               onPressed: () {
-                  //                 setState(() {
-                  //                   widget.product.productQuantity++;
-                  //                 });
-                  //               },
-                  //               icon: const Icon(
-                  //                 Icons.add,
-                  //                 color: AppColor.whiteColor,
-                  //                 size: 18,
-                  //               ),
-                  //             ),
-                  //           ),
-
-                  //         ],
-                  //       ),
-                  //     )
-
-                  //   ],
-                  // ),
-
                   const SizedBox(height: 12),
                   SizeShowModelBottomSheet(
                     product: widget.product,
@@ -349,6 +275,13 @@ class _ProductDetailState extends State<ProductDetail> {
                 color: AppColor.whiteColor,
               ),
             ),
+            SizedBox(
+              height: 8.0,
+            ),
+           
+  DynamicReviewWidget(product: widget.product) 
+ 
+
           ],
         ),
       ),
