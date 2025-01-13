@@ -31,6 +31,8 @@ class ProductData extends ChangeNotifier {
   Map<String, dynamic> upadateQuantity = {};
   List<Map<String, dynamic>> productFirstReviews = [];
     double averageRating = 0.0;
+    List<dynamic> userAllReviews = [];
+double totalAmount = 0.0;
 
   TextEditingController userName = TextEditingController();
   TextEditingController userStreet = TextEditingController();
@@ -73,13 +75,12 @@ class ProductData extends ChangeNotifier {
     }
   }
 
-  // double get totalPrice {
-  //   double total = 0.0;
-  //   for (var product in addCard) {
-  //     total += product.price * product.productQuantity;
-  //   }
-  //   return total;
-  // }
+  void updateTotalAmount() {
+    totalAmount = 0.0; 
+    for (var product in addCard) {
+      totalAmount += product.productQuantity * product.price;
+    }
+  }
 
   void productPriceHightoLow() {
     for (int i = 0; i < products.length; i++) {
@@ -407,7 +408,7 @@ class ProductData extends ChangeNotifier {
     }
   }
 
-  void getOrderItems(String orderId) async {
+  Future<void> getOrderItems(String orderId) async {
     final url = "http://192.168.0.110:3000/api/orderitems/$orderId";
     try {
       final response = await http.get(Uri.parse(url));
@@ -482,11 +483,23 @@ class ProductData extends ChangeNotifier {
 
 }
 
-Map<String, dynamic>? getLatestReview() {
-    if (productReviews.isNotEmpty) {
-      return productReviews.first; 
+  void fetchMyAllReviews(String userId) async {
+    final url = "http://192.168.0.110:3000/api/myallreviews/$userId";
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+
+        userAllReviews = decodeJson;
+
+        notifyListeners();
+      } else {
+        throw Exception("Failed to load orders");
+      }
+    } catch (error) {
+      debugPrint("Error fetching user orders: $error");
+
     }
-    return null;
   }
 
 }

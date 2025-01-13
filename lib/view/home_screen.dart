@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
         iconTheme: const IconThemeData(color: AppColor.whiteColor),
 
         title: Text(
-          "Flutter Market",
+          "E-Commerce App",
           style: GoogleFonts.pacifico(
             fontWeight: FontWeight.w200,
             color: AppColor.whiteColor,

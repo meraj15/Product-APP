@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pdf/pdf.dart';
@@ -10,7 +8,6 @@ import 'package:printing/printing.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
-import 'package:product_app/view/reviews_screen.dart';
 import 'package:provider/provider.dart';
 // import 'package:image_picker/image_picker.dart';
 
@@ -36,8 +33,9 @@ class _OrderItemsState extends State<OrderItems> {
   @override
   void initState() {
     super.initState();
-    context.read<ProductData>().getOrderItems(widget.orderId);
-    context.read<ProductData>().fetchUserOrders(userID);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProductData>().getOrderItems(widget.orderId);
+    });
   }
 
   int selectedStars = 0;
@@ -47,14 +45,13 @@ class _OrderItemsState extends State<OrderItems> {
   Future<void> _openCamera() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.camera, 
-        preferredCameraDevice:
-            CameraDevice.rear, 
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.rear,
       );
 
       if (pickedFile != null) {
         setState(() {
-          _imageFile = pickedFile; 
+          _imageFile = pickedFile;
         });
       }
     } catch (e) {
@@ -88,12 +85,12 @@ class _OrderItemsState extends State<OrderItems> {
                     child: Container(
                       height: 6,
                       decoration: BoxDecoration(
-                        color: Color(0xff9b9b9b),
+                        color: const Color(0xff9b9b9b),
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                   Row(
@@ -130,12 +127,12 @@ class _OrderItemsState extends State<OrderItems> {
                                       children: [
                                         Text(
                                           productTitle,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 18,
                                           ),
                                         ),
-                                        SizedBox(height: 4),
+                                        const SizedBox(height: 4),
                                         Row(
                                           children: List.generate(5, (index) {
                                             return GestureDetector(
@@ -187,7 +184,7 @@ class _OrderItemsState extends State<OrderItems> {
                     child: TextField(
                       controller: _reviewController,
                       maxLines: 6,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintStyle: TextStyle(
                           color: Colors.grey,
                           fontWeight: FontWeight.w300,
@@ -199,7 +196,7 @@ class _OrderItemsState extends State<OrderItems> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
+                  const Text(
                     "Add your photos",
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
@@ -322,7 +319,15 @@ class _OrderItemsState extends State<OrderItems> {
   @override
   Widget build(BuildContext context) {
     final providerRead = context.read<ProductData>();
+    final orderedItems = context.watch<ProductData>().orderedItems;
 
+    if (orderedItems.isEmpty) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(

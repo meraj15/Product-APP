@@ -43,7 +43,8 @@ class ProfileListItem extends StatelessWidget {
                 case 2:
                 Navigator.of(context).pushNamed(AppRoutes.addressForm);
                 break;
-           
+                case 4:
+                Navigator.of(context).pushNamed(AppRoutes.myallreviews);
               default:
             }
           },

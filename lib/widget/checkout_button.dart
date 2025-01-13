@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/provider/product_provider.dart';
+import 'package:product_app/routes/app_routes.dart';
+import 'package:product_app/widget/toast.dart';
 import 'package:provider/provider.dart';
 
 class CheckoutButton extends StatelessWidget {
@@ -14,7 +16,11 @@ class CheckoutButton extends StatelessWidget {
       child: FilledButton(
         onPressed: () {
           context.read<ProductData>().updateCartQuantity(pdata);
-          Navigator.of(context).pushNamed("address_form");
+          if(context.read<ProductData>().addCard.isNotEmpty){
+          Navigator.of(context).pushNamed(AppRoutes.paymentmethodscreen);
+          }else{
+             CustomToast.showCustomToast(context, "Please select the cart");
+          }
         },
         style: FilledButton.styleFrom(
           backgroundColor: const Color(0xffdb3022),

@@ -7,7 +7,7 @@ import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/checkout_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-double totalAmount = 0.0;
+
 class AddCard extends StatefulWidget {
   const AddCard({super.key});
 
@@ -17,8 +17,6 @@ class AddCard extends StatefulWidget {
 
 class _AddCardState extends State<AddCard> {
   List<Map<String, dynamic>> updatedCartQuantities = [];
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,7 @@ class _AddCardState extends State<AddCard> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
-            Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar); 
+            Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
           },
           icon: const Icon(Icons.arrow_back),
         ),
@@ -44,13 +42,13 @@ class _AddCardState extends State<AddCard> {
       body: Column(
         children: [
           Expanded(
-            child: Consumer<ProductData>( 
+            child: Consumer<ProductData>(
               builder: (context, productData, child) {
                 final cartItems = productData.addCard;
                 if (cartItems.isEmpty) {
                   return Center(
                     child: Lottie.asset(
-                        "assets/lottie_animation/product_not_selected.json"), 
+                        "assets/lottie_animation/product_not_selected.json"),
                   );
                 }
                 return Padding(
@@ -83,7 +81,8 @@ class _AddCardState extends State<AddCard> {
                               child: Row(
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
                                     child: Image.network(
                                       product.thumbnail,
                                       width: 115,
@@ -93,10 +92,13 @@ class _AddCardState extends State<AddCard> {
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             product.title,
@@ -108,78 +110,109 @@ class _AddCardState extends State<AddCard> {
                                             ),
                                           ),
                                           const SizedBox(height: 4),
-                                          RichText(
-                                            text:  TextSpan(
-                                              text: 'Brand : ${product.brand}',
-                                              style: TextStyle(color: Colors.black),
+                                          Text(
+                                            'Brand: ${product.brand}',
+                                            style: const TextStyle(
+                                              color: Colors.black,
                                             ),
                                           ),
                                           const SizedBox(height: 6),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Container(
                                                 decoration: BoxDecoration(
-                                                  color: const Color(0xffEEEEEE),
-                                                  borderRadius: BorderRadius.circular(20),
+                                                  color:
+                                                      const Color(0xffEEEEEE),
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
                                                 ),
                                                 child: Padding(
-                                                  padding: const EdgeInsets.all(5.0),
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
                                                   child: Row(
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {
                                                           setState(() {
-                                                            if (product.productQuantity > 1) {
-                                                              product.productQuantity--;
-                                                              updatedCartQuantities.add({
-                                                                'id': product.id,
-                                                                'quantity': product.productQuantity
+                                                            if (product
+                                                                    .productQuantity >
+                                                                1) {
+                                                              product
+                                                                  .productQuantity--;
+                                                              updatedCartQuantities
+                                                                  .add({
+                                                                'id':
+                                                                    product.id,
+                                                                'quantity': product
+                                                                    .productQuantity,
                                                               });
+                                                              productData
+                                                                  .updateTotalAmount();
                                                             }
                                                           });
                                                         },
                                                         child: Container(
                                                           width: 28,
                                                           height: 28,
-                                                          decoration: BoxDecoration(
-                                                            color: AppColor.whiteColor,
-                                                            shape: BoxShape.circle,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            color: AppColor
+                                                                .whiteColor,
+                                                            shape:
+                                                                BoxShape.circle,
                                                           ),
                                                           child: const Icon(
                                                             Icons.remove,
-                                                            color: Colors.black54,
+                                                            color:
+                                                                Colors.black54,
                                                             size: 18.0,
                                                           ),
                                                         ),
                                                       ),
                                                       Padding(
-                                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 8.0,
+                                                        ),
                                                         child: Text(
-                                                          product.productQuantity.toString(),
-                                                          style: const TextStyle(
+                                                          product
+                                                              .productQuantity
+                                                              .toString(),
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 16,
-                                                            fontWeight: FontWeight.w500,
+                                                            fontWeight:
+                                                                FontWeight.w500,
                                                           ),
                                                         ),
                                                       ),
                                                       GestureDetector(
                                                         onTap: () {
                                                           setState(() {
-                                                            product.productQuantity++;
-                                                            // Store updated quantity in the list
-                                                            updatedCartQuantities.add({
+                                                            product
+                                                                .productQuantity++;
+                                                            updatedCartQuantities
+                                                                .add({
                                                               'id': product.id,
-                                                              'quantity': product.productQuantity
+                                                              'quantity': product
+                                                                  .productQuantity,
                                                             });
+                                                            productData
+                                                                .updateTotalAmount();
                                                           });
                                                         },
                                                         child: Container(
                                                           width: 28,
                                                           height: 28,
-                                                          decoration: BoxDecoration(
-                                                            color: AppColor.whiteColor,
-                                                            shape: BoxShape.circle,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            color: AppColor
+                                                                .whiteColor,
+                                                            shape:
+                                                                BoxShape.circle,
                                                           ),
                                                           child: const Icon(
                                                             Icons.add,
@@ -199,7 +232,8 @@ class _AddCardState extends State<AddCard> {
                                                     "${product.price.toStringAsFixed(2)}",
                                                     style: const TextStyle(
                                                       fontSize: 22,
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                       color: Colors.black,
                                                     ),
                                                   ),
@@ -243,49 +277,48 @@ class _AddCardState extends State<AddCard> {
             child: Column(
               children: [
                 Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Enter your promo code',
-                suffixIcon: Icon(Icons.arrow_forward),
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      hintText: 'Enter your promo code',
+                      suffixIcon: Icon(Icons.arrow_forward),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Consumer<ProductData>(builder: (context, productData, child) {
-                    
-                    productData.addCard.forEach((product) {
-                      totalAmount += product.productQuantity * product.price;
-                    });
+                  child: Consumer<ProductData>(
+                    builder: (context, productData, child) {
+                      productData.updateTotalAmount();
 
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Total amount : ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Total amount : ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "\$${totalAmount.toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 17,
+                            Text(
+                              "\$${productData.totalAmount.toStringAsFixed(2)}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 17,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 CheckoutButton(
-                  pdata: updatedCartQuantities, 
+                  pdata: updatedCartQuantities,
                 ),
               ],
             ),

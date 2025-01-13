@@ -12,7 +12,7 @@ class MyOrderScreen extends StatefulWidget {
 }
 
 class _MyOrderScreenState extends State<MyOrderScreen> {
- @override
+  @override
   void initState() {
     super.initState();
   }
@@ -20,14 +20,12 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
   @override
   Widget build(BuildContext context) {
     final providerRead = context.watch<ProductData>();
-
-    return Scaffold(
+        return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        // leading: Icon(Icons.arrow_back, color: Colors.black),
-        title: Text(
+        title: const Text(
           "My Orders",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
@@ -35,14 +33,11 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: providerRead.userAllOrders.isEmpty
-            ? Center(child: Text("No orders available."))
+            ? const Center(child: Text("No orders available."))
             : ListView.builder(
                 itemCount: providerRead.userAllOrders.length,
                 itemBuilder: (context, index) {
                   final order = providerRead.userAllOrders[index];
-
-                 
-
                   return Container(
                     width: 334,
                     height: 164,
@@ -56,7 +51,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                           color: Colors.grey.withOpacity(0.2),
                           blurRadius: 3,
                           spreadRadius: 1,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -68,7 +63,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                           children: [
                             Text(
                               "Order ID: ${order['order_id']}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xff222222),
@@ -76,42 +71,40 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                             ),
                             Text(
                               order['order_date'],
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 14),
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 14),
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
-                          "Name : ${order['name']}",
-                          style:
-                              TextStyle(fontSize: 14, color: Color(0xff9B9B9B)),
+                          "Name: ${order['name']}",
+                          style: const TextStyle(
+                              fontSize: 14, color: Color(0xff9B9B9B)),
                         ),
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "No. of Products: : ${context.read<ProductData>().orderedItems.length}",
-                              style: TextStyle(
-                                  fontSize: 14, color: Color(0xff9B9B9B)),
-                            ),
-                            Text(
-                              "Total : \$${double.parse(order['price'].toString()).toStringAsFixed(2)}",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 8),
+                        Text(
+                          "Total: \$${double.parse(order['price'].toString()).toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
                         ),
-                        SizedBox(height: 5),
+                        //  Text(
+                        //      "No. of Products: ${order['products']?.length ?? 0}",
+                        //       style: const TextStyle(
+                        //           fontSize: 14, color: Color(0xff9B9B9B)),
+                        //     ),
+                        const SizedBox(height: 5),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             OutlinedButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                await context
+                                    .read<ProductData>()
+                                    .getOrderItems(order['order_id']);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -126,21 +119,21 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                               },
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide.none,
-                                  backgroundColor:AppColor.appMainColor,
+                                backgroundColor: AppColor.appMainColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
                                 ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 "Details",
-                                style: TextStyle(color: AppColor.whiteColor,),
+                                style: TextStyle(color: AppColor.whiteColor),
                               ),
                             ),
                             Text(
                               order['order_status'],
                               style: TextStyle(
                                 color: order['order_status'] == "Delivered"
-                                    ? Color(0xff2AA952)
+                                    ? const Color(0xff2AA952)
                                     : Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
