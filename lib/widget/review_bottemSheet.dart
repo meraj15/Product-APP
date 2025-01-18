@@ -1,231 +1,297 @@
-// import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
-// import 'package:product_app/constant/contant.dart';
+import 'dart:io';
 
-// class ReviewBottomSheet extends StatefulWidget {
-  
-//   const ReviewBottomSheet({super.key});
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
+import 'package:product_app/provider/product_provider.dart';
+import 'package:provider/provider.dart';
 
-//   @override
-//   _ReviewBottomSheetState createState() => _ReviewBottomSheetState();
-// }
+class ReviewBottomSheet extends StatefulWidget {
+  final int productId;
+  final String productTitle;
+  final String productThumbnail;
 
-// class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
-//   int selectedStars = 0;
-//   final TextEditingController _reviewController = TextEditingController();
-//   final ImagePicker _picker = ImagePicker();
-//   XFile? _selectedImage;
+  const ReviewBottomSheet({
+    super.key,
+    required this.productId,
+    required this.productTitle,
+    required this.productThumbnail,
+  });
 
-//   void _openCamera() async {
-//     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-//     if (photo != null) {
-//       setState(() {
-//         _selectedImage = photo;
-//       });
-//     }
-//   }
+  @override
+  _ReviewBottomSheetState createState() => _ReviewBottomSheetState();
+}
 
-//   void _showReviewBottomSheet(BuildContext context) {
-//     showModalBottomSheet(
-//       context: context,
-//       backgroundColor: AppColor.scaffoldColor,
-//       isScrollControlled: true,
-//       shape: const RoundedRectangleBorder(
-//         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//       ),
-//       builder: (context) {
-//         return DraggableScrollableSheet(
-//           expand: false,
-//           initialChildSize: 0.76,
-//           maxChildSize: 0.95,
-//           minChildSize: 0.5,
-//           builder: (_, controller) {
-//             return Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.center,
-//                 children: [
-//                   Padding(
-//                     padding: const EdgeInsets.symmetric(
-//                         vertical: 4.0, horizontal: 100),
-//                     child: Container(
-//                       width: 70,
-//                       height: 6,
-//                       decoration: BoxDecoration(
-//                         borderRadius: BorderRadius.circular(3),
-//                         color: Color(0xff9b9b9b),
-//                       ),
-//                     ),
-//                   ),
-//                   const Text(
-//                     "What is you rate?",
-//                     style: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.w500,
-//                         color: Color(0xff222222)),
-//                   ),
-//                   const SizedBox(height: 10),
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: List.generate(5, (index) {
-//                       return IconButton(
-//                         icon: Icon(
-//                           index < selectedStars
-//                               ? Icons.star
-//                               : Icons.star_border_outlined,
-//                           color: index < selectedStars
-//                               ? Colors.yellow
-//                               : Colors.grey,
-//                           size: 32,
-//                         ),
-//                         onPressed: () {
-//                           setState(() {
-//                             selectedStars = index + 1;
-//                           });
-//                         },
-//                       );
-//                     }),
-//                   ),
-//                   const SizedBox(height: 15),
-//                   const Text(
-//                     "Please share your opinion \nabout the product",
-//                     textAlign: TextAlign.center,
-//                     style: TextStyle(
-//                         fontSize: 16,
-//                         fontWeight: FontWeight.w500,
-//                         color: Color(0xff222222)),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   Container(
-//                     decoration: BoxDecoration(
-//                       color: Colors.white,
-//                       borderRadius: BorderRadius.circular(10),
-//                       boxShadow: [
-//                         BoxShadow(
-//                           color: Colors.grey.withOpacity(0.2),
-//                           spreadRadius: 2,
-//                           blurRadius: 2,
-//                         ),
-//                       ],
-//                     ),
-//                     child: TextField(
-//                       controller: _reviewController,
-//                       maxLines: 6,
-//                       decoration: InputDecoration(
-//                         border: InputBorder.none,
-//                         filled: true,
-//                         fillColor: AppColor.whiteColor,
-//                         hintText: "Your review",
-//                         hintStyle: TextStyle(
-//                           color: Color(0xff9b9b9b),
-//                           fontWeight: FontWeight.w400,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   Row(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       GestureDetector(
-//                         onTap: _openCamera,
-//                         child: Container(
-//                           height: 122,
-//                           width: 133,
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(8),
-//                             color: Colors.white,
-//                             boxShadow: [
-//                               BoxShadow(
-//                                 color: Colors.grey.shade300,
-//                                 blurRadius: 1,
-//                                 spreadRadius: 1,
-//                               ),
-//                             ],
-//                           ),
-//                           child: Column(
-//                             mainAxisAlignment: MainAxisAlignment.center,
-//                             children: [
-//                               const Icon(Icons.camera_alt,
-//                                   color: Colors.red, size: 50),
-//                               const SizedBox(height: 8),
-//                               Text(
-//                                 _selectedImage == null
-//                                     ? "Add your photos"
-//                                     : "Photo Added",
-//                                 style: const TextStyle(),
-//                                 textAlign: TextAlign.center,
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                   const SizedBox(height: 30),
-//                   Padding(
-//                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
-//                     child: SizedBox(
-//                       width: double.infinity,
-//                       child: ElevatedButton(
-//                         onPressed: () {
-//                           final reviewText = _reviewController.text.trim();
-//                           if (reviewText.isEmpty || selectedStars == 0) {
-//                             ScaffoldMessenger.of(context).showSnackBar(
-//                               const SnackBar(
-//                                 content: Text(
-//                                     "Please provide a rating and a review."),
-//                               ),
-//                             );
-//                             return;
-//                           }
-//                           Navigator.pop(context);
-//                           ScaffoldMessenger.of(context).showSnackBar(
-//                             const SnackBar(
-//                               content: Text("Review submitted successfully!"),
-//                             ),
-//                           );
-//                         },
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor:
-//                               Theme.of(context).colorScheme.primary,
-//                           padding: const EdgeInsets.symmetric(vertical: 13),
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(24),
-//                           ),
-//                         ),
-//                         child: const Text(
-//                           "SEND REVIEW",
-//                           style: TextStyle(
-//                             fontSize: 15,
-//                             fontWeight: FontWeight.w500,
-//                             color: AppColor.whiteColor,
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             );
-//           },
-//         );
-//       },
-//     );
-//   }
+class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
+  int selectedStars = 0;
+  final TextEditingController _reviewController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  List<XFile> _imageFiles = []; // List to store multiple images
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("Review Demo"),
-//       ),
-//       body: Center(
-//         child: ElevatedButton(
-//           onPressed: () => _showReviewBottomSheet(context),
-//           child: const Text("Write a Review"),
-//         ),
-//       ),
-//     );
-//   }
-// }
+  Future<void> _openCamera() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.rear,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _imageFiles.add(pickedFile);
+        });
+      }
+    } catch (e) {
+      debugPrint("Error picking image: $e");
+    }
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _imageFiles.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 130.0),
+            child: Container(
+              height: 6,
+              decoration: BoxDecoration(
+                color: const Color(0xff9b9b9b),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 100,
+                          width: 90,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              widget.productThumbnail,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  widget.productTitle,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: List.generate(5, (index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedStars = index + 1;
+                                        });
+                                      },
+                                      child: Icon(
+                                        index < selectedStars
+                                            ? Icons.star
+                                            : Icons.star_border_outlined,
+                                        color: index < selectedStars
+                                            ? Colors.amber
+                                            : Colors.grey,
+                                        size: 30,
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4.0),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 2,
+                  blurRadius: 2,
+                  offset: const Offset(1, 1.5),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: _reviewController,
+              maxLines: 6,
+              decoration: const InputDecoration(
+                hintStyle: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w300,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.all(16),
+                hintText: "Your review",
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "Add your photos",
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+        SizedBox(
+  height: 100,
+  child: ListView.builder(
+    scrollDirection: Axis.horizontal,
+    itemCount: _imageFiles.length + 1, // +1 for the camera icon
+    itemBuilder: (context, index) {
+      if (index == 0) {
+        // Always show the camera icon as the first item
+        return GestureDetector(
+          onTap: _openCamera,
+          child: Container(
+            margin: const EdgeInsets.all(8.0),
+            height: 90,
+            width: 90,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: const Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+              size: 30,
+            ),
+          ),
+        );
+      } else {
+        // Show selected images starting from index 1
+        final imageIndex = index - 1;
+        return Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.all(8.0),
+              height: 90,
+              width: 90,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  File(_imageFiles[imageIndex].path),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 4,
+              right: 4,
+              child: GestureDetector(
+                onTap: () => _removeImage(imageIndex),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+    },
+  ),
+),
+
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  final reviewText = _reviewController.text.trim();
+                  if (reviewText.isEmpty || selectedStars == 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please provide a rating and a review."),
+                      ),
+                    );
+                    return;
+                  }
+
+                  final reviewData = {
+                    "rating": selectedStars,
+                    "comment": reviewText,
+                    "userid":userID,
+                  };
+
+                  context
+                      .read<ProductData>()
+                      .postReviews(context, reviewData, widget.productId);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+                child: const Text(
+                  "SEND REVIEW",
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.whiteColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

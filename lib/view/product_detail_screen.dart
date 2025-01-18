@@ -53,7 +53,7 @@ class _ProductDetailState extends State<ProductDetail> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CarouselSlider(
               items: widget.product.images.map((image) {
@@ -273,6 +273,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 category: widget.product.category,
                 // context: context,
                 color: AppColor.whiteColor,
+                product: widget.product,
               ),
             ),
             SizedBox(

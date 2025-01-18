@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
+import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../view/product_detail.dart';
+import '../view/product_detail_screen.dart';
 
 class BuiltCategory extends StatelessWidget {
   final Color color;
   final String category;
+  final Product? product;
 
-  const BuiltCategory({
-    super.key,
-    required this.category,
-    required this.color,
-  });
+  const BuiltCategory(
+      {super.key, required this.category, required this.color, this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +23,16 @@ class BuiltCategory extends StatelessWidget {
 
     final filterProduct = userInput.isEmpty
         ? providerRead.products
-            .where((element) => element.category.toLowerCase() == category)
-            .toList()
-        : providerRead.products
             .where((element) =>
                 element.category.toLowerCase() == category &&
-                element.title.toLowerCase().contains(userInput))
+                element.id != product?.id)
+            .toList()
+        : providerRead.products
+            .where(
+              (element) =>
+                  element.category.toLowerCase() == category &&
+                  element.title.toLowerCase().contains(userInput),
+            )
             .toList();
 
     return Scaffold(
@@ -81,9 +84,10 @@ class BuiltCategory extends StatelessWidget {
                               height: 200,
                               child: Center(
                                 child: Image.network(
-                                  product.category == "smartphones" || product.category == "vehicle"?
-                                  product.images.first :
-                                  product.thumbnail,
+                                  product.category == "smartphones" ||
+                                          product.category == "vehicle"
+                                      ? product.images.first
+                                      : product.thumbnail,
                                   fit: BoxFit.fitWidth,
                                 ),
                               ),
@@ -168,10 +172,11 @@ class BuiltCategory extends StatelessWidget {
                                 'warrantyinformation':
                                     product.warrantyInformation,
                                 'userid': userID,
-                                'category':product.category,
+                                'category': product.category,
                               };
 
-                              providerRead.toggleFavorite(product, favoriteData);
+                              providerRead.toggleFavorite(
+                                  product, favoriteData);
                             },
                             child: Icon(
                               isFavorite
@@ -215,7 +220,7 @@ class BuiltCategory extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       "\$${product.price}",
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w500,
                       ),

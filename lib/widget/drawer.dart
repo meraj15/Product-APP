@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_app/Auth/auth_service.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +17,7 @@ class DrawerWidget extends StatelessWidget {
           Container(
             height: 228,
             width: double.infinity,
-            decoration:  BoxDecoration(
+            decoration: BoxDecoration(
                 // gradient: LinearGradient(
                 //   colors: [
                 //     Theme.of(context).colorScheme.primary,
@@ -49,7 +50,7 @@ class DrawerWidget extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-               const SizedBox(
+                const SizedBox(
                   height: 7,
                 ),
               ],
@@ -62,16 +63,15 @@ class DrawerWidget extends StatelessWidget {
                 createDrawerItem(
                   icon: Icons.home,
                   context: context,
-
                   text: 'Home',
                   onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
+                    Navigator.of(context)
+                        .pushNamed(AppRoutes.bottemNavigationBar);
                   },
                 ),
                 createDrawerItem(
                   icon: Icons.shopping_cart,
                   context: context,
-
                   text: 'My Orders',
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.myorderScreen);
@@ -80,7 +80,6 @@ class DrawerWidget extends StatelessWidget {
                 createDrawerItem(
                   icon: Icons.favorite,
                   context: context,
-
                   text: 'Favorites',
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.favoriteScreen);
@@ -89,7 +88,6 @@ class DrawerWidget extends StatelessWidget {
                 createDrawerItem(
                   icon: Icons.history,
                   context: context,
-
                   text: 'Order History',
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.profileScreen);
@@ -98,7 +96,6 @@ class DrawerWidget extends StatelessWidget {
                 createDrawerItem(
                   icon: Icons.person,
                   context: context,
-
                   text: 'Profile',
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.profileScreen);
@@ -108,7 +105,6 @@ class DrawerWidget extends StatelessWidget {
                   icon: Icons.settings,
                   text: 'Settings',
                   context: context,
-
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.profileScreen);
                   },
@@ -117,7 +113,6 @@ class DrawerWidget extends StatelessWidget {
                 createDrawerItem(
                   icon: Icons.help,
                   context: context,
-
                   text: 'Help & Support',
                   onTap: () {
                     Navigator.of(context).pushNamed('/help-support');
@@ -127,11 +122,11 @@ class DrawerWidget extends StatelessWidget {
                   icon: Icons.logout,
                   context: context,
                   text: 'Logout',
-                  onTap: ()async {
-                         isLogged = false;
-  final SharedPreferences logged = await SharedPreferences.getInstance();
-  logged.setBool("logged", isLogged);
-                    Navigator.of(context).pushNamed(AppRoutes.initialRoute);
+                  onTap: () async {
+                     await AuthService.logout();
+                       
+                        
+                    Navigator.of(context).pushNamed("/");
                   },
                 ),
               ],
@@ -145,8 +140,8 @@ class DrawerWidget extends StatelessWidget {
   Widget createDrawerItem({
     required IconData icon,
     required String text,
-    VoidCallback? onTap,
-   required BuildContext context,
+   required VoidCallback? onTap,
+    required BuildContext context,
   }) {
     return ListTile(
       leading: Icon(

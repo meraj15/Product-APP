@@ -11,14 +11,14 @@ import 'package:provider/provider.dart';
 
 import '../routes/app_routes.dart';
 
-class OrdersScreen extends StatefulWidget {
-  const OrdersScreen({super.key});
+class OrdersSuccessScreen extends StatefulWidget {
+  const OrdersSuccessScreen({super.key});
 
   @override
-  State<OrdersScreen> createState() => _OrdersScreenState();
+  State<OrdersSuccessScreen> createState() => _OrdersSuccessScreenState();
 }
 
-class _OrdersScreenState extends State<OrdersScreen> {
+class _OrdersSuccessScreenState extends State<OrdersSuccessScreen> {
   bool _isDataPosted = false; // Flag to ensure postData runs only once
 
   @override

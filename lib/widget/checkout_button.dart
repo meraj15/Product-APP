@@ -17,7 +17,8 @@ class CheckoutButton extends StatelessWidget {
         onPressed: () {
           context.read<ProductData>().updateCartQuantity(pdata);
           if(context.read<ProductData>().addCard.isNotEmpty){
-          Navigator.of(context).pushNamed(AppRoutes.paymentmethodscreen);
+          Navigator.of(context).pushNamed(AppRoutes.addressForm);
+             context.read<ProductData>().updateCartQuantity(pdata);
           }else{
              CustomToast.showCustomToast(context, "Please select the cart");
           }

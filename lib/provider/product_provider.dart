@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:product_app/Auth/auth_service.dart';
 import 'package:product_app/config/endpoint.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/model/product.dart';
+import 'package:product_app/routes/app_routes.dart';
 
 class ProductData extends ChangeNotifier {
   bool isLoaded = true;
@@ -30,16 +32,21 @@ class ProductData extends ChangeNotifier {
   String orderUsername = "";
   Map<String, dynamic> upadateQuantity = {};
   List<Map<String, dynamic>> productFirstReviews = [];
-    double averageRating = 0.0;
-    List<dynamic> userAllReviews = [];
-double totalAmount = 0.0;
-
+  double averageRating = 0.0;
+  List<dynamic> userAllReviews = [];
+  double totalAmount = 0.0;
   TextEditingController userName = TextEditingController();
   TextEditingController userStreet = TextEditingController();
   TextEditingController userCity = TextEditingController();
   TextEditingController userState = TextEditingController();
   TextEditingController userZipCode = TextEditingController();
   TextEditingController userCountry = TextEditingController();
+  String signScreenErrorMsg = "";
+  final GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
+  
+  bool? isCheckBox = false;
+  bool isClickedPasword = true;
+  String loginScreenErrorMsg = "";
 
   void setProductSize(String size) {
     productSize = size;
@@ -76,7 +83,7 @@ double totalAmount = 0.0;
   }
 
   void updateTotalAmount() {
-    totalAmount = 0.0; 
+    totalAmount = 0.0;
     for (var product in addCard) {
       totalAmount += product.productQuantity * product.price;
     }
@@ -121,54 +128,6 @@ double totalAmount = 0.0;
     notifyListeners();
   }
 
-  // void saveData() async {
-  //   // final List<Map> mapProducts = favorite.map((p) => productToMap(p)).toList();
-  //   final List<Map> mapCards = addCard.map((c) => productToMap(c)).toList();
-  //   // jsonProducts = mapProducts.map((mp) => jsonEncode(mp)).toList();
-  //   jsonCards = mapCards.map((mc) => jsonEncode(mc)).toList();
-  //   final SharedPreferences data = await SharedPreferences.getInstance();
-  //   data.setStringList("Product", jsonProducts);
-  //   data.setStringList("Card", jsonCards);
-  //   data.setString("userName", userName.text);
-  //   // data.setString("userAddress", userAddress.text);
-  //   data.setString("userCity", userCity.text);
-  //   data.setString("userState", userState.text);
-  //   data.setString("userZipCode", userZipCode.text);
-  //   data.setString("userCountry", userCountry.text);
-  // }
-
-  // void loadData() async {
-  //   final SharedPreferences data = await SharedPreferences.getInstance();
-
-  //   final List<String>? jsonProducts = data.getStringList("Product");
-  //   final List<String>? jsonCards = data.getStringList("Card");
-  //   if (jsonProducts != null) {
-  //     final List<Map> mapDBData =
-  //         jsonProducts.map((json) => jsonDecode(json)).toList().cast<Map>();
-  //     // final List<Product> dbProducts =
-  //     mapDBData.map((m) => mapToProduct(m)).toList();
-  //     // favorite = dbProducts;
-  //   }
-
-  //   if (jsonCards != null) {
-  //     final List<Map> mapCardDBData =
-  //         jsonCards.map((json) => jsonDecode(json)).toList().cast<Map>();
-  //     final List<Product> dbCards =
-  //         mapCardDBData.map((m) => mapToProduct(m)).toList();
-  //     addCard = dbCards;
-  //   }
-
-  //   addCardLength = addCard.length;
-  //   userName.text = data.getString("userName") ?? "Khan Meraj";
-  //   // userAddress.text = data.getString("userAddress") ?? "Hairan Gali";
-  //   userCity.text = data.getString("userCity") ?? "Mumbai";
-  //   userState.text = data.getString("userState") ?? "Maharashtra";
-  //   userZipCode.text = data.getString("userZipCode") ?? "400070";
-  //   userCountry.text = data.getString("userCountry") ?? "India";
-
-  //   notifyListeners();
-  // }
-
   void postcartsData(Map<String, dynamic> pdata) async {
     pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
     var url = Uri.parse(APIEndPoint.postcartsDataEndPoint);
@@ -191,7 +150,7 @@ double totalAmount = 0.0;
   }
 
   void getCartsData(String userid) async {
-    final url = "http://192.168.0.110:3000/api/carts/$userid";
+    final url = "${APIEndPoint.getCartsData}/$userid";
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -210,7 +169,7 @@ double totalAmount = 0.0;
     final idToDelete = addCard[index].id;
 
     try {
-      final url = Uri.parse("http://192.168.0.110:3000/api/carts/$idToDelete");
+      final url = Uri.parse("${APIEndPoint.deleteCartData}/$idToDelete");
       final response = await http.delete(url);
 
       if (response.statusCode == 200) {
@@ -263,8 +222,7 @@ double totalAmount = 0.0;
 
   void deleteFavouriteData(int index) async {
     final idToDelete = favorite[index].id;
-    final url =
-        Uri.parse("http://192.168.0.110:3000/api/favourites/$idToDelete");
+    final url = Uri.parse("${APIEndPoint.deleteFavouriteData}/$idToDelete");
     try {
       final response = await http.delete(url);
       if (response.statusCode == 200) {
@@ -280,7 +238,7 @@ double totalAmount = 0.0;
   }
 
   void getFavouriteData(String userId) async {
-    final url = "http://192.168.0.110:3000/api/favourites/$userId";
+    final url = "${APIEndPoint.getFavouriteData}/$userId";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final decodeJson = jsonDecode(response.body) as List<dynamic>;
@@ -328,8 +286,8 @@ double totalAmount = 0.0;
   }
 
   void getAddressData() async {
-    final url = Uri.parse("http://192.168.0.110:3000/api/address/$userID");
-
+    final url = Uri.parse("${APIEndPoint.getAddressData}/$userID");
+    debugPrint("address usrId : $userID");
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -337,6 +295,7 @@ double totalAmount = 0.0;
 
       if (data['status'] == "success") {
         final address = data['address'];
+        debugPrint("if chala userid : $userID");
 
         userName.text = address['name'];
         userStreet.text = address['street'];
@@ -347,6 +306,14 @@ double totalAmount = 0.0;
         isAddressFetched = true;
         notifyListeners();
       } else {
+        isAddressFetched = false;
+        userName.clear();
+        userStreet.clear();
+        userCity.clear();
+        userState.clear();
+        userZipCode.clear();
+        userCountry.clear();
+        notifyListeners();
         debugPrint("No address found for this user.");
       }
     } else {
@@ -387,7 +354,7 @@ double totalAmount = 0.0;
   }
 
   void fetchMyAllOrders(String userId) async {
-    final url = "http://192.168.0.110:3000/api/myorders/$userId";
+    final url = "${APIEndPoint.fetchMyAllOrders}/$userId";
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -409,7 +376,7 @@ double totalAmount = 0.0;
   }
 
   Future<void> getOrderItems(String orderId) async {
-    final url = "http://192.168.0.110:3000/api/orderitems/$orderId";
+    final url = "${APIEndPoint.getOrderItems}/$orderId";
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -431,10 +398,11 @@ double totalAmount = 0.0;
   }
 
   void fetchUserOrders(String userId) async {
-    final url = "http://192.168.0.110:3000/api/myorders/$userId";
+    final url = "${APIEndPoint.fetchUserOrders}/$userId";
     final response = await http.get(Uri.parse(url));
     final decodeJson = jsonDecode(response.body) as List<dynamic>;
     orderUsername = decodeJson[0]["name"];
+    debugPrint("orderUsername : $orderUsername");
   }
 
   void postReviews(BuildContext context, Map reviewData, int productId) async {
@@ -446,42 +414,36 @@ double totalAmount = 0.0;
       );
 
       if (response.statusCode == 201) {
-        // Success message
-        Navigator.pop(context); // Close the bottom sheet
+        Navigator.pop(context); 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Review submitted successfully!"),
           ),
         );
       } else {
-        // Handle failure
         debugPrint("Failed to submit review. Error: ${response.body}");
       }
     } catch (e) {
-      // Handle exceptions
       debugPrint("An error occurred: $e");
     }
   }
 
-   
-
   void getReviews(int productId) async {
-  final url = 'http://192.168.0.110:3000/api/products/$productId/reviews';
-  try {
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final decodeJson = jsonDecode(response.body) as List<dynamic>;
-      productFirstReviews = List<Map<String, dynamic>>.from(decodeJson);
-      productReviews = decodeJson;
-      notifyListeners(); 
-    } else {
-      throw Exception("Failed to load reviews");
+    final url = 'http://192.168.0.110:3000/api/products/$productId/reviews';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+        productFirstReviews = List<Map<String, dynamic>>.from(decodeJson);
+        productReviews = decodeJson;
+        notifyListeners();
+      } else {
+        throw Exception("Failed to load reviews");
+      }
+    } catch (error) {
+      debugPrint("Error fetching reviews: $error");
     }
-  } catch (error) {
-    debugPrint("Error fetching reviews: $error");
   }
-
-}
 
   void fetchMyAllReviews(String userId) async {
     final url = "http://192.168.0.110:3000/api/myallreviews/$userId";
@@ -498,8 +460,68 @@ double totalAmount = 0.0;
       }
     } catch (error) {
       debugPrint("Error fetching user orders: $error");
-
     }
   }
 
+  void postSignUpData(Map<String, dynamic> pdata) async {
+    var url = Uri.parse(APIEndPoint.postSignUpData);
+    try {
+      final res = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(pdata),
+      );
+      final jsonData = jsonDecode(res.body);
+      if (jsonData['status'] == 'success') {
+        userID = jsonData['userId'] ?? "No User ID";
+        debugPrint("User ID sign-up backend: $userID");
+        await AuthService.setLoginStatus(true);
+        await AuthService.saveUserId(userID);
+      } else {
+        signScreenErrorMsg = jsonData['message'] ?? "Sign-Up failed";
+        notifyListeners();
+      }
+    } catch (e) {
+      signScreenErrorMsg = "An error occurred. Please try again.";
+      notifyListeners();
+      debugPrint("Error: $e");
+    }
+  }
+
+  void userLogin(String email, String password, BuildContext context) async {
+    try {
+      final response = await http.post(
+        Uri.parse(APIEndPoint.userLogin),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email, "password": password}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == "success") {
+          userID = data['userId'] ?? "No User ID";
+          await AuthService.setLoginStatus(true);
+          await AuthService.saveUserId(userID);
+          debugPrint("userID : $userID");
+          Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
+        } else if (data['status'] == "error") {
+          loginScreenErrorMsg = data['message'] ?? "Invalid email or password.";
+
+          formKeyLogin.currentState!.validate();
+          notifyListeners();
+        }
+      } else {
+        loginScreenErrorMsg = "Server error: ${response.statusCode}";
+
+        formKeyLogin.currentState!.validate();
+        notifyListeners();
+      }
+    } catch (e) {
+      loginScreenErrorMsg = "An error occurred. Please try again.";
+
+      formKeyLogin.currentState!.validate();
+      notifyListeners();
+      debugPrint("Login Error: $e");
+    }
+  }
 }

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../constant/contant.dart';
 import '../model/product.dart';
 import '../provider/product_provider.dart';
-import '../view/product_detail.dart';
+import '../view/product_detail_screen.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;

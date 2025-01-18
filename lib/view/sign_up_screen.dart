@@ -1,13 +1,14 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+import 'package:product_app/Auth/auth_service.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
+import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -20,18 +21,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController userPassword = TextEditingController();
   final TextEditingController userConfirmPassword = TextEditingController();
   final TextEditingController userMobile = TextEditingController();
-  String errorMessage = "";
+
 
   @override
   Widget build(BuildContext context) {
+    final providerRead = context.read<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
+        backgroundColor: AppColor.scaffoldColor,
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            icon: Icon(Icons.arrow_back_ios)),
+            icon:const Icon(Icons.arrow_back_ios)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -40,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Column(
             children: [
               const SizedBox(height: 40),
-               Text(
+              Text(
                 "Create Account",
                 style: TextStyle(
                   fontSize: 28,
@@ -85,6 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: userMobile,
                 labelText: "Mobile",
                 icon: Icons.phone,
+                maxLength: 10,
                 keyboardType: TextInputType.phone,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
@@ -129,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(height: 25),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
+                                    onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       Map<String, dynamic> userInfo = {
                         'name': userName.text,
@@ -137,11 +141,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         'password': userPassword.text,
                         'mobile': userMobile.text,
                       };
-                      postData(userInfo);
-                      Navigator.of(context)
-                          .pushNamed(AppRoutes.bottemNavigationBar);
+
+                       providerRead.postSignUpData(userInfo);
+
+                      userID = await AuthService.getUserId();
+                      debugPrint("Latest User ID after sign-up: $userID");
+                        Navigator.of(context)
+                            .pushNamed(AppRoutes.bottemNavigationBar);
                     }
                   },
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     minimumSize: const Size(double.infinity, 50),
@@ -158,12 +167,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-              if (errorMessage.isNotEmpty)
+              if (providerRead.signScreenErrorMsg.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Center(
                     child: Text(
-                      errorMessage,
+                      providerRead.signScreenErrorMsg,
                       style: const TextStyle(color: Colors.red),
                     ),
                   ),
@@ -177,7 +186,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child:  Text(
+                    child: Text(
                       "Log In",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
@@ -198,6 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     required TextEditingController controller,
     required String labelText,
     required IconData icon,
+    int? maxLength,
     bool obscureText = false,
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
@@ -208,10 +218,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       obscureText: obscureText,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
+      maxLength: maxLength,
       decoration: InputDecoration(
+        counterText: "",
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:  BorderSide(color: Theme.of(context).colorScheme.primary),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
         ),
         prefixIcon: Icon(icon, color: Colors.grey),
         labelText: labelText,
@@ -223,28 +235,5 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void postData(Map<String, dynamic> pdata) async {
-    var url = Uri.parse("http://192.168.0.110:3000/api/signup");
-    try {
-      final res = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(pdata),
-      );
-      final jsonData = jsonDecode(res.body);
-      if (jsonData['status'] == 'success') {
-        debugPrint("User ID: ${jsonData['userId']}");
-        userID = jsonData['userId'];
-      } else {
-        setState(() {
-          errorMessage = jsonData['message'] ?? "Sign-Up failed";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        errorMessage = "An error occurred. Please try again.";
-      });
-      debugPrint("Error: $e");
-    }
-  }
+
 }

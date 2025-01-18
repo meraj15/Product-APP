@@ -3,17 +3,25 @@ import 'package:product_app/constant/contant.dart';
 import 'routes/app_routes.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+ final bool isLoggedIn;
+ 
+
+  const MyApp({required this.isLoggedIn, super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-navigationBarTheme: NavigationBarThemeData(indicatorColor: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
-          colorScheme: ColorScheme.light(primary: AppColor.appMainColor, ),
-          appBarTheme: AppBarTheme(backgroundColor: AppColor.appMainColor)),
+        navigationBarTheme: NavigationBarThemeData(
+            indicatorColor:
+                Theme.of(context).colorScheme.primary.withOpacity(0.2)),
+        colorScheme: ColorScheme.light(
+          primary: AppColor.appMainColor,
+        ),
+        appBarTheme: AppBarTheme(backgroundColor: AppColor.appMainColor),
+      ),
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.initialRoute,
+      initialRoute:isLoggedIn ? AppRoutes.bottemNavigationBar : AppRoutes.initialRoute,
       routes: AppRoutes.routes,
     );
   }

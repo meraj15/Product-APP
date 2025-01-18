@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
-import 'package:product_app/view/favorite_card.dart';
+import 'package:product_app/view/favorite_cart_screen.dart';
 import 'package:product_app/view/home_screen.dart';
 import 'package:product_app/view/my_order_screen.dart';
 import 'package:provider/provider.dart';
@@ -21,9 +21,9 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
   int selectedIndex = 0;
   @override
   void initState() {
+    context.read<ProductData>().getData();
     context.read<ProductData>().getCartsData(userID);
     context.read<ProductData>().getFavouriteData(userID);
-    context.read<ProductData>().getData();
     context.read<ProductData>().getAddressData();
     context.read<ProductData>().fetchMyAllOrders(userID);
     super.initState();
@@ -79,7 +79,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
        1 => ShopScreen(),
        2 => Favorites(),
        3 => ProfileScreen(),
-       _ => Scaffold(body: Center(child: Text('Naha Le'),),)
+       _ => Scaffold(body: Center(child: Text('Not Available!!'),),)
       },
     );
   }

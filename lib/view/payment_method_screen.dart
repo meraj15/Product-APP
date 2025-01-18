@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
-
+import 'package:product_app/widget/toast.dart';
+import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
   const PaymentMethodScreen({super.key});
@@ -12,19 +15,22 @@ class PaymentMethodScreen extends StatefulWidget {
 }
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
-  String? _selectedPaymentMethod;
-
+  String _selectedPaymentMethod = "Card";
+  final Razorpay _razorpay = Razorpay();
   @override
   Widget build(BuildContext context) {
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    final providerRead = context.read<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            // Navigate back or close the screen
+            Navigator.of(context).pop();
           },
         ),
         title: Text(
@@ -39,89 +45,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             child: ListView(
               padding: const EdgeInsets.all(4.0),
               children: [
-                // Credit/Debit Card Section
-       Padding(
-  padding: const EdgeInsets.symmetric(vertical: 8.0),
-  child: Card(
-    color: Colors.white, // Matches the background to eliminate borders
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-    ),
-    elevation: 2, // Removes shadow
-    child: Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent), // Removes ExpansionTile border
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16), // Adjust padding for alignment
-        leading: Icon(Icons.credit_card, color: Theme.of(context).colorScheme.primary),
-        title: Text(
-          'Credit/Debit Card',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-        children: [
-          ListTile(
-            leading: Icon(Icons.add_circle_outline, color: Theme.of(context).colorScheme.primary),
-            title: Text(
-              'Add New Card',
-              style: TextStyle(fontSize: 16),
-            ),
-            trailing: Icon(Icons.arrow_forward, color: Colors.grey),
-            onTap: () {
-                 Navigator.of(context).pushNamed(AppRoutes.addCardpaymentscreen);
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal:16.0),
-            child: const Divider(color: Colors.grey),
-          ), // Keeps divider
-          ListTile(
-            leading: Icon(Icons.credit_card, color: Theme.of(context).colorScheme.primary),
-            title: Text(
-              'Mastercard •••• 1234',
-              style: TextStyle(fontSize: 16),
-            ),
-            trailing: Radio<String>(
-              value: 'Card',
-              groupValue: _selectedPaymentMethod,
-              activeColor: Theme.of(context).colorScheme.primary,
-              onChanged: (value) {
-                setState(() {
-                  _selectedPaymentMethod = value;
-                });
-              },
-            ),
-          ),
-        ],
-      ),
-    ),
-  ),
-),
-
-               
-
-                // Cash on Delivery Section
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 2,
-                  child: ListTile(
-                    leading: Icon(Icons.money, color: Theme.of(context).colorScheme.primary),
-                    title: Text(
-                      'Cash on Delivery',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    trailing: Radio<String>(
-                      value: 'Cash',
-                      groupValue: _selectedPaymentMethod,
-                      activeColor:  Theme.of(context).colorScheme.primary,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPaymentMethod = value;
-                        });
-                      },
-                    ),
-                  ),
-                ),
+                paymentMethod("Card", "Credit/Debit Card or UPI"),
+                paymentMethod("Cash", "Cash on Delivery")
               ],
             ),
           ),
@@ -141,23 +66,47 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   children: [
                     Text(
                       'Total Amount',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                    Text("\$28.6", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                    Text(
+                      "\$${context.watch<ProductData>().totalAmount.toStringAsFixed(2)}",
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
-                // SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.addressForm);
+                    if (_selectedPaymentMethod == "Card") {
+                      var options = {
+                        'key': 'rzp_test_YghCO1so2pwPnx',
+                        'amount': (providerRead.totalAmount * 100).toInt(),
+                        'name': 'AM Coders.',
+                        'currency': 'USD',
+                        'description': 'Flutter Developer',
+                        'prefill': {
+                          'contact': '7208465366',
+                          'email': 'am@gmail.com',
+                        }
+                      };
+                      _razorpay.open(options);
+                    } else {
+                      Navigator.of(context)
+                          .pushNamed(AppRoutes.orderSuccessScreen);
+                    }
                   },
-                  child: Text('Make Payment', style: TextStyle(fontSize: 16,color: AppColor.whiteColor)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    // minimumSize: Size(double.infinity, 50),
+                  ),
+                  child: Text(
+                    _selectedPaymentMethod == "Cash"
+                        ? 'Place Order'
+                        : 'Make Payment',
+                    style: TextStyle(fontSize: 16, color: AppColor.whiteColor),
                   ),
                 ),
               ],
@@ -166,5 +115,56 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         ],
       ),
     );
+  }
+
+  Widget paymentMethod(String value, String title) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 2,
+      child: ListTile(
+        leading:
+            Icon(Icons.money, color: Theme.of(context).colorScheme.primary),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        trailing: Radio<String>(
+          value: value,
+          groupValue: _selectedPaymentMethod,
+          activeColor: Theme.of(context).colorScheme.primary,
+          onChanged: (value) {
+            setState(() {
+              _selectedPaymentMethod = value!;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    Navigator.of(context).pushNamed(AppRoutes.orderSuccessScreen);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Payment Failed'),
+        duration: Duration(microseconds: 500),
+      ),
+    );
+    debugPrint('response : $response');
+  }
+
+  @override
+  void dispose() {
+    try {
+      _razorpay.clear();
+    } catch (e) {
+      debugPrint('dispose() Catch Block : $e');
+    }
+    super.dispose();
   }
 }

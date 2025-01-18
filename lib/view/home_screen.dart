@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:product_app/Auth/auth_service.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/built_category.dart';
 import 'package:product_app/widget/circular_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constant/contant.dart';
 import '../provider/product_provider.dart';
 import '../widget/drawer.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,13 +22,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController userInput = TextEditingController();
+    TextEditingController userInput = TextEditingController();
   List<String> assets = [
     'assets/images/beauty.png',
     'assets/images/furniture.png',
     'assets/images/offer.png',
   ];
 
+ @override
+  void initState(){
+    super.initState();
+    loadData();
+    debugPrint("HomeScreen : $userID");
+  }
+
+  void loadData()async{
+ userID = await AuthService.getUserId();
+  }
 
   int _currentIndex = 0;
 
@@ -36,14 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: AppColor.whiteColor),
-
         title: Text(
           "E-Commerce App",
           style: GoogleFonts.pacifico(
             fontWeight: FontWeight.w200,
             color: AppColor.whiteColor,
           ),
-          
         ),
         centerTitle: true,
         actions: [
@@ -95,8 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         labelText: "Search product",
                         hintText: "Enter product name...",
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                               BorderSide(color: Theme.of(context).colorScheme.primary),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
@@ -140,7 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             dotsCount: assets.length,
                             position: _currentIndex,
                             decorator: DotsDecorator(
-                              activeColor: Theme.of(context).colorScheme.primary,
+                              activeColor:
+                                  Theme.of(context).colorScheme.primary,
                               color: Colors.grey, // Inactive color
                               size: const Size.square(9.0),
                               activeSize: const Size(18.0, 9.0),

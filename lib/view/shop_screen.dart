@@ -12,7 +12,6 @@ import 'package:product_app/widget/filter_category_product.dart';
 import 'package:product_app/widget/product_card.dart';
 import 'package:product_app/widget/sort_product.dart';
 import 'package:product_app/widget/drawer.dart';
-import 'package:badges/badges.dart' as badges;
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});

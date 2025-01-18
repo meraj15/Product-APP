@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
@@ -8,21 +6,21 @@ import 'package:product_app/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
 class AddressForm extends StatefulWidget {
-   AddressForm({super.key});
+   const AddressForm({super.key});
 
   @override
   State<AddressForm> createState() => _AddressFormState();
 }
 
 class _AddressFormState extends State<AddressForm> {
-
+@override
   @override
   Widget build(BuildContext context) {
     final providerRead = context.read<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        title: Text('Address Form'),
+        title:const Text('Address Form'),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -64,8 +62,8 @@ class _AddressFormState extends State<AddressForm> {
                  
                 providerRead.addCard.clear();
                   
-                  Navigator.of(context)
-                      .pushNamed(AppRoutes.orderScreen);
+                          Navigator.of(context).pushNamed(AppRoutes.paymentmethodscreen);
+
                   
                 },
                 style: ElevatedButton.styleFrom(

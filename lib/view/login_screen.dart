@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:product_app/Auth/auth_service.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
+import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/view/home_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,22 +19,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool? isCheckBox = false;
-  bool isClickedPasword = true;
-  String message = "";
-
+  
   final userEmail = TextEditingController();
   final userPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final providerRead = context.read<ProductData>();
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Form(
-            key: _formKey,
+            key: providerRead.formKeyLogin,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: userPassword,
-                  obscureText: isClickedPasword,
+                  obscureText: providerRead.isClickedPasword,
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -95,11 +95,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 15),
-                    suffixIcon: isClickedPasword
+                    suffixIcon: providerRead.isClickedPasword
                         ? IconButton(
                             onPressed: () {
                               setState(() {
-                                isClickedPasword = false;
+                                providerRead.isClickedPasword = false;
                               });
                             },
                             icon: const Icon(
@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         : IconButton(
                             onPressed: () {
                               setState(() {
-                                isClickedPasword = true;
+                                providerRead.isClickedPasword = true;
                               });
                             },
                             icon: const Icon(
@@ -131,9 +131,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
-                    } else if (message.isNotEmpty) {
-                      final tempMessage = message;
-                      message = "";
+                    } else if (providerRead.loginScreenErrorMsg.isNotEmpty) {
+                      final tempMessage = providerRead.loginScreenErrorMsg;
+                      providerRead.loginScreenErrorMsg = "";
                       return tempMessage;
                     }
                     return null;
@@ -147,10 +147,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Checkbox(
                           activeColor: Theme.of(context).colorScheme.primary,
-                          value: isCheckBox,
+                          value: providerRead.isCheckBox,
                           onChanged: (value) {
                             setState(() {
-                              isCheckBox = value;
+                              providerRead.isCheckBox = value;
                             });
                           },
                         ),
@@ -174,13 +174,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 25),
                 ElevatedButton(
                   onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      login(userEmail.text, userPassword.text);
+                    if (providerRead.formKeyLogin.currentState!.validate()) {
+                      providerRead.userLogin(userEmail.text, userPassword.text,context);
                     }
-                    isLogged = true;
-                    final SharedPreferences logged =
-                        await SharedPreferences.getInstance();
-                    logged.setBool("logged", isLogged);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
@@ -257,8 +253,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     const Text("Don't have an account?"),
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async{
                         Navigator.of(context).pushNamed(AppRoutes.signupScreen);
+                        debugPrint("From login to sign-up Userid : $userID");
                       },
                       child:  Text(
                         "Sign Up",
@@ -273,41 +270,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  void login(String email, String password) async {
-    const url = "http://192.168.0.110:3000/api/login";
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"email": email, "password": password}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['status'] == "success") {
-          userID = data['userId'] ?? "No User ID";
-          debugPrint("userID : $userID");
-          Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
-        } else if (data['status'] == "error") {
-          setState(() {
-            message = data['message'] ?? "Invalid email or password.";
-          });
-          _formKey.currentState!.validate();
-        }
-      } else {
-        setState(() {
-          message = "Server error: ${response.statusCode}";
-        });
-        _formKey.currentState!.validate();
-      }
-    } catch (e) {
-      setState(() {
-        message = "An error occurred. Please try again.";
-      });
-      _formKey.currentState!.validate();
-      debugPrint("Login Error: $e");
-    }
   }
 }
