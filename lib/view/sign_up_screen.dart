@@ -15,15 +15,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController userName = TextEditingController();
-  final TextEditingController userEmail = TextEditingController();
-  final TextEditingController userPassword = TextEditingController();
-  final TextEditingController userConfirmPassword = TextEditingController();
-  final TextEditingController userMobile = TextEditingController();
-
-
-  @override
+   @override
   Widget build(BuildContext context) {
     final providerRead = context.read<ProductData>();
     return Scaffold(
@@ -39,7 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Form(
-          key: _formKey,
+          key: providerRead.formKeySignUp,
           child: Column(
             children: [
               const SizedBox(height: 40),
@@ -59,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 25),
               _buildTextField(
-                controller: userName,
+                controller: providerRead.signUpUserName,
                 labelText: "Name",
                 icon: Icons.person,
                 validator: (value) {
@@ -71,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: userEmail,
+                controller: providerRead.userEmail,
                 labelText: "Email",
                 icon: Icons.email,
                 validator: (value) {
@@ -85,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: userMobile,
+                controller: providerRead.userMobile,
                 labelText: "Mobile",
                 icon: Icons.phone,
                 maxLength: 10,
@@ -102,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: userPassword,
+                controller: providerRead.userPassword,
                 labelText: "Password",
                 icon: Icons.lock,
                 obscureText: true,
@@ -117,14 +109,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: userConfirmPassword,
+                controller: providerRead.userConfirmPassword,
                 labelText: "Confirm Password",
                 icon: Icons.lock_outline,
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Please confirm your password";
-                  } else if (value != userPassword.text) {
+                  } else if (value != providerRead.userPassword.text) {
                     return "Passwords do not match";
                   }
                   return null;
@@ -134,15 +126,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Center(
                 child: ElevatedButton(
                                     onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
+                    if (providerRead.formKeySignUp.currentState!.validate()) {
                       Map<String, dynamic> userInfo = {
-                        'name': userName.text,
-                        'email': userEmail.text,
-                        'password': userPassword.text,
-                        'mobile': userMobile.text,
+                        'name': providerRead.userName.text,
+                        'email': providerRead.userEmail.text,
+                        'password': providerRead.userPassword.text,
+                        'mobile': providerRead.userMobile.text,
                       };
 
-                       providerRead.postSignUpData(userInfo);
+                      await providerRead.postSignUpData(userInfo);
 
                       userID = await AuthService.getUserId();
                       debugPrint("Latest User ID after sign-up: $userID");
@@ -234,6 +226,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       validator: validator,
     );
   }
-
-
 }

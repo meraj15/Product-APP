@@ -3,6 +3,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
+import 'package:product_app/widget/show_image_preview_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -120,26 +121,35 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       const SizedBox(height: 8),
 
                       // Images
-                      if (review['images'] != null &&
-                          (review['images'] as List).isNotEmpty)
+                      if (review['product_images'] != null &&
+                          (review['product_images'] as List).isNotEmpty)
                         Row(
                           children: List.generate(
-                            (review['images'] as List).length,
+                            (review['product_images'] as List).length,
                             (imgIndex) => Padding(
                               padding: const EdgeInsets.only(right: 8.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  review['images'][imgIndex],
-                                  width: 70,
-                                  height: 70,
-                                  fit: BoxFit.cover,
+                              child: GestureDetector(
+                                onTap: () {
+                                  ShowImageDialog.showImageDialog(
+                                    context,
+                                    review['product_images'][imgIndex],
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    review['product_images'][imgIndex],
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       const SizedBox(height: 12),
+
 
                       // Reviewer Info and Date
                       Text(
@@ -157,6 +167,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
+  
   void _openFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -184,7 +195,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   Navigator.pop(context);
                 },
                 trailing: selectedStar == 0
-                    ? const Icon(Icons.check, color: Colors.blue)
+                    ? const Icon(Icons.check, color: AppColor.appMainColor)
                     : null,
               ),
               for (int i = 1; i <= 5; i++)

@@ -37,7 +37,6 @@ class _OrderItemsState extends State<OrderItems> {
     });
   }
 
-  int selectedStars = 0;
   void _showReviewBottomSheet(BuildContext context, int productId,
       String productTitle, String productThumbnail) {
     showModalBottomSheet(
@@ -77,11 +76,10 @@ class _OrderItemsState extends State<OrderItems> {
         ),
       );
     }
+
     return Scaffold(
       appBar: AppBar(
-        iconTheme:const IconThemeData(
-          color: AppColor.whiteColor,
-        ),
+        iconTheme: const IconThemeData(color: AppColor.whiteColor),
         title: const Text(
           "Order Details",
           style: TextStyle(
@@ -121,10 +119,7 @@ class _OrderItemsState extends State<OrderItems> {
                           color: AppColor.whiteColor,
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: const [
-                            BoxShadow(
-                              blurRadius: 5.0,
-                              color: Colors.black12,
-                            ),
+                            BoxShadow(blurRadius: 5.0, color: Colors.black12),
                           ],
                         ),
                         child: Row(
@@ -143,6 +138,7 @@ class _OrderItemsState extends State<OrderItems> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  SizedBox(height: 4.0,),
                                   Text(
                                     product.title,
                                     overflow: TextOverflow.ellipsis,
@@ -152,27 +148,24 @@ class _OrderItemsState extends State<OrderItems> {
                                       color: Colors.black87,
                                     ),
                                   ),
-                                  Text(
-                                    "Brand: ${product.brand}",
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black54,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical:2.0),
+                                    child: Text(
+                                      "Brand: ${product.brand}",
+                                      style: const TextStyle(
+                                          fontSize: 13, color: Colors.black54),
                                     ),
                                   ),
                                   Text(
                                     "Quantity: ${orderQuantity[index]['quantity']}",
                                     style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
+                                        fontSize: 12, color: Colors.black54),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 4.0),
+                                    padding: const EdgeInsets.symmetric(vertical: 6.0),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
                                       children: [
                                         TextButton.icon(
                                           onPressed: () {
@@ -191,24 +184,28 @@ class _OrderItemsState extends State<OrderItems> {
                                                 color: Colors.blue),
                                           ),
                                           style: TextButton.styleFrom(
-                                            padding:
-                                                const EdgeInsets.only(top: 0),
-                                            minimumSize: const Size(0, 0),
+                                            padding: EdgeInsets.zero,
+                                            minimumSize: Size.zero,
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap,
                                           ),
                                         ),
-                                        Text(
-                                          "\$${product.price.toString()}",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
+                                        Padding(
+                                          padding: const EdgeInsets.only(right:8.0),
+                                          child: Text(
+                                            "\$${product.price.toString()}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -242,10 +239,9 @@ class _OrderItemsState extends State<OrderItems> {
                   child: Text(
                     "Download Invoice PDF",
                     style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

@@ -3,12 +3,13 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:product_app/model/product.dart';
 import 'package:product_app/view/reviews_screen.dart';
+import 'package:product_app/widget/show_image_preview_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:product_app/provider/product_provider.dart';
 
 class DynamicReviewWidget extends StatefulWidget {
   final Product product;
-  const DynamicReviewWidget({super.key,required this.product});
+  const DynamicReviewWidget({super.key, required this.product});
 
   @override
   State<DynamicReviewWidget> createState() => _DynamicReviewWidgetState();
@@ -21,20 +22,19 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
     context.read<ProductData>().getReviews(widget.product.id);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final productProvider = context.read<ProductData>();
     final latestReview = productProvider.productReviews.isNotEmpty
-        ? productProvider.productReviews.first
+        ? productProvider.productReviews.last
         : null;
     if (productProvider.productReviews.isNotEmpty) {
       double sum = 0.0;
       for (var review in productProvider.productReviews) {
         sum += review['rating'];
       }
-      productProvider.averageRating = sum / productProvider.productReviews.length;
+      productProvider.averageRating =
+          sum / productProvider.productReviews.length;
     }
 
     String formatDate(String dateString) {
@@ -42,10 +42,11 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
       final DateTime dateTime = DateTime.parse(dateString);
       return formatter.format(dateTime);
     }
-   if (productProvider.productReviews.isEmpty) {
-    return const SizedBox.shrink(); 
-  }
-    return  Container(
+
+    if (productProvider.productReviews.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return Container(
       color: Colors.white,
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -78,8 +79,7 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            top: 13.0), 
+                        padding: const EdgeInsets.only(top: 13.0),
                         child: const Text(
                           "5",
                           style: TextStyle(
@@ -135,19 +135,27 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
           ),
           const SizedBox(height: 16),
 
-          if (latestReview != null && latestReview['images'] != null)
+          if (latestReview != null && latestReview['product_images'] != null)
             Row(
               children: List.generate(
-                (latestReview['images'] as List).length,
-                (index) => Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      latestReview['images'][index],
-                      width: 70,
-                      height: 70,
-                      fit: BoxFit.cover,
+                (latestReview['product_images'] as List).length,
+                (imgIndex) => GestureDetector(
+                  onTap: () {
+                    ShowImageDialog.showImageDialog(
+                      context,
+                      latestReview['product_images'][imgIndex],
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        latestReview['product_images'][imgIndex],
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -170,8 +178,9 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>
-                      ReviewScreen(product: widget.product,),
+                  builder: (context) => ReviewScreen(
+                    product: widget.product,
+                  ),
                 ),
               );
             },

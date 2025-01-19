@@ -1,11 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ReviewBottomSheet extends StatefulWidget {
   final int productId;
@@ -27,7 +28,8 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   int selectedStars = 0;
   final TextEditingController _reviewController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  List<XFile> _imageFiles = []; // List to store multiple images
+  List<XFile> _imageFiles = [];
+  bool _isSubmitting = false;
 
   Future<void> _openCamera() async {
     try {
@@ -51,6 +53,69 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
       _imageFiles.removeAt(index);
     });
   }
+
+  Future<XFile?> _compressImage(File file) async {
+    
+  try {
+    // Define a temporary directory for storing compressed images
+    final tempDir = await Directory.systemTemp.createTemp();
+    final outputPath = '${tempDir.path}/compressed_${file.path.split('/').last}';
+
+    final compressedFile = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, // Input file path
+      outputPath,         // Output file path
+      quality: 80,        // Compression quality
+    );
+
+    // Convert File to XFile before returning
+    if (compressedFile != null) {
+      return XFile(compressedFile.path);
+    }
+
+    return null; // Return null if compression failed
+  } catch (e) {
+    debugPrint("Error compressing image: $e");
+    return null;
+  }
+}
+
+
+ Future<List<String>> _uploadImages() async {
+  List<String> imageUrls = [];
+
+  for (var imageFile in _imageFiles) {
+    final originalFile = File(imageFile.path);
+
+    // Compress the image and get an XFile
+    final compressedFile = await _compressImage(originalFile);
+
+    // Convert XFile to File if compression returns an XFile
+    final fileToUpload = compressedFile != null ? File(compressedFile.path) : originalFile;
+
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}_${imageFile.name}';
+
+    try {
+      final response = await Supabase.instance.client.storage
+          .from('images') 
+          .upload(fileName, fileToUpload);
+
+      if (response.isEmpty) {
+        throw Exception("Failed to upload $fileName");
+      }
+      debugPrint("public-key: $fileName");
+      final imageUrl = Supabase.instance.client.storage
+          .from('images')
+          .getPublicUrl(fileName);
+
+      imageUrls.add(imageUrl);
+    } catch (e) {
+      debugPrint("Image upload error: $e");
+    }
+  }
+  return imageUrls;
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -173,86 +238,77 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
             style: TextStyle(fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
-        SizedBox(
-  height: 100,
-  child: ListView.builder(
-    scrollDirection: Axis.horizontal,
-    itemCount: _imageFiles.length + 1, // +1 for the camera icon
-    itemBuilder: (context, index) {
-      if (index == 0) {
-        // Always show the camera icon as the first item
-        return GestureDetector(
-          onTap: _openCamera,
-          child: Container(
-            margin: const EdgeInsets.all(8.0),
-            height: 90,
-            width: 90,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey),
-            ),
-            child: const Icon(
-              Icons.camera_alt,
-              color: Colors.white,
-              size: 30,
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _imageFiles.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return GestureDetector(
+                    onTap: _openCamera,
+                    child: Container(
+                      margin: const EdgeInsets.all(8.0),
+                      height: 90,
+                      width: 90,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  );
+                } else {
+                  final imageIndex = index - 1;
+                  return Stack(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(8.0),
+                        height: 90,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            File(_imageFiles[imageIndex].path),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () => _removeImage(imageIndex),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            child: const Icon(
+                              Icons.close,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
           ),
-        );
-      } else {
-        // Show selected images starting from index 1
-        final imageIndex = index - 1;
-        return Stack(
-          children: [
-            Container(
-              margin: const EdgeInsets.all(8.0),
-              height: 90,
-              width: 90,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.file(
-                  File(_imageFiles[imageIndex].path),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Positioned(
-              top: 4,
-              right: 4,
-              child: GestureDetector(
-                onTap: () => _removeImage(imageIndex),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      }
-    },
-  ),
-),
-
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  final reviewText = _reviewController.text.trim();
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: ()async{
+                final reviewText = _reviewController.text.trim();
                   if (reviewText.isEmpty || selectedStars == 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -262,11 +318,21 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                     return;
                   }
 
-                  final reviewData = {
+                  
+                  // Upload images to Supabase
+                  List<String> imageUrls = await _uploadImages();
+                  debugPrint("imageUrls : $imageUrls");
+final reviewData = {
                     "rating": selectedStars,
                     "comment": reviewText,
-                    "userid":userID,
+                    "userid": userID,
+                    "product_images":imageUrls
                   };
+
+                  // Optionally, add the image URLs to your reviewData
+                  // if (imageUrls.isNotEmpty) {
+                  //   reviewData["imageUrls"] = imageUrls;
+                  // }
 
                   context
                       .read<ProductData>()
@@ -279,15 +345,11 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                     borderRadius: BorderRadius.circular(24),
                   ),
                 ),
-                child: const Text(
-                  "SEND REVIEW",
-                  style: TextStyle(
+              child: const Text("SEND REVIEW", style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: AppColor.whiteColor,
-                  ),
-                ),
-              ),
+                  ),),
             ),
           ),
         ],

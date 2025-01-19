@@ -41,8 +41,14 @@ class ProductData extends ChangeNotifier {
   TextEditingController userState = TextEditingController();
   TextEditingController userZipCode = TextEditingController();
   TextEditingController userCountry = TextEditingController();
+    GlobalKey<FormState> formKeySignUp = GlobalKey<FormState>();
+   TextEditingController signUpUserName = TextEditingController();
+   TextEditingController userEmail = TextEditingController();
+   TextEditingController userPassword = TextEditingController();
+   TextEditingController userConfirmPassword = TextEditingController();
+   TextEditingController userMobile = TextEditingController();
   String signScreenErrorMsg = "";
-  final GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
+   GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
   
   bool? isCheckBox = false;
   bool isClickedPasword = true;
@@ -405,7 +411,7 @@ class ProductData extends ChangeNotifier {
     debugPrint("orderUsername : $orderUsername");
   }
 
-  void postReviews(BuildContext context, Map reviewData, int productId) async {
+  Future<void> postReviews(BuildContext context, Map reviewData, int productId) async {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.0.110:3000/api/products/$productId/reviews'),
@@ -463,7 +469,7 @@ class ProductData extends ChangeNotifier {
     }
   }
 
-  void postSignUpData(Map<String, dynamic> pdata) async {
+  Future<void> postSignUpData(Map<String, dynamic> pdata) async {
     var url = Uri.parse(APIEndPoint.postSignUpData);
     try {
       final res = await http.post(
