@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
@@ -29,7 +28,6 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   final TextEditingController _reviewController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   List<XFile> _imageFiles = [];
-  bool _isSubmitting = false;
 
   Future<void> _openCamera() async {
     try {
@@ -54,68 +52,33 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
     });
   }
 
-  Future<XFile?> _compressImage(File file) async {
-    
-  try {
-    // Define a temporary directory for storing compressed images
-    final tempDir = await Directory.systemTemp.createTemp();
-    final outputPath = '${tempDir.path}/compressed_${file.path.split('/').last}';
+  Future<List<String>> _uploadImages() async {
+    List<String> imageUrls = [];
 
-    final compressedFile = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path, // Input file path
-      outputPath,         // Output file path
-      quality: 80,        // Compression quality
-    );
+    for (var imageFile in _imageFiles) {
+      final originalFile = File(imageFile.path);
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${imageFile.name}';
 
-    // Convert File to XFile before returning
-    if (compressedFile != null) {
-      return XFile(compressedFile.path);
-    }
+      try {
+        final response = await Supabase.instance.client.storage
+            .from('images') 
+            .upload(fileName, originalFile);
 
-    return null; // Return null if compression failed
-  } catch (e) {
-    debugPrint("Error compressing image: $e");
-    return null;
-  }
-}
+        if (response.isEmpty) {
+          throw Exception("Failed to upload $fileName");
+        }
+        debugPrint("public-key: $fileName");
+        final imageUrl = Supabase.instance.client.storage
+            .from('images')
+            .getPublicUrl(fileName);
 
-
- Future<List<String>> _uploadImages() async {
-  List<String> imageUrls = [];
-
-  for (var imageFile in _imageFiles) {
-    final originalFile = File(imageFile.path);
-
-    // Compress the image and get an XFile
-    final compressedFile = await _compressImage(originalFile);
-
-    // Convert XFile to File if compression returns an XFile
-    final fileToUpload = compressedFile != null ? File(compressedFile.path) : originalFile;
-
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}_${imageFile.name}';
-
-    try {
-      final response = await Supabase.instance.client.storage
-          .from('images') 
-          .upload(fileName, fileToUpload);
-
-      if (response.isEmpty) {
-        throw Exception("Failed to upload $fileName");
+        imageUrls.add(imageUrl);
+      } catch (e) {
+        debugPrint("Image upload error: $e");
       }
-      debugPrint("public-key: $fileName");
-      final imageUrl = Supabase.instance.client.storage
-          .from('images')
-          .getPublicUrl(fileName);
-
-      imageUrls.add(imageUrl);
-    } catch (e) {
-      debugPrint("Image upload error: $e");
     }
+    return imageUrls;
   }
-  return imageUrls;
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -288,10 +251,11 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                         child: GestureDetector(
                           onTap: () => _removeImage(imageIndex),
                           child: CircleAvatar(
+                            radius: 10,
                             backgroundColor: Colors.red,
                             child: const Icon(
                               Icons.close,
-                              size: 20,
+                              size: 13,
                               color: Colors.white,
                             ),
                           ),
@@ -307,49 +271,46 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: ()async{
+              onPressed: () async {
                 final reviewText = _reviewController.text.trim();
-                  if (reviewText.isEmpty || selectedStars == 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Please provide a rating and a review."),
-                      ),
-                    );
-                    return;
-                  }
+                if (reviewText.isEmpty || selectedStars == 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please provide a rating and a review."),
+                    ),
+                  );
+                  return;
+                }
 
-                  
-                  // Upload images to Supabase
-                  List<String> imageUrls = await _uploadImages();
-                  debugPrint("imageUrls : $imageUrls");
-final reviewData = {
-                    "rating": selectedStars,
-                    "comment": reviewText,
-                    "userid": userID,
-                    "product_images":imageUrls
-                  };
+                // Upload images to Supabase
+                List<String> imageUrls = await _uploadImages();
+                debugPrint("imageUrls : $imageUrls");
+                final reviewData = {
+                  "rating": selectedStars,
+                  "comment": reviewText,
+                  "userid": userID,
+                  "product_images": imageUrls
+                };
 
-                  // Optionally, add the image URLs to your reviewData
-                  // if (imageUrls.isNotEmpty) {
-                  //   reviewData["imageUrls"] = imageUrls;
-                  // }
-
-                  context
-                      .read<ProductData>()
-                      .postReviews(context, reviewData, widget.productId);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
+                context
+                    .read<ProductData>()
+                    .postReviews(context, reviewData, widget.productId);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
                 ),
-              child: const Text("SEND REVIEW", style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.whiteColor,
-                  ),),
+              ),
+              child: const Text(
+                "SEND REVIEW",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: AppColor.whiteColor,
+                ),
+              ),
             ),
           ),
         ],

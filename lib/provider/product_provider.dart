@@ -49,6 +49,7 @@ class ProductData extends ChangeNotifier {
    TextEditingController userMobile = TextEditingController();
   String signScreenErrorMsg = "";
    GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
+   bool isMyOrdersLoaded =true;
   
   bool? isCheckBox = false;
   bool isClickedPasword = true;
@@ -382,12 +383,15 @@ class ProductData extends ChangeNotifier {
   }
 
   Future<void> getOrderItems(String orderId) async {
+    debugPrint("orderId  :$orderId");
     final url = "${APIEndPoint.getOrderItems}/$orderId";
     try {
       final response = await http.get(Uri.parse(url));
+        debugPrint("response.body : ${response.body}");
+
       if (response.statusCode == 200) {
         final decodedJson = jsonDecode(response.body) as List<dynamic>;
-        debugPrint("decodedJson item : $response");
+        debugPrint("decodedJson item : ${response.body}");
 
         orderedItems =
             decodedJson.map((json) => Product.fromJson(json)).toList();
@@ -414,7 +418,7 @@ class ProductData extends ChangeNotifier {
   Future<void> postReviews(BuildContext context, Map reviewData, int productId) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.0.110:3000/api/products/$productId/reviews'),
+        Uri.parse('${APIEndPoint.postReviews}/products/$productId/reviews'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reviewData),
       );
@@ -435,7 +439,7 @@ class ProductData extends ChangeNotifier {
   }
 
   void getReviews(int productId) async {
-    final url = 'http://192.168.0.110:3000/api/products/$productId/reviews';
+    final url = '${APIEndPoint.getReviews}/products/$productId/reviews';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -452,7 +456,7 @@ class ProductData extends ChangeNotifier {
   }
 
   void fetchMyAllReviews(String userId) async {
-    final url = "http://192.168.0.110:3000/api/myallreviews/$userId";
+    final url = "${APIEndPoint.fetchMyAllReviews}/$userId";
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {

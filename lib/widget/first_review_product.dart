@@ -131,7 +131,7 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
             latestReview != null
                 ? latestReview['comment']
                 : "No reviews yet. Be the first to review!",
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
+            style: const TextStyle(fontSize: 15, color: Colors.grey),
           ),
           const SizedBox(height: 16),
 
@@ -168,7 +168,7 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
             latestReview != null
                 ? "${latestReview['reviewer_name']}, ${formatDate(latestReview['date'])}"
                 : "",
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
+            style: const TextStyle(fontSize: 13, color: Colors.grey),
           ),
 
           const SizedBox(height: 10),
