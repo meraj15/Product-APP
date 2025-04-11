@@ -89,7 +89,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   onTap: (index) {
                     carouselController.animateTo(
                       index.toDouble(),
-                      duration: Duration(seconds: 1),
+                      duration:const Duration(seconds: 1),
                       curve: Curves.easeIn,
                     );
                   },
@@ -276,7 +276,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 product: widget.product,
               ),
             ),
-            SizedBox(
+           const SizedBox(
               height: 8.0,
             ),
            

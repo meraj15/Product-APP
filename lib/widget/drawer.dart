@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/Auth/auth_service.dart';
+import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
+import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
-class DrawerWidget extends StatelessWidget {
-  final double avatarRadius = 60;
-
+class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
 
   @override
+  State<DrawerWidget> createState() => _DrawerWidgetState();
+}
+
+class _DrawerWidgetState extends State<DrawerWidget> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ProductData>().getUserDetail(userID);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final providerRead = context.watch<ProductData>();
     return Drawer(
       child: Column(
         children: [
@@ -18,43 +30,70 @@ class DrawerWidget extends StatelessWidget {
             height: 228,
             width: double.infinity,
             decoration: BoxDecoration(
-                // gradient: LinearGradient(
-                //   colors: [
-                //     Theme.of(context).colorScheme.primary,
-                //     Color.fromARGB(255, 224, 79, 66)
-                //   ],
-                //   begin: Alignment.topLeft,
-                //   end: Alignment.bottomRight,
-                // ),
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    const Color.fromARGB(255, 216, 91, 79)
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 color: Theme.of(context).colorScheme.primary),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 37),
-                SizedBox(
-                  height: 130,
-                  child: Image.asset("assets/images/profile.png"),
-                ),
-                const Text(
-                  "Khan Meraj",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-                const Text(
-                  "khanmeraj1542005@gmail.com",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(
-                  height: 7,
-                ),
-              ],
+             child: providerRead.userDetails.isNotEmpty
+    ? Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 37),
+          Container(
+            height: 90,
+            width: 90,
+            decoration: BoxDecoration(
+              color: AppColor.whiteColor,
+              borderRadius: BorderRadius.circular(50),
             ),
+            child: Center(
+              child: Text(
+                providerRead.getInitials(
+                  (providerRead.userDetails.isNotEmpty && providerRead.userDetails.first.containsKey("name"))
+                      ? providerRead.userDetails.first["name"] ?? "A"
+                      : "A",
+                ),
+                style: TextStyle(
+                  fontSize: 40,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            (providerRead.userDetails.isNotEmpty && providerRead.userDetails.first.containsKey("name"))
+                ? providerRead.userDetails.first["name"] ?? "Anonymous"
+                : "Anonymous",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            (providerRead.userDetails.isNotEmpty && providerRead.userDetails.first.containsKey("email"))
+                ? providerRead.userDetails.first["email"] ?? "No Email"
+                : "No Email",
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(
+            height: 7,
+          ),
+        ],
+      )
+    : const Center(
+        child: CircularProgressIndicator(color: AppColor.whiteColor),
+      ),
+
           ),
           Expanded(
             child: ListView(
@@ -86,14 +125,6 @@ class DrawerWidget extends StatelessWidget {
                   },
                 ),
                 createDrawerItem(
-                  icon: Icons.history,
-                  context: context,
-                  text: 'Order History',
-                  onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.profileScreen);
-                  },
-                ),
-                createDrawerItem(
                   icon: Icons.person,
                   context: context,
                   text: 'Profile',
@@ -101,31 +132,14 @@ class DrawerWidget extends StatelessWidget {
                     Navigator.of(context).pushNamed(AppRoutes.profileScreen);
                   },
                 ),
-                createDrawerItem(
-                  icon: Icons.settings,
-                  text: 'Settings',
-                  context: context,
-                  onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.profileScreen);
-                  },
-                ),
                 const Divider(),
-                createDrawerItem(
-                  icon: Icons.help,
-                  context: context,
-                  text: 'Help & Support',
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/help-support');
-                  },
-                ),
                 createDrawerItem(
                   icon: Icons.logout,
                   context: context,
                   text: 'Logout',
                   onTap: () async {
-                     await AuthService.logout();
-                       
-                        
+                    await AuthService.logout();
+
                     Navigator.of(context).pushNamed("/");
                   },
                 ),
@@ -140,7 +154,7 @@ class DrawerWidget extends StatelessWidget {
   Widget createDrawerItem({
     required IconData icon,
     required String text,
-   required VoidCallback? onTap,
+    required VoidCallback? onTap,
     required BuildContext context,
   }) {
     return ListTile(

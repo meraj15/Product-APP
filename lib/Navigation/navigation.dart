@@ -4,7 +4,6 @@ import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/view/favorite_cart_screen.dart';
 import 'package:product_app/view/home_screen.dart';
-import 'package:product_app/view/my_order_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../view/profile_screen.dart';
@@ -21,11 +20,13 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
   int selectedIndex = 0;
   @override
   void initState() {
-    context.read<ProductData>().getData();
+    // context.read<ProductData>().getData();
     context.read<ProductData>().getCartsData(userID);
     context.read<ProductData>().getFavouriteData(userID);
     context.read<ProductData>().getAddressData();
     context.read<ProductData>().fetchMyAllOrders(userID);
+    context.read<ProductData>().fetchMyAllReviews(userID);
+
     super.initState();
   }
   @override
@@ -45,7 +46,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
               Icons.home,
               color: Theme.of(context).colorScheme.primary,
             ),
-            icon: Icon(Icons.home),
+            icon:const Icon(Icons.home),
             label: "Home",
           ),
           NavigationDestination(
@@ -53,7 +54,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
               Icons.shopping_cart,
               color: Theme.of(context).colorScheme.primary,
             ),
-            icon: Icon(Icons.shopping_cart),
+            icon:const Icon(Icons.shopping_cart),
             label: "Shop",
           ),
           NavigationDestination(
@@ -61,7 +62,7 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
               Icons.favorite,
               color: Theme.of(context).colorScheme.primary,
             ),
-            icon: Icon(Icons.favorite),
+            icon:const Icon(Icons.favorite),
             label: "Favorite",
           ),
           NavigationDestination(
@@ -69,17 +70,17 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
               Icons.person,
               color: Theme.of(context).colorScheme.primary,
             ),
-            icon: Icon(Icons.person),
+            icon:const Icon(Icons.person),
             label: "Person",
           ),
         ],
       ),
       body: switch(selectedIndex){
-       0 => HomeScreen(),
-       1 => ShopScreen(),
-       2 => Favorites(),
-       3 => ProfileScreen(),
-       _ => Scaffold(body: Center(child: Text('Not Available!!'),),)
+       0 =>const HomeScreen(),
+       1 =>const ShopScreen(),
+       2 =>const Favorites(),
+       3 =>const ProfileScreen(),
+       _ =>const Scaffold(body: Center(child: Text('Not Available!!'),),)
       },
     );
   }

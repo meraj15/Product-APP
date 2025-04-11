@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:product_app/Auth/auth_service.dart';
 import 'package:product_app/config/endpoint.dart';
 import 'package:product_app/main.dart';
@@ -41,19 +42,20 @@ class ProductData extends ChangeNotifier {
   TextEditingController userState = TextEditingController();
   TextEditingController userZipCode = TextEditingController();
   TextEditingController userCountry = TextEditingController();
-    GlobalKey<FormState> formKeySignUp = GlobalKey<FormState>();
-   TextEditingController signUpUserName = TextEditingController();
-   TextEditingController userEmail = TextEditingController();
-   TextEditingController userPassword = TextEditingController();
-   TextEditingController userConfirmPassword = TextEditingController();
-   TextEditingController userMobile = TextEditingController();
+  GlobalKey<FormState> formKeySignUp = GlobalKey<FormState>();
+  TextEditingController signUpUserName = TextEditingController();
+  TextEditingController userEmail = TextEditingController();
+  TextEditingController userPassword = TextEditingController();
+  TextEditingController userConfirmPassword = TextEditingController();
+  TextEditingController userMobile = TextEditingController();
   String signScreenErrorMsg = "";
-   GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
-   bool isMyOrdersLoaded =true;
-  
+  GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
+  bool isMyOrdersLoaded = true;
+  List<dynamic> userDetails = [];
   bool? isCheckBox = false;
   bool isClickedPasword = true;
   String loginScreenErrorMsg = "";
+  List<Map<String, dynamic>> updatedCartQuantities = [];
 
   void setProductSize(String size) {
     productSize = size;
@@ -211,6 +213,13 @@ class ProductData extends ChangeNotifier {
     notifyListeners();
   }
 
+String getInitials(String? name) {
+  if (name == null || name.trim().isEmpty) return "A"; 
+  List<String> parts = name.trim().split(' ');
+  return parts.length > 1 ? '${parts[0][0]}${parts[1][0]}' : parts[0][0];
+}
+
+
   void postfavouriteData(Map<String, dynamic> pdata) async {
     pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
 
@@ -267,8 +276,8 @@ class ProductData extends ChangeNotifier {
     );
   }
 
-  void updateData(String userId) async {
-    final url = Uri.parse("http://192.168.0.110:3000/api/address/$userId");
+  void updateAddressData(String userId) async {
+    final url = Uri.parse("${APIEndPoint.updateAddressData}/$userId");
     await http.patch(
       url,
       headers: {"Content-Type": "application/json"},
@@ -387,7 +396,7 @@ class ProductData extends ChangeNotifier {
     final url = "${APIEndPoint.getOrderItems}/$orderId";
     try {
       final response = await http.get(Uri.parse(url));
-        debugPrint("response.body : ${response.body}");
+      debugPrint("response.body : ${response.body}");
 
       if (response.statusCode == 200) {
         final decodedJson = jsonDecode(response.body) as List<dynamic>;
@@ -415,7 +424,8 @@ class ProductData extends ChangeNotifier {
     debugPrint("orderUsername : $orderUsername");
   }
 
-  Future<void> postReviews(BuildContext context, Map reviewData, int productId) async {
+  Future<void> postReviews(
+      BuildContext context, Map reviewData, int productId) async {
     try {
       final response = await http.post(
         Uri.parse('${APIEndPoint.postReviews}/products/$productId/reviews'),
@@ -424,7 +434,7 @@ class ProductData extends ChangeNotifier {
       );
 
       if (response.statusCode == 201) {
-        Navigator.pop(context); 
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Review submitted successfully!"),
@@ -534,4 +544,93 @@ class ProductData extends ChangeNotifier {
       debugPrint("Login Error: $e");
     }
   }
+
+  String formatOrderTime(DateTime orderTime) {
+    return DateFormat('hh:mm a').format(orderTime);
+  }
+
+  void postOrder(BuildContext context) async {
+    final DateTime orderTime = DateTime.now();
+    try {
+      final response = await http.post(
+        Uri.parse(APIEndPoint.postOrder),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "userid": userID,
+          'price': totalAmount,
+          'order_time': formatOrderTime(orderTime),
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (data['message'] == "Order placed successfully") {
+        deleteAllCarts();
+      }
+    } catch (e) {
+      debugPrint("Error in postData: $e");
+    }
+  }
+
+  void deleteAllCarts() async {
+    try {
+      final url = Uri.parse(APIEndPoint.deleteAllCarts);
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        debugPrint("All carts deleted: ${responseData['message']}");
+      } else if (response.statusCode == 404) {
+        debugPrint("No carts found to delete: ${response.body}");
+      } else {
+        debugPrint("Failed to delete all carts: ${response.body}");
+      }
+    } catch (e) {
+      debugPrint("Error: $e");
+    }
+  }
+
+  void updateOrderStatus(String orderId, String newStatus) async {
+    final url = "${APIEndPoint.updateOrderStatus}/$orderId";
+    final headers = {"Content-Type": "application/json"};
+    final body = jsonEncode({"order_status": newStatus});
+
+    try {
+      final response = await http.put(
+        Uri.parse(url),
+        headers: headers,
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("Order status successfully updated to $newStatus");
+        notifyListeners();
+      } else {
+        debugPrint(
+            "Failed to update order status. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error updating order status: $e");
+    }
+  }
+
+  Future<void> getUserDetail(String userId) async {
+  final url = "${APIEndPoint.getUserDetail}/$userId";
+  try {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final List<dynamic> decodeJson = jsonDecode(response.body);
+      userDetails = decodeJson.cast<Map<String, dynamic>>();
+      debugPrint("userDetails: $userDetails");
+      notifyListeners();
+    } else {
+      debugPrint("Failed to load user details: ${response.body}");
+      throw Exception('Failed to load user details');
+    }
+  } catch (e) {
+    debugPrint("Error fetching user details: $e");
+    error = e.toString();
+  }
+}
+
 }

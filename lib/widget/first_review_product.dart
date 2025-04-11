@@ -52,9 +52,9 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+         const Text(
             "Ratings & Reviews",
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w500,
               color: Colors.black87,
@@ -78,9 +78,9 @@ class _DynamicReviewWidgetState extends State<DynamicReviewWidget> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 13.0),
-                        child: const Text(
+                     const Padding(
+                        padding:  EdgeInsets.only(top: 13.0),
+                        child:  Text(
                           "5",
                           style: TextStyle(
                             fontSize: 18,

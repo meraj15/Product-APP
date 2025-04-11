@@ -58,7 +58,7 @@ class InvoicePdfWidget {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text('Order ID: $orderId',
-                      style: pw.TextStyle(fontSize: 13)),
+                      style:const pw.TextStyle(fontSize: 13)),
                   pw.SizedBox(height: 4),
                   pw.Text('Order Date: $orderDate'),
                   pw.SizedBox(height: 4),
@@ -89,8 +89,8 @@ class InvoicePdfWidget {
               fontWeight: pw.FontWeight.bold,
               fontSize: 12,
             ),
-            cellStyle: pw.TextStyle(fontSize: 10),
-            headerDecoration: pw.BoxDecoration(
+            cellStyle:const pw.TextStyle(fontSize: 10),
+            headerDecoration:const pw.BoxDecoration(
               color: PdfColors.grey300,
             ),
             cellPadding: const pw.EdgeInsets.all(8),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/view/address_form_screen.dart';
-import 'package:product_app/view/all_user_reviews.dart';
+import 'package:product_app/view/all_my_reviews.dart';
 import 'package:product_app/view/login_screen.dart';
 import 'package:product_app/view/payment_method_screen.dart';
 import 'package:product_app/view/sign_up_screen.dart';

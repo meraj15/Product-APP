@@ -250,10 +250,10 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                         right: 0,
                         child: GestureDetector(
                           onTap: () => _removeImage(imageIndex),
-                          child: CircleAvatar(
+                          child:const CircleAvatar(
                             radius: 10,
                             backgroundColor: Colors.red,
-                            child: const Icon(
+                            child:  Icon(
                               Icons.close,
                               size: 13,
                               color: Colors.white,

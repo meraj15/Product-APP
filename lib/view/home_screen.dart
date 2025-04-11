@@ -9,7 +9,6 @@ import 'package:product_app/widget/circular_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../constant/contant.dart';
 import '../provider/product_provider.dart';
 import '../widget/drawer.dart';
@@ -22,22 +21,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-    TextEditingController userInput = TextEditingController();
+  TextEditingController userInput = TextEditingController();
   List<String> assets = [
-    'assets/images/beauty.png',
-    'assets/images/furniture.png',
-    'assets/images/offer.png',
+    'assets/images/beauty.jpg',
+    'assets/images/product.jpg',
+    'assets/images/republic_sale.jpg',
   ];
 
- @override
-  void initState(){
+  @override
+  void initState() {
     super.initState();
     loadData();
+     userInput.addListener(() {
+    setState(() {}); 
+  });
     debugPrint("HomeScreen : $userID");
   }
 
-  void loadData()async{
- userID = await AuthService.getUserId();
+  void loadData() async {
+    userID = await AuthService.getUserId();
+    await context.read<ProductData>().getData();
   }
 
   int _currentIndex = 0;
@@ -137,9 +140,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               return Builder(
                                 builder: (BuildContext context) {
                                   return SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child:
-                                        Image.asset(asset, fit: BoxFit.cover),
+                                    width: MediaQuery.of(context)
+                                        .size
+                                        .width, 
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                          10), 
+                                      child: Image.asset(
+                                        asset,
+                                        fit: BoxFit
+                                            .cover, 
+                                      ),
+                                    ),
                                   );
                                 },
                               );
@@ -164,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   if (userInput.text.isNotEmpty)
-                    buildCategorySection(context, userInput.text.toLowerCase())
+                    buildCategorySection(context, userInput.text)
                   else
                     buildAllCategories(context),
                 ],

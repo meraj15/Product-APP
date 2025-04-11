@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:printing/printing.dart';
 import 'package:product_app/constant/contant.dart';
@@ -138,7 +137,9 @@ class _OrderItemsState extends State<OrderItems> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 4.0,),
+                                  const SizedBox(
+                                    height: 4.0,
+                                  ),
                                   Text(
                                     product.title,
                                     overflow: TextOverflow.ellipsis,
@@ -149,7 +150,8 @@ class _OrderItemsState extends State<OrderItems> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical:2.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 2.0),
                                     child: Text(
                                       "Brand: ${product.brand}",
                                       style: const TextStyle(
@@ -162,36 +164,42 @@ class _OrderItemsState extends State<OrderItems> {
                                         fontSize: 12, color: Colors.black54),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 6.0),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        TextButton.icon(
-                                          onPressed: () {
-                                            _showReviewBottomSheet(
-                                                context,
-                                                product.id,
-                                                product.title,
-                                                product.thumbnail);
-                                          },
-                                          icon: const Icon(Icons.edit,
-                                              size: 16, color: Colors.blue),
-                                          label: const Text(
-                                            'Write a review',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.blue),
-                                          ),
-                                          style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: Size.zero,
-                                            tapTargetSize: MaterialTapTargetSize
-                                                .shrinkWrap,
-                                          ),
-                                        ),
+                                        widget.orderstatus == "Delivered"
+                                            ? TextButton.icon(
+                                                onPressed: () {
+                                                  _showReviewBottomSheet(
+                                                      context,
+                                                      product.id,
+                                                      product.title,
+                                                      product.thumbnail);
+                                                },
+                                                icon: const Icon(Icons.edit,
+                                                    size: 16,
+                                                    color: Colors.blue),
+                                                label: const Text(
+                                                  'Write a review',
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.blue),
+                                                ),
+                                                style: TextButton.styleFrom(
+                                                  padding: EdgeInsets.zero,
+                                                  minimumSize: Size.zero,
+                                                  tapTargetSize:
+                                                      MaterialTapTargetSize
+                                                          .shrinkWrap,
+                                                ),
+                                              )
+                                            : const SizedBox(),
                                         Padding(
-                                          padding: const EdgeInsets.only(right:8.0),
+                                          padding:
+                                              const EdgeInsets.only(right: 8.0),
                                           child: Text(
                                             "\$${product.price.toString()}",
                                             style: TextStyle(

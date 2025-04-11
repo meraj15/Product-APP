@@ -25,16 +25,16 @@ class CheckoutButton extends StatelessWidget {
         },
         style: FilledButton.styleFrom(
           backgroundColor: const Color(0xffdb3022),
-          minimumSize: Size(double.infinity, 50),
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          minimumSize:const Size(double.infinity, 50),
+          padding:const EdgeInsets.symmetric(horizontal: 16.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.0),
           ),
         ),
-        child: Center(
+        child:const Center(
           child: Text(
             "CHECK OUT",
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 16,
               color: Colors.white,
               fontWeight: FontWeight.w500,

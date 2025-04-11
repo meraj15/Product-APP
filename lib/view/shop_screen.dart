@@ -37,22 +37,6 @@ class _ShopScreenState extends State<ShopScreen> {
         ),
         backgroundColor: AppColor.scaffoldColor,
         actions: [
-          // Badge(
-          //   backgroundColor: AppColor.appMainColor,
-          //   label: Text(
-          //     '${context.watch<ProductData>().addCard.length}',
-          //     style: TextStyle(
-          //       color: Colors.red,
-          //       fontWeight: FontWeight.w900,
-          //     ),
-          //   ),
-          //   child: IconButton(
-          //     onPressed: () {
-          //       Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
-          //     },
-          //     icon: const Icon(Icons.shopping_cart_outlined),
-          //   ),
-          // )
           IconButton(
             onPressed: () {
               Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
@@ -61,7 +45,7 @@ class _ShopScreenState extends State<ShopScreen> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               label: Text(
                 '${context.watch<ProductData>().addCard.length}',
-                style: TextStyle(
+                style:const TextStyle(
                   color: AppColor.whiteColor,
                   fontWeight: FontWeight.w900,
                 ),

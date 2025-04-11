@@ -1,15 +1,9 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:product_app/Auth/auth_service.dart';
-import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
-import 'package:product_app/view/home_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

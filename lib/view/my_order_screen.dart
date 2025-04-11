@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/view/order_items_screen.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +28,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: providerRead.isOrderAllLoading
-            ? const Center(child:  CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : providerRead.userAllOrders.isEmpty
                 ? const Center(child: Text("No orders available."))
                 : ListView.builder(
@@ -38,7 +37,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                       final order = providerRead.userAllOrders[index];
                       return Container(
                         width: 334,
-                        height: 164,
+                        height: 165,
                         padding: const EdgeInsets.all(16.0),
                         margin: const EdgeInsets.only(bottom: 16.0),
                         decoration: BoxDecoration(
@@ -67,10 +66,46 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                     color: Color(0xff222222),
                                   ),
                                 ),
-                                Text(
-                                  order['order_date'],
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 14),
+                                Row(
+                                  children: [
+                                    Text(
+                                      order['order_date'],
+                                      style: const TextStyle(
+                                          color: Colors.grey, fontSize: 14),
+                                    ),
+                                    GestureDetector(
+                                      onTapDown:
+                                          (TapDownDetails details) async {
+                                        final selectedValue =
+                                            await showMenu<String>(
+                                          context: context,
+                                          position: RelativeRect.fromLTRB(
+                                            details.globalPosition.dx,
+                                            details.globalPosition.dy,
+                                            details.globalPosition.dx + 40,
+                                            details.globalPosition.dy + 40,
+                                          ),
+                                          items: [
+                                            const PopupMenuItem<String>(
+                                              value: 'Cancel Order',
+                                              child: Text('Cancel Order'),
+                                            ),
+                                          ],
+                                        );
+
+                                        if (selectedValue == 'Cancel Order') {
+                                          setState(() {
+                                            order['order_status'] =
+                                                'Cancelled'; // UI Update Immediately
+                                          });
+
+                                          providerRead.updateOrderStatus(
+                                              order['order_id'], 'Cancelled');
+                                        }
+                                      },
+                                      child: const Icon(Icons.more_vert),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -119,7 +154,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                     side: BorderSide.none,
                                     backgroundColor: AppColor.appMainColor,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(24),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
                                   ),
                                   child: const Text(

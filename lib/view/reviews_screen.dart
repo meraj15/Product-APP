@@ -68,8 +68,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
               child: Text("No reviews available."),
             )
           : ListView.separated(
-              separatorBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              separatorBuilder: (context, index) =>const Padding(
+                padding:  EdgeInsets.symmetric(horizontal: 8.0),
                 child: Divider(
                   color: Color(0xff9b9b9b),
                 ),
@@ -81,7 +81,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 return Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
-                  decoration: BoxDecoration(
+                  decoration:const BoxDecoration(
                     color: Colors.white,
                   ),
                   child: Column(

@@ -128,7 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     onPressed: () async {
                     if (providerRead.formKeySignUp.currentState!.validate()) {
                       Map<String, dynamic> userInfo = {
-                        'name': providerRead.userName.text,
+                        'name': providerRead.signUpUserName.text,
                         'email': providerRead.userEmail.text,
                         'password': providerRead.userPassword.text,
                         'mobile': providerRead.userMobile.text,

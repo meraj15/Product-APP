@@ -31,17 +31,17 @@ class _AddressFormState extends State<AddressForm> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildTextField(providerRead.userName, 'Full name'),
-              SizedBox(height: 23.0),
+             const SizedBox(height: 23.0),
               _buildTextField(providerRead.userStreet, 'Address'),
-              SizedBox(height: 23.0),
+             const SizedBox(height: 23.0),
               _buildTextField(providerRead.userCity, 'City'),
-              SizedBox(height: 23.0),
+             const SizedBox(height: 23.0),
               _buildTextField(providerRead.userState, 'State/Province/Region'),
-              SizedBox(height: 23.0),
+             const SizedBox(height: 23.0),
               _buildTextField(providerRead.userZipCode, 'Zip Code (Postal Code)'),
-              SizedBox(height: 23.0),
+             const SizedBox(height: 23.0),
               _buildTextField(providerRead.userCountry, 'Country'),
-              SizedBox(height: 32.0),
+             const SizedBox(height: 32.0),
               ElevatedButton(
                 onPressed: () async {
                  Map<String, dynamic> cardProduct = {
@@ -55,7 +55,7 @@ class _AddressFormState extends State<AddressForm> {
                   };
 
                   if (providerRead.isAddressFetched) {
-                    providerRead.updateData(userID);
+                    providerRead.updateAddressData(userID);
                   } else {
                     providerRead.saveAddress(cardProduct);
                   }
@@ -68,26 +68,26 @@ class _AddressFormState extends State<AddressForm> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
-                  padding: EdgeInsets.symmetric(vertical: 14.0),
+                  padding:const EdgeInsets.symmetric(vertical: 14.0),
                 ),
                 child: Text(
                   providerRead.isAddressFetched ? "Confirm ADDRESS" : "SAVE ADDRESS",
-                  style: TextStyle(
+                  style:const TextStyle(
                     fontSize: 16.0,
                     color: AppColor.whiteColor,
                   ),
                 ),
               ),
-              SizedBox(height: 15.0),
+             const SizedBox(height: 15.0),
               ElevatedButton(
                 onPressed: () async {
                   await providerRead.getCurrentLocation(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
-                  padding: EdgeInsets.symmetric(vertical: 14.0),
+                  padding:const EdgeInsets.symmetric(vertical: 14.0),
                 ),
-                child: Text(
+                child:const Text(
                   'Current Location',
                   style: TextStyle(
                     fontSize: 16.0,
@@ -110,7 +110,7 @@ class _AddressFormState extends State<AddressForm> {
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
             blurRadius: 2,
-            offset: Offset(0, 1),
+            offset:const Offset(0, 1),
           ),
         ],
       ),
@@ -121,7 +121,7 @@ class _AddressFormState extends State<AddressForm> {
           filled: true,
           fillColor: Colors.white,
           labelText: labelText,
-          labelStyle: TextStyle(
+          labelStyle:const TextStyle(
             color: Colors.grey,
           ),
         ),

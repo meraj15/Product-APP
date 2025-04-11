@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
-import 'package:product_app/model/product.dart';
 import 'package:product_app/provider/product_provider.dart';
+import 'package:product_app/widget/show_image_preview_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -15,13 +15,7 @@ class AllMyReviews extends StatefulWidget {
 }
 
 class _AllMyReviewsState extends State<AllMyReviews> {
-  int selectedStar = 0; // 0 means "All" reviews
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<ProductData>().fetchMyAllReviews(userID);
-  }
+  int selectedStar = 0;
 
   String formatDate(String dateString) {
     final DateFormat formatter = DateFormat('d MMM yyyy');
@@ -37,7 +31,7 @@ class _AllMyReviewsState extends State<AllMyReviews> {
         : providerRead.userAllReviews
             .where((review) => review['rating'] == selectedStar)
             .toList();
-
+    final products = providerRead.products;
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       appBar: AppBar(
@@ -67,8 +61,8 @@ class _AllMyReviewsState extends State<AllMyReviews> {
               child: Text("No reviews available."),
             )
           : ListView.separated(
-              separatorBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              separatorBuilder: (context, index) => const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: Divider(
                   color: Color(0xff9b9b9b),
                 ),
@@ -80,7 +74,7 @@ class _AllMyReviewsState extends State<AllMyReviews> {
                 return Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                   ),
                   child: Column(
@@ -100,10 +94,10 @@ class _AllMyReviewsState extends State<AllMyReviews> {
 
                       // Title
                       Text(
-                        "review['title']",
+                        products[index].title,
                         style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -120,20 +114,28 @@ class _AllMyReviewsState extends State<AllMyReviews> {
                       const SizedBox(height: 8),
 
                       // Images
-                      if (review['images'] != null &&
-                          (review['images'] as List).isNotEmpty)
+                      if (review['product_images'] != null &&
+                          (review['product_images'] as List).isNotEmpty)
                         Row(
                           children: List.generate(
-                            (review['images'] as List).length,
+                            (review['product_images'] as List).length,
                             (imgIndex) => Padding(
                               padding: const EdgeInsets.only(right: 8.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  review['images'][imgIndex],
-                                  width: 70,
-                                  height: 70,
-                                  fit: BoxFit.cover,
+                              child: GestureDetector(
+                                onTap: () {
+                                  ShowImageDialog.showImageDialog(
+                                    context,
+                                    review['product_images'][imgIndex],
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    review['product_images'][imgIndex],
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
@@ -184,7 +186,10 @@ class _AllMyReviewsState extends State<AllMyReviews> {
                   Navigator.pop(context);
                 },
                 trailing: selectedStar == 0
-                    ? const Icon(Icons.check, color: Colors.blue)
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
                     : null,
               ),
               for (int i = 1; i <= 5; i++)
@@ -197,7 +202,10 @@ class _AllMyReviewsState extends State<AllMyReviews> {
                     Navigator.pop(context);
                   },
                   trailing: selectedStar == i
-                      ? const Icon(Icons.check, color: Colors.blue)
+                      ? Icon(
+                          Icons.check,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
                       : null,
                 ),
             ],

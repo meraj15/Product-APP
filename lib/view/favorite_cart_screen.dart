@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/drawer.dart';
 import 'package:provider/provider.dart';
 import '../widget/filter_category_product.dart';
-import 'package:badges/badges.dart' as badges;
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
@@ -41,7 +39,7 @@ class _FavoritesState extends State<Favorites> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               label: Text(
                 '${context.watch<ProductData>().addCard.length}',
-                style: TextStyle(
+                style:const TextStyle(
                   color: AppColor.whiteColor,
                   fontWeight: FontWeight.w900,
                 ),

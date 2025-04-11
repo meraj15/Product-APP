@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
-import 'package:product_app/widget/toast.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
@@ -33,7 +32,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             Navigator.of(context).pop();
           },
         ),
-        title: Text(
+        title:const Text(
           'Payment Method',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
@@ -64,7 +63,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                   const Text(
                       'Total Amount',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -72,7 +71,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     Text(
                       "\$${context.watch<ProductData>().totalAmount.toStringAsFixed(2)}",
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                         const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -106,7 +105,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     _selectedPaymentMethod == "Cash"
                         ? 'Place Order'
                         : 'Make Payment',
-                    style: TextStyle(fontSize: 16, color: AppColor.whiteColor),
+                    style:const TextStyle(fontSize: 16, color: AppColor.whiteColor),
                   ),
                 ),
               ],
@@ -128,7 +127,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             Icon(Icons.money, color: Theme.of(context).colorScheme.primary),
         title: Text(
           title,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style:const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         trailing: Radio<String>(
           value: value,

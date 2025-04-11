@@ -16,7 +16,9 @@ class AddCard extends StatefulWidget {
 }
 
 class _AddCardState extends State<AddCard> {
-  List<Map<String, dynamic>> updatedCartQuantities = [];
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +143,7 @@ class _AddCardState extends State<AddCard> {
                                                                 1) {
                                                               product
                                                                   .productQuantity--;
-                                                              updatedCartQuantities
+                                                            productData.updatedCartQuantities
                                                                   .add({
                                                                 'id':
                                                                     product.id,
@@ -194,7 +196,7 @@ class _AddCardState extends State<AddCard> {
                                                           setState(() {
                                                             product
                                                                 .productQuantity++;
-                                                            updatedCartQuantities
+                                                            productData.updatedCartQuantities
                                                                 .add({
                                                               'id': product.id,
                                                               'quantity': product
@@ -276,10 +278,10 @@ class _AddCardState extends State<AddCard> {
             ),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+               const Padding(
+                  padding:  EdgeInsets.all(8.0),
                   child: TextField(
-                    decoration: const InputDecoration(
+                    decoration:  InputDecoration(
                       hintText: 'Enter your promo code',
                       suffixIcon: Icon(Icons.arrow_forward),
                       border: OutlineInputBorder(),
@@ -318,7 +320,7 @@ class _AddCardState extends State<AddCard> {
                   ),
                 ),
                 CheckoutButton(
-                  pdata: updatedCartQuantities,
+                  pdata:context.read<ProductData>().updatedCartQuantities,
                 ),
               ],
             ),
