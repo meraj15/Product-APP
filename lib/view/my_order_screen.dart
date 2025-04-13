@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/constant/contant.dart';
+import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/view/order_items_screen.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,12 @@ class MyOrderScreen extends StatefulWidget {
 }
 
 class _MyOrderScreenState extends State<MyOrderScreen> {
+@override
+  void initState() {
+    super.initState();
+    context.read<ProductData>().fetchMyAllOrders(userID);
+  }
+
   @override
   Widget build(BuildContext context) {
     final providerRead = context.watch<ProductData>();
@@ -73,6 +80,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                       style: const TextStyle(
                                           color: Colors.grey, fontSize: 14),
                                     ),
+                                    if(order['order_status'] != "Delivered" && order['order_status'] != "Cancelled")
                                     GestureDetector(
                                       onTapDown:
                                           (TapDownDetails details) async {
@@ -105,6 +113,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                       },
                                       child: const Icon(Icons.more_vert),
                                     ),
+                                 
                                   ],
                                 ),
                               ],

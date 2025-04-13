@@ -32,6 +32,7 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget build(BuildContext context) {
     final isFavorite =
         context.watch<ProductData>().favorite.contains(widget.product);
+    final providerWatch = context.watch<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
@@ -89,7 +90,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   onTap: (index) {
                     carouselController.animateTo(
                       index.toDouble(),
-                      duration:const Duration(seconds: 1),
+                      duration: const Duration(seconds: 1),
                       curve: Curves.easeIn,
                     );
                   },
@@ -236,8 +237,18 @@ class _ProductDetailState extends State<ProductDetail> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  SizeShowModelBottomSheet(
-                    product: widget.product,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                          "⭐ ${providerWatch.averageRating.toStringAsFixed(1)} (${providerWatch.productReviews.length} reviews)"),
+                          if (widget.product.category == "mens-shirts" ||
+                      widget.product.category == "tops" ||
+                      widget.product.category == "womens-dresses")
+                      SizeShowModelBottomSheet(
+                        product: widget.product,
+                      ),
+                    ],
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -276,13 +287,10 @@ class _ProductDetailState extends State<ProductDetail> {
                 product: widget.product,
               ),
             ),
-           const SizedBox(
+            const SizedBox(
               height: 8.0,
             ),
-           
-  DynamicReviewWidget(product: widget.product) 
- 
-
+            DynamicReviewWidget(product: widget.product)
           ],
         ),
       ),

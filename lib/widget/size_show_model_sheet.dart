@@ -18,122 +18,115 @@ class SizeShowModelBottomSheet extends StatefulWidget {
 class _SizeShowModelBottomSheetState extends State<SizeShowModelBottomSheet> {
   @override
   Widget build(BuildContext context) {
-    final providerWatch = context.watch<ProductData>();
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-
-        Text("⭐ ${providerWatch.averageRating.toStringAsFixed(1)} (${providerWatch.productReviews.length} reviews)"),
-        GestureDetector(
-          onTap: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: const Color(0xfff3f3f3),
-                    border: Border.all(
-                      width: 1.0,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
+   
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              height: 200,
+              decoration: BoxDecoration(
+                color: const Color(0xfff3f3f3),
+                border: Border.all(
+                  width: 1.0,
+                ),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Container(
+                      height: 5,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color: const Color(0xff9B9B9B),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Container(
-                          height: 5,
-                          width: 60,
-                          decoration: BoxDecoration(
-                            color: const Color(0xff9B9B9B),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text(
+                      "Select size",
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        child: Text(
-                          "Select size",
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Consumer<ProductData>(
-                        builder: (context, watchProvider, child) {
-                          return Column(
+                    ),
+                  ),
+                  Consumer<ProductData>(
+                    builder: (context, watchProvider, child) {
+                      return Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceAround,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  SizeOption(
-                                      context: context,
-                                      provider: watchProvider,
-                                      size: "XS"),
-                                  SizeOption(
-                                      context: context,
-                                      provider: watchProvider,
-                                      size: "S"),
-                                  SizeOption(
-                                      context: context,
-                                      provider: watchProvider,
-                                      size: "M"),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  SizeOption(
-                                      context: context,
-                                      provider: watchProvider,
-                                      size: "L"),
-                                  SizeOption(
-                                      context: context,
-                                      provider: watchProvider,
-                                      size: "XL"),
-                                  SizeOption(
-                                      context: context,
-                                      provider: watchProvider,
-                                      size: "XLL"),
-                                ],
-                              ),
+                              SizeOption(
+                                  context: context,
+                                  provider: watchProvider,
+                                  size: "XS"),
+                              SizeOption(
+                                  context: context,
+                                  provider: watchProvider,
+                                  size: "S"),
+                              SizeOption(
+                                  context: context,
+                                  provider: watchProvider,
+                                  size: "M"),
                             ],
-                          );
-                        },
-                      ),
-                      // const SizedBox(
-                      //   height: 19,
-                      // ),
-                      // ProductDetailBottomSheet(
-                      //   product: widget.product,
-                      //   bgColor: const Color(0xfff3f3f3),
-                      //   pdata: {
-                      //   'id': widget.product.id,
-                      //   'title': widget.product.title,
-                      //   'thumbnail': widget.product.thumbnail,
-                      //   'brand': widget.product.brand,
-                      //   'price': widget.product.price,
-                      //   'userid': userID,
-                      //   'quantity':1,
-                      // },
-                      // )
-                    ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceAround,
+                            children: [
+                              SizeOption(
+                                  context: context,
+                                  provider: watchProvider,
+                                  size: "L"),
+                              SizeOption(
+                                  context: context,
+                                  provider: watchProvider,
+                                  size: "XL"),
+                              SizeOption(
+                                  context: context,
+                                  provider: watchProvider,
+                                  size: "XLL"),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                );
-              },
+                  // const SizedBox(
+                  //   height: 19,
+                  // ),
+                  // ProductDetailBottomSheet(
+                  //   product: widget.product,
+                  //   bgColor: const Color(0xfff3f3f3),
+                  //   pdata: {
+                  //   'id': widget.product.id,
+                  //   'title': widget.product.title,
+                  //   'thumbnail': widget.product.thumbnail,
+                  //   'brand': widget.product.brand,
+                  //   'price': widget.product.price,
+                  //   'userid': userID,
+                  //   'quantity':1,
+                  // },
+                  // )
+                ],
+              ),
             );
           },
-          child: const SizeSelector(),
-        ),
-      ],
+        );
+      },
+      child: const SizeSelector(),
     );
   }
 }

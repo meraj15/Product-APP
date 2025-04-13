@@ -27,7 +27,8 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final providerRead = context.read<ProductData>();
-    final isThereInCart = context.watch<ProductData>().addCard.contains(widget.product);
+    final isThereInCart =
+        context.watch<ProductData>().addCard.contains(widget.product);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -43,18 +44,22 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
           child: FilledButton(
             onPressed: () {
               if (isThereInCart) {
-               
                 Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
               } else {
-                if (providerRead.productSize.isNotEmpty) {
+                bool requiresSize = widget.product.category == "mens-shirts" ||
+                    widget.product.category == "tops" ||
+                    widget.product.category == "womens-dresses";
+
+                if (requiresSize && providerRead.productSize.isEmpty) {
+                  CustomToast.showCustomToast(
+                      context, "Please select the size");
+                } else {
                   providerRead.postcartsData(widget.pdata);
-                  providerRead.addCard.add(widget.product); 
+                  providerRead.addCard.add(widget.product);
                   providerRead.productSize = "";
                   providerRead.addCardLength = providerRead.addCard.length;
                   CustomToast.showCustomToast(context, "Added Successfully");
                   setState(() {});
-                } else {
-                  CustomToast.showCustomToast(context, 'Please select the size');
                 }
               }
             },
@@ -78,7 +83,6 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
           ),
         ),
       ),
-   
     );
   }
 }

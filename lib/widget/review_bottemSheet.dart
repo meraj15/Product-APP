@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
+import 'package:product_app/widget/toast.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -57,11 +58,12 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
 
     for (var imageFile in _imageFiles) {
       final originalFile = File(imageFile.path);
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${imageFile.name}';
+      final fileName =
+          '${DateTime.now().millisecondsSinceEpoch}_${imageFile.name}';
 
       try {
         final response = await Supabase.instance.client.storage
-            .from('images') 
+            .from('images')
             .upload(fileName, originalFile);
 
         if (response.isEmpty) {
@@ -82,6 +84,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final providerRead = context.read<ProductData>();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
@@ -250,10 +253,10 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                         right: 0,
                         child: GestureDetector(
                           onTap: () => _removeImage(imageIndex),
-                          child:const CircleAvatar(
+                          child: const CircleAvatar(
                             radius: 10,
                             backgroundColor: Colors.red,
-                            child:  Icon(
+                            child: Icon(
                               Icons.close,
                               size: 13,
                               color: Colors.white,
@@ -267,50 +270,111 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
               },
             ),
           ),
+          // const SizedBox(height: 16),
+          // SizedBox(
+          //   width: double.infinity,
+          //   child: ElevatedButton(
+          //     onPressed: () async {
+          //       final reviewText = _reviewController.text.trim();
+          //       if (reviewText.isEmpty || selectedStars == 0) {
+          //         ScaffoldMessenger.of(context).showSnackBar(
+          //           const SnackBar(
+          //             content: Text("Please provide a rating and a review."),
+          //           ),
+          //         );
+          //         return;
+          //       }
+
+          //       List<String> imageUrls = await _uploadImages();
+          //       debugPrint("imageUrls : $imageUrls");
+          //       final reviewData = {
+          //         "rating": selectedStars,
+          //         "comment": reviewText,
+          //         "userid": userID,
+          //         "product_images": imageUrls
+          //       };
+
+          //       context
+          //           .read<ProductData>()
+          //           .postReviews(context, reviewData, widget.productId);
+          //     },
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: Theme.of(context).colorScheme.primary,
+          //       padding: const EdgeInsets.symmetric(vertical: 13),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(24),
+          //       ),
+          //     ),
+          //     child: const Text(
+          //       "SEND REVIEW",
+          //       style: TextStyle(
+          //         fontSize: 15,
+          //         fontWeight: FontWeight.w500,
+          //         color: AppColor.whiteColor,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () async {
-                final reviewText = _reviewController.text.trim();
-                if (reviewText.isEmpty || selectedStars == 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please provide a rating and a review."),
-                    ),
-                  );
-                  return;
-                }
+              onPressed: providerRead.isReviewPosting
+                  ? null
+                  : () async {
+                      final reviewText = _reviewController.text.trim();
+                      if (reviewText.isEmpty || selectedStars == 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  "Please provide a rating and a review.")),
+                        );
+                        return;
+                      }
 
-                // Upload images to Supabase
-                List<String> imageUrls = await _uploadImages();
-                debugPrint("imageUrls : $imageUrls");
-                final reviewData = {
-                  "rating": selectedStars,
-                  "comment": reviewText,
-                  "userid": userID,
-                  "product_images": imageUrls
-                };
+                      setState(() => providerRead.isReviewPosting = true);
 
-                context
-                    .read<ProductData>()
-                    .postReviews(context, reviewData, widget.productId);
-              },
+                      try {
+                        final imageUrls = await _uploadImages();
+                        final reviewData = {
+                          "rating": selectedStars,
+                          "comment": reviewText,
+                          "userid": userID,
+                          "product_images": imageUrls,
+                        };
+
+                        await context
+                            .read<ProductData>()
+                            .postReviews(context, reviewData, widget.productId);
+                        Navigator.of(context).pop();
+                      } catch (e) {
+                        CustomToast.showCustomToast(
+                            context, 'Failed to post review: $e');
+                      } finally {
+                        setState(() => providerRead.isReviewPosting = false);
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
+                    borderRadius: BorderRadius.circular(24)),
               ),
-              child: const Text(
-                "SEND REVIEW",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: AppColor.whiteColor,
-                ),
-              ),
+              child: providerRead.isReviewPosting
+                  ? const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                          color: Colors.white, strokeWidth: 2),
+                    )
+                  : const Text(
+                      "SEND REVIEW",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.whiteColor,
+                      ),
+                    ),
             ),
           ),
         ],

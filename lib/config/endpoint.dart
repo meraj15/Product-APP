@@ -26,4 +26,7 @@ class APIEndPoint {
   static const String deleteAllCarts = "$_baseEndPoint/carts";
   static const String updateOrderStatus = "$_baseEndPoint/orders";
   static const String getUserDetail = "$_baseEndPoint/userdetails";
+  static const String updatePassword = "$_baseEndPoint/update";
+    static const String sendOtp= "$_baseEndPoint/send-otp";
+        static const String verifyOtp= "$_baseEndPoint/verify-otp";
 }

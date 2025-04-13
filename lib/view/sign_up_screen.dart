@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:product_app/Auth/auth_service.dart';
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
-import 'package:product_app/routes/app_routes.dart';
+import 'package:product_app/view/otp_screen.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -15,18 +13,21 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-   @override
+  @override
   Widget build(BuildContext context) {
     final providerRead = context.read<ProductData>();
+    final providerWatch = context.watch<ProductData>();
+
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         backgroundColor: AppColor.scaffoldColor,
         leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon:const Icon(Icons.arrow_back_ios)),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -54,6 +55,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: providerRead.signUpUserName,
                 labelText: "Name",
                 icon: Icons.person,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Name is required";
@@ -63,9 +67,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: providerRead.userEmail,
+                controller: providerRead.userSignEmail,
                 labelText: "Email",
                 icon: Icons.email,
+                errorText: providerWatch.signScreenErrorMsg.isNotEmpty
+                    ? providerWatch.signScreenErrorMsg
+                    : null,
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                ],
+                onChanged: (value) {
+                  if (providerRead.signScreenErrorMsg.isNotEmpty) {
+                    providerRead.signScreenErrorMsg = "";
+                    providerRead.notifyListeners();
+                  }
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Email is required";
@@ -77,7 +93,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: providerRead.userMobile,
+                controller: providerRead.userSignMobile,
                 labelText: "Mobile",
                 icon: Icons.phone,
                 maxLength: 10,
@@ -94,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: providerRead.userPassword,
+                controller: providerRead.userSignPassword,
                 labelText: "Password",
                 icon: Icons.lock,
                 obscureText: true,
@@ -109,14 +125,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: providerRead.userConfirmPassword,
+                controller: providerRead.userSignConfirmPassword,
                 labelText: "Confirm Password",
                 icon: Icons.lock_outline,
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Please confirm your password";
-                  } else if (value != providerRead.userPassword.text) {
+                  } else if (value != providerRead.userSignPassword.text) {
                     return "Passwords do not match";
                   }
                   return null;
@@ -125,24 +141,53 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(height: 25),
               Center(
                 child: ElevatedButton(
-                                    onPressed: () async {
-                    if (providerRead.formKeySignUp.currentState!.validate()) {
-                      Map<String, dynamic> userInfo = {
-                        'name': providerRead.signUpUserName.text,
-                        'email': providerRead.userEmail.text,
-                        'password': providerRead.userPassword.text,
-                        'mobile': providerRead.userMobile.text,
-                      };
+                  onPressed: providerRead.isSignLoading
+                      ? null
+                      : () async {
+                          if (providerRead.formKeySignUp.currentState!.validate()) {
+                            try {
+                              setState(() {
+                                providerRead.isSignLoading = true;
+                              });
+                              // Map<String, dynamic> userInfo = {
+                              //   'name': providerRead.signUpUserName.text,
+                              //   'email': providerRead.userSignEmail.text,
+                              //   'password': providerRead.userSignPassword.text,
+                              //   'mobile': providerRead.userSignMobile.text,
+                              // };
 
-                      await providerRead.postSignUpData(userInfo);
+                              // bool success = await providerRead.postSignUpData(userInfo);
 
-                      userID = await AuthService.getUserId();
-                      debugPrint("Latest User ID after sign-up: $userID");
-                        Navigator.of(context)
-                            .pushNamed(AppRoutes.bottemNavigationBar);
-                    }
-                  },
-
+                              // if (success) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => OTPScreen(
+                                      email: providerRead.userSignEmail.text,
+                                      fromScreen: "signUp",
+                                    ),
+                                  ),
+                                );
+                                // Optionally clear fields (uncomment if needed)
+                                // providerRead.signUpUserName.clear();
+                                // providerRead.userSignEmail.clear();
+                                // providerRead.userSignPassword.clear();
+                                // providerRead.userSignMobile.clear();
+                                // providerRead.userSignConfirmPassword.clear();
+                              // }
+                            } catch (e) {
+                              providerRead.signScreenErrorMsg =
+                                  "An error occurred. Please try again.";
+                              providerRead.notifyListeners();
+                              debugPrint("Error: $e");
+                            } finally {
+                              if (mounted) {
+                                setState(() {
+                                  providerRead.isSignLoading = false;
+                                });
+                              }
+                            }
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     minimumSize: const Size(double.infinity, 50),
@@ -150,25 +195,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    "Sign Up",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: AppColor.whiteColor,
-                    ),
-                  ),
+                  child: providerRead.isSignLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          "Sign Up",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: AppColor.whiteColor,
+                          ),
+                        ),
                 ),
               ),
-              if (providerRead.signScreenErrorMsg.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Center(
-                    child: Text(
-                      providerRead.signScreenErrorMsg,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ),
-                ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -203,14 +247,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     bool obscureText = false,
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
+    String? errorText,
     String? Function(String?)? validator,
+    void Function(String)? onChanged,
   }) {
     return TextFormField(
+      onTapOutside: (e) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       maxLength: maxLength,
+      onChanged: onChanged,
       decoration: InputDecoration(
         counterText: "",
         focusedBorder: OutlineInputBorder(
@@ -222,6 +272,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColor.appMainColor),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColor.appMainColor),
+        ),
+        errorText: errorText,
+        errorStyle: const TextStyle(fontSize: 12, height: 0.8),
       ),
       validator: validator,
     );

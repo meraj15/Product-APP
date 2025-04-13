@@ -9,6 +9,7 @@ import 'package:product_app/config/endpoint.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/model/product.dart';
 import 'package:product_app/routes/app_routes.dart';
+import 'package:product_app/widget/toast.dart';
 
 class ProductData extends ChangeNotifier {
   bool isLoaded = true;
@@ -44,22 +45,30 @@ class ProductData extends ChangeNotifier {
   TextEditingController userCountry = TextEditingController();
   GlobalKey<FormState> formKeySignUp = GlobalKey<FormState>();
   TextEditingController signUpUserName = TextEditingController();
-  TextEditingController userEmail = TextEditingController();
-  TextEditingController userPassword = TextEditingController();
-  TextEditingController userConfirmPassword = TextEditingController();
-  TextEditingController userMobile = TextEditingController();
+  TextEditingController userSignEmail = TextEditingController();
+  TextEditingController userSignPassword = TextEditingController();
+  TextEditingController userSignConfirmPassword = TextEditingController();
+  TextEditingController userSignMobile = TextEditingController();
   String signScreenErrorMsg = "";
-  GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
+
   bool isMyOrdersLoaded = true;
   List<dynamic> userDetails = [];
   bool? isCheckBox = false;
   bool isClickedPasword = true;
   String loginScreenErrorMsg = "";
   List<Map<String, dynamic>> updatedCartQuantities = [];
+  bool isReviewPosting = false;
+  bool isLoginLoading = false;
+  bool isSignLoading = false;
 
   void setProductSize(String size) {
     productSize = size;
     notifyListeners();
+  }
+
+  @override
+  void notifyListeners() {
+    super.notifyListeners();
   }
 
   void setSort(String sort) {
@@ -193,15 +202,29 @@ class ProductData extends ChangeNotifier {
     }
   }
 
-  void toggleFavorite(Product product, Map<String, dynamic> pdata) async {
-    if (favorite.contains(product)) {
-      final index = favorite.indexOf(product);
-      deleteFavouriteData(index);
-    } else {
-      favorites(product);
-      postfavouriteData(pdata);
+  String getInitials(String? name) {
+    if (name == null || name.trim().isEmpty) return "A";
+    List<String> parts = name.trim().split(' ');
+    return parts.length > 1 ? '${parts[0][0]}${parts[1][0]}' : parts[0][0];
+  }
+
+  Future<void> toggleFavorite(
+      Product product, Map<String, dynamic> pdata) async {
+    try {
+      notifyListeners();
+
+      if (favorite.contains(product)) {
+        final index = favorite.indexOf(product);
+        await deleteFavouriteData(index);
+      } else {
+        favorites(product);
+        await postfavouriteData(pdata);
+      }
+    } catch (e) {
+      debugPrint("Error toggling favorite: $e");
+    } finally {
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   void favorites(Product product) {
@@ -213,14 +236,7 @@ class ProductData extends ChangeNotifier {
     notifyListeners();
   }
 
-String getInitials(String? name) {
-  if (name == null || name.trim().isEmpty) return "A"; 
-  List<String> parts = name.trim().split(' ');
-  return parts.length > 1 ? '${parts[0][0]}${parts[1][0]}' : parts[0][0];
-}
-
-
-  void postfavouriteData(Map<String, dynamic> pdata) async {
+  Future<void> postfavouriteData(Map<String, dynamic> pdata) async {
     pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
 
     var url = Uri.parse(APIEndPoint.postfavouriteData);
@@ -230,13 +246,14 @@ String getInitials(String? name) {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(pdata),
       );
-      // debugPrint("Data posted successfully in favourites: ${res.body}");
+      debugPrint("Data posted successfully in favourites");
     } catch (e) {
       debugPrint("Error posting data: $e");
+      rethrow;
     }
   }
 
-  void deleteFavouriteData(int index) async {
+  Future<void> deleteFavouriteData(int index) async {
     final idToDelete = favorite[index].id;
     final url = Uri.parse("${APIEndPoint.deleteFavouriteData}/$idToDelete");
     try {
@@ -247,9 +264,11 @@ String getInitials(String? name) {
         debugPrint("Data removed successfully from favorites.");
       } else {
         debugPrint("Failed to delete item: ${response.statusCode}");
+        throw Exception("Failed to delete item: ${response.statusCode}");
       }
     } catch (e) {
       debugPrint("Error deleting item: $e");
+      rethrow;
     }
   }
 
@@ -435,11 +454,7 @@ String getInitials(String? name) {
 
       if (response.statusCode == 201) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Review submitted successfully!"),
-          ),
-        );
+        CustomToast.showCustomToast(context, 'Review submitted successfully!');
       } else {
         debugPrint("Failed to submit review. Error: ${response.body}");
       }
@@ -483,7 +498,9 @@ String getInitials(String? name) {
     }
   }
 
-  Future<void> postSignUpData(Map<String, dynamic> pdata) async {
+
+
+ Future<bool> postSignUpData(Map<String, dynamic> pdata) async {
     var url = Uri.parse(APIEndPoint.postSignUpData);
     try {
       final res = await http.post(
@@ -492,58 +509,79 @@ String getInitials(String? name) {
         body: jsonEncode(pdata),
       );
       final jsonData = jsonDecode(res.body);
+      debugPrint("jsonData: $jsonData");
+
+      if (jsonData['status'] == 'error') {
+        signScreenErrorMsg = jsonData['message'] ?? "An error occurred";
+        if (jsonData['message'] == 'Email already used') {
+          signScreenErrorMsg = "Email already used. Please use a different email.";
+        }
+        notifyListeners();
+        return false; // No login actions for any error
+      }
+
       if (jsonData['status'] == 'success') {
         userID = jsonData['userId'] ?? "No User ID";
         debugPrint("User ID sign-up backend: $userID");
-        await AuthService.setLoginStatus(true);
-        await AuthService.saveUserId(userID);
-      } else {
-        signScreenErrorMsg = jsonData['message'] ?? "Sign-Up failed";
+        await AuthService.setLoginStatus(true); // Only on success
+        await AuthService.saveUserId(userID); // Only on success
+        signScreenErrorMsg = ""; // Clear error
         notifyListeners();
+        return true;
       }
+
+      signScreenErrorMsg = "Sign-Up failed. Please try again.";
+      notifyListeners();
+      return false;
     } catch (e) {
       signScreenErrorMsg = "An error occurred. Please try again.";
       notifyListeners();
       debugPrint("Error: $e");
+      return false;
     }
   }
 
-  void userLogin(String email, String password, BuildContext context) async {
-    try {
-      final response = await http.post(
-        Uri.parse(APIEndPoint.userLogin),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"email": email, "password": password}),
-      );
+ Future<void> userLogin(String email, String password, BuildContext context) async {
+  try {
+    final response = await http.post(
+      Uri.parse(APIEndPoint.userLogin),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"email": email.trim().toLowerCase(), "password": password}),
+    );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['status'] == "success") {
-          userID = data['userId'] ?? "No User ID";
-          await AuthService.setLoginStatus(true);
-          await AuthService.saveUserId(userID);
-          debugPrint("userID : $userID");
-          Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
-        } else if (data['status'] == "error") {
-          loginScreenErrorMsg = data['message'] ?? "Invalid email or password.";
+    debugPrint("Login response: ${response.statusCode} - ${response.body}");
 
-          formKeyLogin.currentState!.validate();
-          notifyListeners();
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['status'] == "success") {
+        userID = data['userId']?.toString() ?? "No User ID";
+        await AuthService.setLoginStatus(true);
+        await AuthService.saveUserId(userID);
+        debugPrint("Login success, userID: $userID");
+        if (context.mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppRoutes.bottemNavigationBar,
+            (route) => false,
+          );
         }
       } else {
-        loginScreenErrorMsg = "Server error: ${response.statusCode}";
-
-        formKeyLogin.currentState!.validate();
-        notifyListeners();
+        loginScreenErrorMsg = data['message'] ?? "Invalid email or password.";
+        debugPrint("Login error: $loginScreenErrorMsg");
+        notifyListeners(); // Update UI with error
       }
-    } catch (e) {
-      loginScreenErrorMsg = "An error occurred. Please try again.";
-
-      formKeyLogin.currentState!.validate();
-      notifyListeners();
-      debugPrint("Login Error: $e");
+    } else {
+      loginScreenErrorMsg = "Server error: ${response.statusCode}";
+      debugPrint("Server error: $loginScreenErrorMsg");
+      notifyListeners(); // Update UI with error
     }
+  } catch (e, stackTrace) {
+    loginScreenErrorMsg = "An error occurred. Please try again.";
+    debugPrint("Login exception: $e\n$stackTrace");
+    notifyListeners(); // Update UI with error
   }
+}
+
+
 
   String formatOrderTime(DateTime orderTime) {
     return DateFormat('hh:mm a').format(orderTime);
@@ -615,22 +653,21 @@ String getInitials(String? name) {
   }
 
   Future<void> getUserDetail(String userId) async {
-  final url = "${APIEndPoint.getUserDetail}/$userId";
-  try {
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final List<dynamic> decodeJson = jsonDecode(response.body);
-      userDetails = decodeJson.cast<Map<String, dynamic>>();
-      debugPrint("userDetails: $userDetails");
-      notifyListeners();
-    } else {
-      debugPrint("Failed to load user details: ${response.body}");
-      throw Exception('Failed to load user details');
+    final url = "${APIEndPoint.getUserDetail}/$userId";
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final List<dynamic> decodeJson = jsonDecode(response.body);
+        userDetails = decodeJson.cast<Map<String, dynamic>>();
+        debugPrint("userDetails: $userDetails");
+        notifyListeners();
+      } else {
+        debugPrint("Failed to load user details: ${response.body}");
+        throw Exception('Failed to load user details');
+      }
+    } catch (e) {
+      debugPrint("Error fetching user details: $e");
+      error = e.toString();
     }
-  } catch (e) {
-    debugPrint("Error fetching user details: $e");
-    error = e.toString();
   }
-}
-
 }

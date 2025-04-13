@@ -11,9 +11,15 @@ class BuiltCategory extends StatelessWidget {
   final Color color;
   final String category;
   final Product? product;
+  final List<Product>? filteredProducts; // New parameter for search results
 
-  const BuiltCategory(
-      {super.key, required this.category, required this.color, this.product});
+  const BuiltCategory({
+    super.key,
+    required this.category,
+    required this.color,
+    this.product,
+    this.filteredProducts,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +27,21 @@ class BuiltCategory extends StatelessWidget {
     final providerWatch = context.watch<ProductData>();
     final userInput = providerRead.userInput.text.toLowerCase();
 
-    final filterProduct = userInput.isEmpty
-        ? providerRead.products
-            .where((element) =>
-                element.category.toLowerCase() == category &&
-                element.id != product?.id)
-            .toList()
-        : providerRead.products
-            .where(
-              (element) =>
-                  element.category.toLowerCase() == category &&
-                  element.title.toLowerCase().contains(userInput),
-            )
-            .toList();
+    // Use filteredProducts if provided (for search), otherwise filter by category
+    final filterProduct = filteredProducts ??
+        (userInput.isEmpty
+            ? providerRead.products
+                .where((element) =>
+                    element.category.toLowerCase() == category &&
+                    element.id != product?.id)
+                .toList()
+            : providerRead.products
+                .where(
+                  (element) =>
+                      element.category.toLowerCase() == category &&
+                      element.title.toLowerCase().contains(userInput),
+                )
+                .toList());
 
     return Scaffold(
       backgroundColor: color,
@@ -174,7 +182,6 @@ class BuiltCategory extends StatelessWidget {
                                 'userid': userID,
                                 'category': product.category,
                               };
-
                               providerRead.toggleFavorite(
                                   product, favoriteData);
                             },
@@ -226,7 +233,7 @@ class BuiltCategory extends StatelessWidget {
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           );

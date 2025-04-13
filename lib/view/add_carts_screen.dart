@@ -16,10 +16,6 @@ class AddCard extends StatefulWidget {
 }
 
 class _AddCardState extends State<AddCard> {
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +139,8 @@ class _AddCardState extends State<AddCard> {
                                                                 1) {
                                                               product
                                                                   .productQuantity--;
-                                                            productData.updatedCartQuantities
+                                                              productData
+                                                                  .updatedCartQuantities
                                                                   .add({
                                                                 'id':
                                                                     product.id,
@@ -177,8 +174,8 @@ class _AddCardState extends State<AddCard> {
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                          horizontal: 8.0,
-                                                        ),
+                                                                horizontal:
+                                                                    8.0),
                                                         child: Text(
                                                           product
                                                               .productQuantity
@@ -196,7 +193,8 @@ class _AddCardState extends State<AddCard> {
                                                           setState(() {
                                                             product
                                                                 .productQuantity++;
-                                                            productData.updatedCartQuantities
+                                                            productData
+                                                                .updatedCartQuantities
                                                                 .add({
                                                               'id': product.id,
                                                               'quantity': product
@@ -231,9 +229,9 @@ class _AddCardState extends State<AddCard> {
                                                 children: [
                                                   const Text("\$"),
                                                   Text(
-                                                    "${product.price.toStringAsFixed(2)}",
+                                                    "${(product.price * product.productQuantity).toStringAsFixed(2)}",
                                                     style: const TextStyle(
-                                                      fontSize: 22,
+                                                      fontSize: 18,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       color: Colors.black,
@@ -263,68 +261,69 @@ class _AddCardState extends State<AddCard> {
               },
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  spreadRadius: 5,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-               const Padding(
-                  padding:  EdgeInsets.all(8.0),
-                  child: TextField(
-                    decoration:  InputDecoration(
-                      hintText: 'Enter your promo code',
-                      suffixIcon: Icon(Icons.arrow_forward),
-                      border: OutlineInputBorder(),
+          if (context.watch<ProductData>().addCard.isNotEmpty)
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 5,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Enter your promo code',
+                        suffixIcon: Icon(Icons.arrow_forward),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Consumer<ProductData>(
-                    builder: (context, productData, child) {
-                      productData.updateTotalAmount();
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Consumer<ProductData>(
+                      builder: (context, productData, child) {
+                        productData.updateTotalAmount();
 
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Total amount : ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 15,
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Total amount : ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "\$${productData.totalAmount.toStringAsFixed(2)}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 17,
+                              Text(
+                                "\$${productData.totalAmount.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 17,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                CheckoutButton(
-                  pdata:context.read<ProductData>().updatedCartQuantities,
-                ),
-              ],
+                  CheckoutButton(
+                    pdata: context.read<ProductData>().updatedCartQuantities,
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

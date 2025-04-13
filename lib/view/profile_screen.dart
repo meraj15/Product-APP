@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
+import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/widget/drawer.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final providerWatch = context.watch<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
-      drawer: const DrawerWidget(),
+     
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
@@ -35,6 +36,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: GoogleFonts.pacifico(),
         ),
         centerTitle: true,
+        leading:   IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
+            },
+          ),
         // actions: [
         //   IconButton(
         //     icon: const Icon(Icons.menu, color: Colors.black),
