@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/view/forgot_password_screen.dart';
+import 'package:product_app/view/sign_up_screen.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -150,11 +152,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.red),
+                        borderSide: const BorderSide(color: AppColor.appMainColor),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.red),
+                        borderSide: const BorderSide(color: AppColor.appMainColor),
                       ),
                       hintText: "Enter your password",
                       labelText: "Password",
@@ -187,6 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextButton(
                         onPressed: () {
+                          providerRead.loginScreenErrorMsg = "";
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => ForgotPasswordScreen(
                                     email: userEmail,
@@ -212,6 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 providerRead.isLoginLoading = true;
                               });
                               try {
+                                providerRead.loginScreenErrorMsg = "";
                                 await providerRead.userLogin(
                                     userEmail.text, userPassword.text, context);
                               } catch (e) {
@@ -313,8 +317,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Text("Don't have an account?"),
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed(AppRoutes.signupScreen);
+                          context.read<ProductData>().loginScreenErrorMsg = "";
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SignUpScreen(email: userEmail)));
                           debugPrint("From login to sign-up Userid: $userID");
                         },
                         child: Text(

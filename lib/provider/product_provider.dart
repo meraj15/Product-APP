@@ -45,12 +45,10 @@ class ProductData extends ChangeNotifier {
   TextEditingController userCountry = TextEditingController();
   GlobalKey<FormState> formKeySignUp = GlobalKey<FormState>();
   TextEditingController signUpUserName = TextEditingController();
-  TextEditingController userSignEmail = TextEditingController();
   TextEditingController userSignPassword = TextEditingController();
   TextEditingController userSignConfirmPassword = TextEditingController();
   TextEditingController userSignMobile = TextEditingController();
   String signScreenErrorMsg = "";
-
   bool isMyOrdersLoaded = true;
   List<dynamic> userDetails = [];
   bool? isCheckBox = false;

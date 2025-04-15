@@ -6,7 +6,8 @@ import 'package:product_app/view/otp_screen.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+    final TextEditingController email;
+  const SignUpScreen({super.key,required this.email});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -67,7 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: providerRead.userSignEmail,
+                controller: widget.email,
                 labelText: "Email",
                 icon: Icons.email,
                 errorText: providerWatch.signScreenErrorMsg.isNotEmpty
@@ -162,7 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) => OTPScreen(
-                                      email: providerRead.userSignEmail.text,
+                                      email: widget.email.text,
                                       fromScreen: "signUp",
                                     ),
                                   ),

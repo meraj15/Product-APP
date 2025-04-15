@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class OTPScreen extends StatefulWidget {
   final String email;
-  final String fromScreen; 
+  final String fromScreen;
 
   const OTPScreen({super.key, required this.email, required this.fromScreen});
 
@@ -25,13 +25,13 @@ class _OTPScreenState extends State<OTPScreen> {
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
   final _OTPformKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  bool _isOtpError = false; 
-  String _otpWrongMessage = ''; 
+  bool _isOtpError = false;
+  String _otpWrongMessage = '';
 
   @override
   void initState() {
     super.initState();
-    _sendOtp(); 
+    _sendOtp();
   }
 
   @override
@@ -45,12 +45,11 @@ class _OTPScreenState extends State<OTPScreen> {
     super.dispose();
   }
 
- 
   Future<void> _sendOtp() async {
     setState(() {
       _isLoading = true;
-      _isOtpError = false; 
-      _otpWrongMessage = ''; 
+      _isOtpError = false;
+      _otpWrongMessage = '';
     });
     try {
       final response = await http.post(
@@ -79,7 +78,6 @@ class _OTPScreenState extends State<OTPScreen> {
     }
   }
 
-  // Verify OTP
   Future<void> _verifyOtp() async {
     final providerRead = context.read<ProductData>();
     if (_OTPformKey.currentState!.validate()) {
@@ -92,7 +90,7 @@ class _OTPScreenState extends State<OTPScreen> {
         );
         if (response.statusCode == 200) {
           setState(() {
-            _isOtpError = false; 
+            _isOtpError = false;
             _otpWrongMessage = '';
           });
           ScaffoldMessenger.of(context).showSnackBar(
@@ -100,7 +98,7 @@ class _OTPScreenState extends State<OTPScreen> {
           );
 
           if (widget.fromScreen == 'forgotPassword') {
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => CreateNewPasswordScreen(email: widget.email),
               ),
@@ -112,21 +110,25 @@ class _OTPScreenState extends State<OTPScreen> {
             );
             Map<String, dynamic> userInfo = {
               'name': providerRead.signUpUserName.text,
-              'email': providerRead.userSignEmail.text,
+              'email': widget.email,
               'password': providerRead.userSignPassword.text,
               'mobile': providerRead.userSignMobile.text,
             };
             await providerRead.postSignUpData(userInfo);
+            providerRead.signUpUserName.clear();
+            providerRead.userSignPassword.clear();
+            providerRead.userSignMobile.clear();
+            providerRead.userSignConfirmPassword.clear();
           }
         } else {
           setState(() {
-            _isOtpError = true; 
+            _isOtpError = true;
             _otpWrongMessage = 'OTP is wrong';
           });
         }
       } catch (e) {
         setState(() {
-          _isOtpError = true; 
+          _isOtpError = true;
           _otpWrongMessage = 'An error occurred. Please try again.';
         });
         debugPrint("Verify OTP error: $e");
@@ -134,9 +136,11 @@ class _OTPScreenState extends State<OTPScreen> {
     }
   }
 
-  void _moveToNextField(int index) {
-    if (_otpControllers[index].text.length == 1 && index < 3) {
+  void _handleOtpInput(int index, String value) {
+    if (value.length == 1 && index < 3) {
       _focusNodes[index + 1].requestFocus();
+    } else if (value.isEmpty && index > 0) {
+      _focusNodes[index - 1].requestFocus();
     }
   }
 
@@ -184,7 +188,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(1),
                               ],
-                              onChanged: (value) => _moveToNextField(index),
+                              onChanged: (value) => _handleOtpInput(index, value),
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25),
@@ -202,14 +206,14 @@ class _OTPScreenState extends State<OTPScreen> {
                                         borderSide: const BorderSide(
                                             color: AppColor.appMainColor),
                                       )
-                                    : null, 
+                                    : null,
                                 focusedErrorBorder: _isOtpError
                                     ? OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(25),
                                         borderSide: const BorderSide(
                                             color: AppColor.appMainColor),
                                       )
-                                    : null, 
+                                    : null,
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -260,4 +264,3 @@ class _OTPScreenState extends State<OTPScreen> {
     );
   }
 }
-

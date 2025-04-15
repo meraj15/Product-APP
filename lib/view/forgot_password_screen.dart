@@ -11,7 +11,7 @@ class ForgotPasswordScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0, // Removes shadow for a cleaner look
+        elevation: 0, 
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
