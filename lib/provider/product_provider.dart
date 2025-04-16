@@ -52,13 +52,18 @@ class ProductData extends ChangeNotifier {
   bool isMyOrdersLoaded = true;
   List<dynamic> userDetails = [];
   bool? isCheckBox = false;
-  bool isClickedPasword = true;
-  String loginScreenErrorMsg = "";
+bool isPasswordObscured = true;
   List<Map<String, dynamic>> updatedCartQuantities = [];
   bool isReviewPosting = false;
   bool isLoginLoading = false;
   bool isSignLoading = false;
+String passwordErrorMsg = "";
+String emailErrorMsg = "";
 
+
+void togglePasswordVisibility() {
+  isPasswordObscured = !isPasswordObscured;
+}
   void setProductSize(String size) {
     productSize = size;
     notifyListeners();
@@ -210,7 +215,6 @@ class ProductData extends ChangeNotifier {
       Product product, Map<String, dynamic> pdata) async {
     try {
       notifyListeners();
-
       if (favorite.contains(product)) {
         final index = favorite.indexOf(product);
         await deleteFavouriteData(index);
@@ -541,6 +545,11 @@ class ProductData extends ChangeNotifier {
 
  Future<void> userLogin(String email, String password, BuildContext context) async {
   try {
+    emailErrorMsg = ''; // Clear previous errors
+    passwordErrorMsg = '';
+    isLoginLoading = true;
+    notifyListeners();
+
     final response = await http.post(
       Uri.parse(APIEndPoint.userLogin),
       headers: {"Content-Type": "application/json"},
@@ -563,19 +572,28 @@ class ProductData extends ChangeNotifier {
           );
         }
       } else {
-        loginScreenErrorMsg = data['message'] ?? "Invalid email or password.";
-        debugPrint("Login error: $loginScreenErrorMsg");
-        notifyListeners(); // Update UI with error
+        if (data['message'] == "Email not found. Please sign up.") {
+          emailErrorMsg = data['message'];
+        } else if (data['message'] == "Incorrect password. Please try again.") {
+          passwordErrorMsg = data['message'];
+        } else {
+          emailErrorMsg = data['message'] ?? "Invalid email or password.";
+        }
+        debugPrint("Login error: ${data['message']}");
+        notifyListeners();
       }
     } else {
-      loginScreenErrorMsg = "Server error: ${response.statusCode}";
-      debugPrint("Server error: $loginScreenErrorMsg");
-      notifyListeners(); // Update UI with error
+      emailErrorMsg = "Server error: ${response.statusCode}";
+      debugPrint("Server error: $emailErrorMsg");
+      notifyListeners();
     }
   } catch (e, stackTrace) {
-    loginScreenErrorMsg = "An error occurred. Please try again.";
+    emailErrorMsg = "An error occurred. Please try again.";
     debugPrint("Login exception: $e\n$stackTrace");
-    notifyListeners(); // Update UI with error
+    notifyListeners();
+  } finally {
+    isLoginLoading = false;
+    notifyListeners();
   }
 }
 

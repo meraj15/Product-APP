@@ -26,9 +26,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController userHomeSearchInput = TextEditingController();
   List<String> assets = [
-    'assets/images/beauty.jpg',
-    'assets/images/product.jpg',
-    'assets/images/republic_sale.jpg',
+    'assets/images/beauty.gif',
+    'assets/images/product.gif',
+    'assets/images/republic_sale.gif',
   ];
 
   @override
@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).unfocus();
     });
+    
     Timer? _debounce;
     userHomeSearchInput.addListener(() {
       if (_debounce?.isActive ?? false) _debounce!.cancel();

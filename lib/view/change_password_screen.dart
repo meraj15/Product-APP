@@ -11,7 +11,8 @@ class CreateNewPasswordScreen extends StatefulWidget {
   const CreateNewPasswordScreen({super.key, required this.email});
 
   @override
-  _CreateNewPasswordScreenState createState() => _CreateNewPasswordScreenState();
+  _CreateNewPasswordScreenState createState() =>
+      _CreateNewPasswordScreenState();
 }
 
 class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
@@ -30,7 +31,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
 
   Future<void> _updatePassword() async {
     if (!_createPasswordFormKey.currentState!.validate()) {
-      return; // Stop if validation fails
+      return;
     }
 
     setState(() {
@@ -49,19 +50,25 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
       );
 
       final data = jsonDecode(response.body);
-      setState(() {
-        _message = data['message'] ?? data['error'];
-      });
 
       if (response.statusCode == 200) {
+        setState(() {
+          _message = 'Password updated successfully';
+          _newPasswordController.clear();
+          _confirmPasswordController.clear();
+        });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_message)),
+          const SnackBar(content: Text('Password updated successfully')),
         );
         Navigator.pushReplacementNamed(context, AppRoutes.initialRoute);
+      } else {
+        setState(() {
+          _message = data['error'] ?? 'Failed to update password';
+        });
       }
     } catch (e) {
       setState(() {
-        _message = 'An error occurred. Please try again.';
+        _message = 'Network error. Please try again.';
       });
       debugPrint('Error: $e');
     } finally {
@@ -100,7 +107,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                       controller: _newPasswordController,
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
+                        prefixIcon:
+                            const Icon(Icons.lock_outline, color: Colors.grey),
                         labelText: "New Password",
                         labelStyle: const TextStyle(color: Colors.grey),
                         border: OutlineInputBorder(
@@ -109,7 +117,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                          borderSide:
+                              BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -135,7 +144,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                       controller: _confirmPasswordController,
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
+                        prefixIcon:
+                            const Icon(Icons.lock_outline, color: Colors.grey),
                         labelText: "Confirm New Password",
                         labelStyle: const TextStyle(color: Colors.grey),
                         border: OutlineInputBorder(
@@ -144,7 +154,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                          borderSide:
+                              BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -171,7 +182,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         child: Text(
                           _message,
                           style: TextStyle(
-                            color: _message.contains('error') || _message.contains('Please')
+                            color: _message.contains('error') ||
+                                    _message.contains('Please')
                                 ? Colors.red
                                 : Colors.green,
                             fontSize: 14,
@@ -191,7 +203,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                           ),
                         ),
                         child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
                             : const Text(
                                 "Update Password",
                                 style: TextStyle(

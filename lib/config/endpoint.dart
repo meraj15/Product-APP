@@ -1,6 +1,6 @@
 class APIEndPoint {
-  static const String _baseEndPoint ="https://ecommerce-renderer.onrender.com/api";
-  //  static const String _baseEndPoint = "http://192.168.0.118:3000/api";
+  // static const String _baseEndPoint ="https://ecommerce-renderer.onrender.com/api";
+   static const String _baseEndPoint = "http://192.168.0.109:3000/api";
   static const String productGetEndPoint = "$_baseEndPoint/products";
   static const String addCartScreenEndPoint = "$_baseEndPoint/carts/:userId";
   static const String favouriteScreenEndPoint ="$_baseEndPoint/favourites/:userId";
