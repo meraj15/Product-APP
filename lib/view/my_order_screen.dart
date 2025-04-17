@@ -13,7 +13,7 @@ class MyOrderScreen extends StatefulWidget {
 }
 
 class _MyOrderScreenState extends State<MyOrderScreen> {
-@override
+  @override
   void initState() {
     super.initState();
     context.read<ProductData>().fetchMyAllOrders(userID);
@@ -21,11 +21,10 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final providerRead = context.watch<ProductData>();
+    final provider = context.watch<ProductData>();
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: Colors.white,
         title: const Text(
           "My Orders",
@@ -34,30 +33,20 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: providerRead.isOrderAllLoading
+        child: provider.isOrderAllLoading
             ? const Center(child: CircularProgressIndicator())
-            : providerRead.userAllOrders.isEmpty
+            : provider.userAllOrders.isEmpty
                 ? const Center(child: Text("No orders available."))
                 : ListView.builder(
-                    itemCount: providerRead.userAllOrders.length,
+                    itemCount: provider.userAllOrders.length,
                     itemBuilder: (context, index) {
-                      final order = providerRead.userAllOrders[index];
+                      final order = provider.userAllOrders[index];
                       return Container(
-                        width: 334,
-                        height: 165,
                         padding: const EdgeInsets.all(16.0),
                         margin: const EdgeInsets.only(bottom: 16.0),
                         decoration: BoxDecoration(
                           color: AppColor.whiteColor,
                           borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              blurRadius: 3,
-                              spreadRadius: 1,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +59,6 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
-                                    color: Color(0xff222222),
                                   ),
                                 ),
                                 Row(
@@ -78,42 +66,40 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                     Text(
                                       order['order_date'],
                                       style: const TextStyle(
-                                          color: Colors.grey, fontSize: 14),
+                                        color: Colors.grey,
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                    if(order['order_status'] != "Delivered" && order['order_status'] != "Cancelled")
-                                    GestureDetector(
-                                      onTapDown:
-                                          (TapDownDetails details) async {
-                                        final selectedValue =
-                                            await showMenu<String>(
-                                          context: context,
-                                          position: RelativeRect.fromLTRB(
-                                            details.globalPosition.dx,
-                                            details.globalPosition.dy,
-                                            details.globalPosition.dx + 40,
-                                            details.globalPosition.dy + 40,
-                                          ),
-                                          items: [
-                                            const PopupMenuItem<String>(
-                                              value: 'Cancel Order',
-                                              child: Text('Cancel Order'),
+                                    if (order['order_status'] != "Delivered" &&
+                                        order['order_status'] != "Cancelled")
+                                      GestureDetector(
+                                        onTapDown: (details) async {
+                                          final value = await showMenu<String>(
+                                            context: context,
+                                            position: RelativeRect.fromLTRB(
+                                              details.globalPosition.dx - 100,
+                                              details.globalPosition.dy,
+                                              details.globalPosition.dx,
+                                              details.globalPosition.dy + 40,
                                             ),
-                                          ],
-                                        );
-
-                                        if (selectedValue == 'Cancel Order') {
-                                          setState(() {
-                                            order['order_status'] =
-                                                'Cancelled'; // UI Update Immediately
-                                          });
-
-                                          providerRead.updateOrderStatus(
-                                              order['order_id'], 'Cancelled');
-                                        }
-                                      },
-                                      child: const Icon(Icons.more_vert),
-                                    ),
-                                 
+                                            items: const [
+                                              PopupMenuItem<String>(
+                                                value: 'Cancel Order',
+                                                child: Text('Cancel Order'),
+                                              ),
+                                            ],
+                                          );
+                                          if (value == 'Cancel Order') {
+                                            order['order_status'] = 'Cancelled';
+                                            setState(() {});
+                                            provider.updateOrderStatus(
+                                              order['order_id'],
+                                              'Cancelled',
+                                            );
+                                          }
+                                        },
+                                        child: const Icon(Icons.more_vert),
+                                      ),
                                   ],
                                 ),
                               ],
@@ -122,7 +108,9 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                             Text(
                               "Name: ${order['name']}",
                               style: const TextStyle(
-                                  fontSize: 14, color: Color(0xff9B9B9B)),
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Text(
@@ -130,22 +118,15 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black87,
                               ),
                             ),
-                            //  Text(
-                            //      "No. of Products: ${order['products']?.length ?? 0}",
-                            //       style: const TextStyle(
-                            //           fontSize: 14, color: Color(0xff9B9B9B)),
-                            //     ),
                             const SizedBox(height: 5),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 OutlinedButton(
                                   onPressed: () async {
-                                    await context
-                                        .read<ProductData>()
+                                    await provider
                                         .getOrderItems(order['order_id']);
                                     Navigator.push(
                                       context,

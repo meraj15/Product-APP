@@ -139,11 +139,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColor.appMainColor),
+                        borderSide:
+                            const BorderSide(color: AppColor.appMainColor),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColor.appMainColor),
+                        borderSide:
+                            const BorderSide(color: AppColor.appMainColor),
                       ),
                       errorText: providerWatch.passwordErrorMsg.isNotEmpty
                           ? providerWatch.passwordErrorMsg
@@ -165,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     },
                   ),
-                   const SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(providerRead.passwordErrorMsg),
                   const SizedBox(height: 10),
                   Row(
@@ -282,34 +284,44 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: Image.asset(
-                          "assets/images/google_icon.png",
-                          width: 42,
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Image.asset(
-                          "assets/images/facebook_icon.png",
-                          width: 38,
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Image.asset(
-                          "assets/images/twitter_icon.png",
-                          width: 38,
-                        ),
-                      ),
-                    ],
-                  ),
+                 ElevatedButton(
+  onPressed: () {
+    final provider = Provider.of<ProductData>(context, listen: false);
+    provider.googleLogin(context);
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.white,
+    foregroundColor: Theme.of(context).colorScheme.primary,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+      side: BorderSide(
+        color: Theme.of(context).colorScheme.primary, 
+      ),
+    ),
+    minimumSize: const Size(double.infinity, 50),
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Image.asset(
+        'assets/images/google_icon.png', 
+        height: 24, 
+        width: 24,
+      ),
+      const SizedBox(width: 8), 
+      Text(
+        "Login with Google",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+          color: Theme.of(context).colorScheme.primary, 
+        ),
+      ),
+    ],
+  ),
+),
+             
+
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -321,7 +333,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           providerRead.passwordErrorMsg = "";
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => SignUpScreen(email: userEmail),
+                              builder: (context) => SignUpScreen(
+                                email: userEmail,
+                                name: TextEditingController(),
+                                isGoogleSignIn: false,
+                              ),
                             ),
                           );
                           debugPrint("From login to sign-up");

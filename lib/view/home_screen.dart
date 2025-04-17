@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -30,32 +28,20 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/product.gif',
     'assets/images/republic_sale.gif',
   ];
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    loadData();
     context.read<ProductData>().getUserDetail(userID);
     userHomeSearchInput.clear();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).unfocus();
-    });
-    
-    Timer? _debounce;
-    userHomeSearchInput.addListener(() {
-      if (_debounce?.isActive ?? false) _debounce!.cancel();
-      _debounce = Timer(const Duration(milliseconds: 300), () {
-        setState(() {});
-      });
-    });
+    loadData();
   }
 
-  void loadData() async {
-    userID = await AuthService.getUserId();
-    await context.read<ProductData>().getData();
+  void loadData()async {
+    userID =await AuthService.getUserId();
+    context.read<ProductData>().getData();
   }
-
-  int _currentIndex = 0;
 
   @override
   void dispose() {
@@ -66,120 +52,114 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final providerWatch = context.watch<ProductData>();
-    return Stack(
-      children: [
-        Scaffold(
-          backgroundColor: AppColor.scaffoldColor,
-          appBar: AppBar(
-            iconTheme: const IconThemeData(color: AppColor.whiteColor),
-            title: Text(
-              "E-Commerce App",
-              style: GoogleFonts.pacifico(
-                fontWeight: FontWeight.w200,
-                color: AppColor.whiteColor,
-              ),
-            ),
-            centerTitle: true,
-            actions: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushNamed(AppRoutes.profileScreen);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: AppColor.whiteColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        providerWatch.userDetails.isNotEmpty
-                            ? providerWatch.getInitials(
-                                providerWatch.userDetails[0]["name"] ?? "")
-                            : "",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+    return Scaffold(
+      backgroundColor: AppColor.scaffoldColor,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppColor.whiteColor),
+        title: Text(
+          "E-Commerce App",
+          style: GoogleFonts.pacifico(
+            fontWeight: FontWeight.w200,
+            color: AppColor.whiteColor,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).pushNamed(AppRoutes.profileScreen);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: AppColor.whiteColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: Text(
+                    providerWatch.userDetails.isNotEmpty
+                        ? providerWatch.getInitials(
+                            providerWatch.userDetails[0]["name"] ?? "")
+                        : "",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-          drawer: const DrawerWidget(),
-          body: providerWatch.isLoaded
-              ? const CircularLoader()
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          onTapOutside: (e) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
-                          controller: userHomeSearchInput,
-                          decoration: InputDecoration(
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 12.0),
-                            prefixIcon: const Icon(Icons.search),
-                            suffixIcon: userHomeSearchInput.text.isNotEmpty
-                                ? IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        userHomeSearchInput.clear();
-                                      });
-                                    },
-                                    icon: const Icon(Icons.close,
-                                        color: Colors.grey),
-                                  )
-                                : null,
-                            fillColor: AppColor.whiteColor,
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            labelText: "Search product",
-                            hintText: "Enter product name...",
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary),
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
+        ],
+      ),
+      drawer: const DrawerWidget(),
+      body: providerWatch.isLoaded
+          ? const CircularLoader()
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      onTapOutside: (e) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      controller: userHomeSearchInput,
+                      decoration: InputDecoration(
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 12.0),
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: userHomeSearchInput.text.isNotEmpty
+                            ? IconButton(
+                                onPressed: () {
+                                  userHomeSearchInput.clear();
+                                },
+                                icon: const Icon(Icons.close, color: Colors.grey),
+                              )
+                            : null,
+                        fillColor: AppColor.whiteColor,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        labelText: "Search product",
+                        hintText: "Enter product name...",
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
-                      if (userHomeSearchInput.text.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 200.0,
-                                  autoPlay: true,
-                                  enlargeCenterPage: true,
-                                  aspectRatio: 16 / 9,
-                                  viewportFraction: 1.0,
-                                  onPageChanged: (index, reason) {
-                                    setState(() {
-                                      _currentIndex = index;
-                                    });
-                                  },
-                                ),
-                                items: assets.map((asset) {
-                                  return Builder(
-                                    builder: (BuildContext context) {
+                    ),
+                  ),
+                  userHomeSearchInput.text.isEmpty
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  CarouselSlider(
+                                    options: CarouselOptions(
+                                      height: 200.0,
+                                      autoPlay: true,
+                                      enlargeCenterPage: true,
+                                      aspectRatio: 16 / 9,
+                                      viewportFraction: 1.0,
+                                      onPageChanged: (index, reason) {
+                                        setState(() {
+                                          _currentIndex = index;
+                                        });
+                                      },
+                                    ),
+                                    items: assets.map((asset) {
                                       return SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
+                                        width: MediaQuery.of(context).size.width,
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10),
@@ -189,47 +169,42 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                       );
-                                    },
-                                  );
-                                }).toList(),
-                              ),
-                              const SizedBox(height: 10),
-                              DotsIndicator(
-                                dotsCount: assets.length,
-                                position: _currentIndex,
-                                decorator: DotsDecorator(
-                                  activeColor:
-                                      Theme.of(context).colorScheme.primary,
-                                  color: Colors.grey,
-                                  size: const Size.square(9.0),
-                                  activeSize: const Size(18.0, 9.0),
-                                  activeShape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
+                                    }).toList(),
                                   ),
-                                ),
+                                  const SizedBox(height: 10),
+                                  DotsIndicator(
+                                    dotsCount: assets.length,
+                                    position: _currentIndex,
+                                    decorator: DotsDecorator(
+                                      activeColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      color: Colors.grey,
+                                      size: const Size.square(9.0),
+                                      activeSize: const Size(18.0, 9.0),
+                                      activeShape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                      userHomeSearchInput.text.isNotEmpty
-                          ? buildSearchResults(
-                              context, userHomeSearchInput.text)
-                          : buildAllCategories(context),
-                    ],
-                  ),
-                ),
-        ),
-      ],
+                            ),
+                            buildAllCategories(context),
+                          ],
+                        )
+                      : buildSearchResults(context, userHomeSearchInput.text),
+                ],
+              ),
+            ),
     );
   }
 
   Widget buildSearchResults(BuildContext context, String searchText) {
     final providerRead = context.read<ProductData>();
     final providerWatch = context.watch<ProductData>();
-    final searchTextLower = searchText.toLowerCase();
     final filteredProducts = providerWatch.products
-        .where(
-            (product) => product.title.toLowerCase().contains(searchTextLower))
+        .where((product) =>
+            product.title.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
 
     if (filteredProducts.isEmpty) {
@@ -239,8 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: SizedBox(
             height: 250,
             width: 400,
-            child:
-                Lottie.asset("assets/lottie_animation/product_not_found.json"),
+            child: Lottie.asset("assets/lottie_animation/product_not_found.json"),
           ),
         ),
       );
@@ -274,12 +248,9 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: (context, index) {
             final product = filteredProducts[index];
             final isFavorite = providerWatch.favorite.contains(product);
-            int rating = product.rating.ceil();
-            if (rating > 5) {
-              rating = 5;
-            }
-            int filledStars = rating;
-            int outlinedStars = 5 - filledStars;
+            final rating = product.rating.clamp(0, 5).ceil();
+            final filledStars = rating;
+            final outlinedStars = 5 - filledStars;
 
             return Container(
               decoration: BoxDecoration(
@@ -298,9 +269,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) {
-                                    return ProductDetail(product: product);
-                                  },
+                                  builder: (context) =>
+                                      ProductDetail(product: product),
                                 ),
                               );
                             },
@@ -366,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: CircleAvatar(
                             backgroundColor: AppColor.whiteColor,
                             child: GestureDetector(
-                              onTap: () async {
+                              onTap: () {
                                 Map<String, dynamic> favoriteData = {
                                   'id': product.id,
                                   'brand': product.brand,
@@ -430,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             );
@@ -441,33 +411,37 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildAllCategories(BuildContext context) {
+    const categories = [
+      "beauty",
+      "fragrances",
+      "furniture",
+      "groceries",
+      "home-decoration",
+      "kitchen-accessories",
+      "laptops",
+      "mens-shirts",
+      "mens-shoes",
+      "mens-watches",
+      "mobile-accessories",
+      "motorcycle",
+      "skin-care",
+      "smartphones",
+      "sports-accessories",
+      "sunglasses",
+      "tablets",
+      "tops",
+      "vehicle",
+      "womens-bags",
+      "womens-dresses",
+      "womens-jewellery",
+      "womens-shoes",
+      "womens-watches",
+    ];
+
     return Column(
-      children: [
-        buildCategorySection(context, "beauty"),
-        buildCategorySection(context, "fragrances"),
-        buildCategorySection(context, "furniture"),
-        buildCategorySection(context, "groceries"),
-        buildCategorySection(context, "home-decoration"),
-        buildCategorySection(context, "kitchen-accessories"),
-        buildCategorySection(context, "laptops"),
-        buildCategorySection(context, "mens-shirts"),
-        buildCategorySection(context, "mens-shoes"),
-        buildCategorySection(context, "mens-watches"),
-        buildCategorySection(context, "mobile-accessories"),
-        buildCategorySection(context, "motorcycle"),
-        buildCategorySection(context, "skin-care"),
-        buildCategorySection(context, "smartphones"),
-        buildCategorySection(context, "sports-accessories"),
-        buildCategorySection(context, "sunglasses"),
-        buildCategorySection(context, "tablets"),
-        buildCategorySection(context, "tops"),
-        buildCategorySection(context, "vehicle"),
-        buildCategorySection(context, "womens-bags"),
-        buildCategorySection(context, "womens-dresses"),
-        buildCategorySection(context, "womens-jewellery"),
-        buildCategorySection(context, "womens-shoes"),
-        buildCategorySection(context, "womens-watches"),
-      ],
+      children: categories
+          .map((category) => buildCategorySection(context, category))
+          .toList(),
     );
   }
 

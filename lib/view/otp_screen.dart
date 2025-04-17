@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:product_app/config/endpoint.dart';
 import 'package:product_app/constant/contant.dart';
-import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
 import 'package:http/http.dart' as http;
 import 'package:product_app/view/change_password_screen.dart';
-import 'package:provider/provider.dart';
 
 class OTPScreen extends StatefulWidget {
   final String email;
@@ -79,8 +77,12 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   Future<void> _verifyOtp() async {
-    final providerRead = context.read<ProductData>();
     if (_OTPformKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+        _isOtpError = false;
+        _otpWrongMessage = '';
+      });
       final enteredOtp = _otpControllers.map((c) => c.text).join();
       try {
         final response = await http.post(
@@ -89,10 +91,6 @@ class _OTPScreenState extends State<OTPScreen> {
           body: jsonEncode({'email': widget.email, 'otp': enteredOtp}),
         );
         if (response.statusCode == 200) {
-          setState(() {
-            _isOtpError = false;
-            _otpWrongMessage = '';
-          });
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('OTP Verified!')),
           );
@@ -108,17 +106,6 @@ class _OTPScreenState extends State<OTPScreen> {
               AppRoutes.bottemNavigationBar,
               (route) => false,
             );
-            Map<String, dynamic> userInfo = {
-              'name': providerRead.signUpUserName.text,
-              'email': widget.email,
-              'password': providerRead.userSignPassword.text,
-              'mobile': providerRead.userSignMobile.text,
-            };
-            await providerRead.postSignUpData(userInfo);
-            providerRead.signUpUserName.clear();
-            providerRead.userSignPassword.clear();
-            providerRead.userSignMobile.clear();
-            providerRead.userSignConfirmPassword.clear();
           }
         } else {
           setState(() {
@@ -132,6 +119,10 @@ class _OTPScreenState extends State<OTPScreen> {
           _otpWrongMessage = 'An error occurred. Please try again.';
         });
         debugPrint("Verify OTP error: $e");
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }

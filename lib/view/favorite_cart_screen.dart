@@ -54,6 +54,7 @@ class _FavoritesState extends State<Favorites> {
 ),
       body: Column(
         children: [
+          if(context.read<ProductData>().favorite.isNotEmpty)
           const SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
@@ -337,8 +338,9 @@ class _FavoritesState extends State<Favorites> {
                                 },
                                 icon:  Icon(
 
+
+
                                   Icons.close,
-                                  // color: Theme.of(context).colorScheme.primary,
                                   color: Theme.of(context).colorScheme.primary
                                 ),
                               ),

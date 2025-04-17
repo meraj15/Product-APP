@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:product_app/Auth/auth_service.dart';
@@ -9,6 +11,8 @@ import 'package:product_app/config/endpoint.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/model/product.dart';
 import 'package:product_app/routes/app_routes.dart';
+import 'package:product_app/view/otp_screen.dart';
+import 'package:product_app/view/sign_up_screen.dart';
 import 'package:product_app/widget/toast.dart';
 
 class ProductData extends ChangeNotifier {
@@ -52,18 +56,156 @@ class ProductData extends ChangeNotifier {
   bool isMyOrdersLoaded = true;
   List<dynamic> userDetails = [];
   bool? isCheckBox = false;
-bool isPasswordObscured = true;
+  bool isPasswordObscured = true;
   List<Map<String, dynamic>> updatedCartQuantities = [];
   bool isReviewPosting = false;
   bool isLoginLoading = false;
   bool isSignLoading = false;
-String passwordErrorMsg = "";
-String emailErrorMsg = "";
+  String passwordErrorMsg = "";
+  String emailErrorMsg = "";
 
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  GoogleSignInAccount? _user;
 
-void togglePasswordVisibility() {
-  isPasswordObscured = !isPasswordObscured;
-}
+  GoogleSignInAccount? get user => _user;
+
+  Future logout() async {
+    await googleSignIn.disconnect();
+  }
+
+  Future<void> googleLogin(BuildContext context) async {
+    try {
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        _user = null;
+        userID = "";
+        debugPrint('Sign-in canceled by user');
+        notifyListeners();
+        return;
+      }
+
+      _user = googleUser;
+      debugPrint('User signed in: ${user?.displayName}');
+      debugPrint('Email: ${user?.email}');
+
+      Map<String, dynamic> userCheckResult =
+          await _checkUserInDatabase(googleUser.email);
+
+      if (userCheckResult['exists']) {
+        userID = userCheckResult['userId'] ?? "";
+        await AuthService.setLoginStatus(true);
+        await AuthService.saveUserId(userID);
+        debugPrint("Existing user ID: $userID");
+        Navigator.of(context)
+            .pushReplacementNamed(AppRoutes.bottemNavigationBar);
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => SignUpScreen(
+              email: TextEditingController(text: googleUser.email),
+              name: TextEditingController(text: googleUser.displayName ?? ''),
+              isGoogleSignIn: true,
+            ),
+          ),
+        );
+      }
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Google Sign-In error: $e');
+      _user = null;
+      userID = "";
+      notifyListeners();
+    }
+  }
+
+  Future<Map<String, dynamic>> _checkUserInDatabase(String email) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${APIEndPoint.checkUserInDatabase}$email'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {
+          'exists': data['exists'] == true,
+          'userId': data['userId'] ?? "",
+        };
+      } else {
+        throw Exception('Failed to check user: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error checking user in database: $e');
+      return {'exists': false, 'userId': ""};
+    }
+  }
+
+  Future<bool> postSignUpData(Map<String, dynamic> pdata, BuildContext context,
+      {bool isGoogleSignIn = false}) async {
+    var url = Uri.parse(APIEndPoint.postSignUpData);
+    try {
+      isSignLoading = true;
+      notifyListeners();
+
+      final res = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(pdata),
+      );
+      final jsonData = jsonDecode(res.body);
+      debugPrint("jsonData: $jsonData");
+
+      if (jsonData['status'] == 'error') {
+        signScreenErrorMsg = jsonData['message'] ?? "An error occurred";
+        if (jsonData['message'] == 'Email already used') {
+          signScreenErrorMsg =
+              "Email already used. Please use a different email.";
+        }
+        notifyListeners();
+        return false;
+      }
+
+      if (jsonData['status'] == 'success') {
+        userID = jsonData['userId'] ?? "No User ID";
+        debugPrint("User ID sign-up backend: $userID");
+        await AuthService.setLoginStatus(true);
+        await AuthService.saveUserId(userID);
+        signScreenErrorMsg = "";
+        if (isGoogleSignIn) {
+          Navigator.of(context)
+              .pushReplacementNamed(AppRoutes.bottemNavigationBar);
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => OTPScreen(
+                email: pdata['email'],
+                fromScreen: 'signUp',
+              ),
+            ),
+          );
+        }
+        notifyListeners();
+        return true;
+      }
+
+      signScreenErrorMsg = "Sign-Up failed. Please try again.";
+      notifyListeners();
+      return false;
+    } catch (e) {
+      signScreenErrorMsg = "An error occurred. Please try again.";
+      notifyListeners();
+      debugPrint("Error: $e");
+      return false;
+    } finally {
+      isSignLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void togglePasswordVisibility() {
+    isPasswordObscured = !isPasswordObscured;
+  }
+
   void setProductSize(String size) {
     productSize = size;
     notifyListeners();
@@ -500,104 +642,104 @@ void togglePasswordVisibility() {
     }
   }
 
+  // Future<bool> postSignUpData(Map<String, dynamic> pdata) async {
+  //   var url = Uri.parse(APIEndPoint.postSignUpData);
+  //   try {
+  //     final res = await http.post(
+  //       url,
+  //       headers: {"Content-Type": "application/json"},
+  //       body: jsonEncode(pdata),
+  //     );
+  //     final jsonData = jsonDecode(res.body);
+  //     debugPrint("jsonData: $jsonData");
 
+  //     if (jsonData['status'] == 'error') {
+  //       signScreenErrorMsg = jsonData['message'] ?? "An error occurred";
+  //       if (jsonData['message'] == 'Email already used') {
+  //         signScreenErrorMsg =
+  //             "Email already used. Please use a different email.";
+  //       }
+  //       notifyListeners();
+  //       return false; // No login actions for any error
+  //     }
 
- Future<bool> postSignUpData(Map<String, dynamic> pdata) async {
-    var url = Uri.parse(APIEndPoint.postSignUpData);
+  //     if (jsonData['status'] == 'success') {
+  //       userID = jsonData['userId'] ?? "No User ID";
+  //       debugPrint("User ID sign-up backend: $userID");
+  //       await AuthService.setLoginStatus(true); // Only on success
+  //       await AuthService.saveUserId(userID); // Only on success
+  //       signScreenErrorMsg = ""; // Clear error
+  //       notifyListeners();
+  //       return true;
+  //     }
+
+  //     signScreenErrorMsg = "Sign-Up failed. Please try again.";
+  //     notifyListeners();
+  //     return false;
+  //   } catch (e) {
+  //     signScreenErrorMsg = "An error occurred. Please try again.";
+  //     notifyListeners();
+  //     debugPrint("Error: $e");
+  //     return false;
+  //   }
+  // }
+
+  Future<void> userLogin(
+      String email, String password, BuildContext context) async {
     try {
-      final res = await http.post(
-        url,
+      emailErrorMsg = ''; // Clear previous errors
+      passwordErrorMsg = '';
+      isLoginLoading = true;
+      notifyListeners();
+
+      final response = await http.post(
+        Uri.parse(APIEndPoint.userLogin),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode(pdata),
+        body: jsonEncode(
+            {"email": email.trim().toLowerCase(), "password": password}),
       );
-      final jsonData = jsonDecode(res.body);
-      debugPrint("jsonData: $jsonData");
 
-      if (jsonData['status'] == 'error') {
-        signScreenErrorMsg = jsonData['message'] ?? "An error occurred";
-        if (jsonData['message'] == 'Email already used') {
-          signScreenErrorMsg = "Email already used. Please use a different email.";
-        }
-        notifyListeners();
-        return false; // No login actions for any error
-      }
+      debugPrint("Login response: ${response.statusCode} - ${response.body}");
 
-      if (jsonData['status'] == 'success') {
-        userID = jsonData['userId'] ?? "No User ID";
-        debugPrint("User ID sign-up backend: $userID");
-        await AuthService.setLoginStatus(true); // Only on success
-        await AuthService.saveUserId(userID); // Only on success
-        signScreenErrorMsg = ""; // Clear error
-        notifyListeners();
-        return true;
-      }
-
-      signScreenErrorMsg = "Sign-Up failed. Please try again.";
-      notifyListeners();
-      return false;
-    } catch (e) {
-      signScreenErrorMsg = "An error occurred. Please try again.";
-      notifyListeners();
-      debugPrint("Error: $e");
-      return false;
-    }
-  }
-
- Future<void> userLogin(String email, String password, BuildContext context) async {
-  try {
-    emailErrorMsg = ''; // Clear previous errors
-    passwordErrorMsg = '';
-    isLoginLoading = true;
-    notifyListeners();
-
-    final response = await http.post(
-      Uri.parse(APIEndPoint.userLogin),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email.trim().toLowerCase(), "password": password}),
-    );
-
-    debugPrint("Login response: ${response.statusCode} - ${response.body}");
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['status'] == "success") {
-        userID = data['userId']?.toString() ?? "No User ID";
-        await AuthService.setLoginStatus(true);
-        await AuthService.saveUserId(userID);
-        debugPrint("Login success, userID: $userID");
-        if (context.mounted) {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            AppRoutes.bottemNavigationBar,
-            (route) => false,
-          );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == "success") {
+          userID = data['userId']?.toString() ?? "No User ID";
+          await AuthService.setLoginStatus(true);
+          await AuthService.saveUserId(userID);
+          debugPrint("Login success, userID: $userID");
+          if (context.mounted) {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              AppRoutes.bottemNavigationBar,
+              (route) => false,
+            );
+          }
+        } else {
+          if (data['message'] == "Email not found. Please sign up.") {
+            emailErrorMsg = data['message'];
+          } else if (data['message'] ==
+              "Incorrect password. Please try again.") {
+            passwordErrorMsg = data['message'];
+          } else {
+            emailErrorMsg = data['message'] ?? "Invalid email or password.";
+          }
+          debugPrint("Login error: ${data['message']}");
+          notifyListeners();
         }
       } else {
-        if (data['message'] == "Email not found. Please sign up.") {
-          emailErrorMsg = data['message'];
-        } else if (data['message'] == "Incorrect password. Please try again.") {
-          passwordErrorMsg = data['message'];
-        } else {
-          emailErrorMsg = data['message'] ?? "Invalid email or password.";
-        }
-        debugPrint("Login error: ${data['message']}");
+        emailErrorMsg = "Server error: ${response.statusCode}";
+        debugPrint("Server error: $emailErrorMsg");
         notifyListeners();
       }
-    } else {
-      emailErrorMsg = "Server error: ${response.statusCode}";
-      debugPrint("Server error: $emailErrorMsg");
+    } catch (e, stackTrace) {
+      emailErrorMsg = "An error occurred. Please try again.";
+      debugPrint("Login exception: $e\n$stackTrace");
+      notifyListeners();
+    } finally {
+      isLoginLoading = false;
       notifyListeners();
     }
-  } catch (e, stackTrace) {
-    emailErrorMsg = "An error occurred. Please try again.";
-    debugPrint("Login exception: $e\n$stackTrace");
-    notifyListeners();
-  } finally {
-    isLoginLoading = false;
-    notifyListeners();
   }
-}
-
-
 
   String formatOrderTime(DateTime orderTime) {
     return DateFormat('hh:mm a').format(orderTime);

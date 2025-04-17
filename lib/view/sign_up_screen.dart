@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:product_app/constant/contant.dart';
 import 'package:product_app/provider/product_provider.dart';
+import 'package:product_app/routes/app_routes.dart';
 import 'package:product_app/view/otp_screen.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
-    final TextEditingController email;
-  const SignUpScreen({super.key,required this.email});
+  final TextEditingController email;
+  final TextEditingController name;
+  final bool isGoogleSignIn;
+
+  const SignUpScreen({
+    super.key,
+    required this.email,
+    required this.name,
+    this.isGoogleSignIn = false,
+  });
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -53,9 +62,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 25),
               _buildTextField(
-                controller: providerRead.signUpUserName,
+                controller: widget.name,
                 labelText: "Name",
                 icon: Icons.person,
+                enabled: true, // Always editable
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
                 ],
@@ -71,18 +81,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: widget.email,
                 labelText: "Email",
                 icon: Icons.email,
+                enabled: !widget.isGoogleSignIn, // Non-editable for Google Sign-In
                 errorText: providerWatch.signScreenErrorMsg.isNotEmpty
                     ? providerWatch.signScreenErrorMsg
                     : null,
                 inputFormatters: [
                   FilteringTextInputFormatter.deny(RegExp(r'\s')),
                 ],
-                onChanged: (value) {
-                  if (providerRead.signScreenErrorMsg.isNotEmpty) {
-                    providerRead.signScreenErrorMsg = "";
-                    providerRead.notifyListeners();
-                  }
-                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Email is required";
@@ -150,31 +155,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               setState(() {
                                 providerRead.isSignLoading = true;
                               });
-                              // Map<String, dynamic> userInfo = {
-                              //   'name': providerRead.signUpUserName.text,
-                              //   'email': providerRead.userSignEmail.text,
-                              //   'password': providerRead.userSignPassword.text,
-                              //   'mobile': providerRead.userSignMobile.text,
-                              // };
 
-                              // bool success = await providerRead.postSignUpData(userInfo);
+                              Map<String, dynamic> userInfo = {
+                                'name': widget.name.text,
+                                'email': widget.email.text,
+                                'password': providerRead.userSignPassword.text,
+                                'mobile': providerRead.userSignMobile.text,
+                              };
 
-                              // if (success) {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => OTPScreen(
-                                      email: widget.email.text,
-                                      fromScreen: "signUp",
-                                    ),
-                                  ),
-                                );
-                                // Optionally clear fields (uncomment if needed)
-                                // providerRead.signUpUserName.clear();
-                                // providerRead.userSignEmail.clear();
-                                // providerRead.userSignPassword.clear();
-                                // providerRead.userSignMobile.clear();
-                                // providerRead.userSignConfirmPassword.clear();
-                              // }
+                              bool success = await providerRead.postSignUpData(
+                                userInfo,
+                                context,
+                                isGoogleSignIn: widget.isGoogleSignIn,
+                              );
+
+                              if (success) {
+                                providerRead.userSignMobile.clear();
+                                providerRead.userSignPassword.clear();
+                                providerRead.userSignConfirmPassword.clear();
+                                if (!widget.isGoogleSignIn) {
+                                  widget.name.clear();
+                                  widget.email.clear();
+                                }
+                              }
                             } catch (e) {
                               providerRead.signScreenErrorMsg =
                                   "An error occurred. Please try again.";
@@ -250,7 +253,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     List<TextInputFormatter>? inputFormatters,
     String? errorText,
     String? Function(String?)? validator,
-    void Function(String)? onChanged,
+    bool enabled = true,
   }) {
     return TextFormField(
       onTapOutside: (e) {
@@ -261,7 +264,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       maxLength: maxLength,
-      onChanged: onChanged,
+      enabled: enabled,
       decoration: InputDecoration(
         counterText: "",
         focusedBorder: OutlineInputBorder(

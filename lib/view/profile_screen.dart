@@ -4,7 +4,6 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
-import 'package:product_app/widget/drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../widget/profile_list_item.dart';
@@ -21,6 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     context.read<ProductData>().getUserDetail(userID);
+    
   }
 
   @override

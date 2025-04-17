@@ -1,6 +1,6 @@
 class APIEndPoint {
-  // static const String _baseEndPoint ="https://ecommerce-renderer.onrender.com/api";
-   static const String _baseEndPoint = "http://192.168.0.109:3000/api";
+  static const String _baseEndPoint ="https://ecommerce-renderer.onrender.com/api";
+  //  static const String _baseEndPoint = "http://192.168.0.109:3000/api";
   static const String productGetEndPoint = "$_baseEndPoint/products";
   static const String addCartScreenEndPoint = "$_baseEndPoint/carts/:userId";
   static const String favouriteScreenEndPoint ="$_baseEndPoint/favourites/:userId";
@@ -27,6 +27,7 @@ class APIEndPoint {
   static const String updateOrderStatus = "$_baseEndPoint/orders";
   static const String getUserDetail = "$_baseEndPoint/userdetails";
   static const String updatePassword = "$_baseEndPoint/update";
-    static const String sendOtp= "$_baseEndPoint/send-otp";
-        static const String verifyOtp= "$_baseEndPoint/verify-otp";
+  static const String sendOtp= "$_baseEndPoint/send-otp";
+  static const String verifyOtp= "$_baseEndPoint/verify-otp";
+    static const String checkUserInDatabase= "$_baseEndPoint/check-user?email=";
 }

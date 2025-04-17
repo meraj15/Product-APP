@@ -50,7 +50,9 @@ class _ProductDetailBottomSheetState extends State<ProductDetailBottomSheet> {
                     widget.product.category == "tops" ||
                     widget.product.category == "womens-dresses";
 
-                if (requiresSize && providerRead.productSize.isEmpty) {
+                if (widget.product.stock <= 0) {
+                  CustomToast.showCustomToast(context, "Product out of stock");
+                } else if (requiresSize && providerRead.productSize.isEmpty) {
                   CustomToast.showCustomToast(
                       context, "Please select the size");
                 } else {

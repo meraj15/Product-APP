@@ -191,12 +191,13 @@ class _ProductDetailState extends State<ProductDetail> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            widget.product.availabilityStatus,
+                            widget.product.stock <= 10
+                                ? "Low Stock"
+                                : "In Stock",
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: widget.product.availabilityStatus ==
-                                      "Low Stock"
+                              color: widget.product.stock <= 10
                                   ? Theme.of(context).colorScheme.primary
                                   : Colors.green,
                             ),
@@ -242,12 +243,12 @@ class _ProductDetailState extends State<ProductDetail> {
                     children: [
                       Text(
                           "⭐ ${providerWatch.averageRating.toStringAsFixed(1)} (${providerWatch.productReviews.length} reviews)"),
-                          if (widget.product.category == "mens-shirts" ||
-                      widget.product.category == "tops" ||
-                      widget.product.category == "womens-dresses")
-                      SizeShowModelBottomSheet(
-                        product: widget.product,
-                      ),
+                      if (widget.product.category == "mens-shirts" ||
+                          widget.product.category == "tops" ||
+                          widget.product.category == "womens-dresses")
+                        SizeShowModelBottomSheet(
+                          product: widget.product,
+                        ),
                     ],
                   ),
                   Padding(

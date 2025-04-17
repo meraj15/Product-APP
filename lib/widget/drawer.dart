@@ -152,7 +152,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   text: 'Logout',
                   onTap: () async {
                     await AuthService.logout();
-
+                        providerRead.logout();
                     Navigator.of(context).pushNamed("/");
                   },
                 ),
