@@ -18,6 +18,9 @@ class ShowImageDialog{
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error, size: 20);
+                              },
                   width: MediaQuery.of(context).size.width * 0.9,
                   // height: MediaQuery.of(context).size.height * 0.7,
                 ),

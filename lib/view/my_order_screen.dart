@@ -82,10 +82,10 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                               details.globalPosition.dx,
                                               details.globalPosition.dy + 40,
                                             ),
-                                            items: const [
+                                            items:  [
                                               PopupMenuItem<String>(
                                                 value: 'Cancel Order',
-                                                child: Text('Cancel Order'),
+                                                child: Text('Cancel Order',style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                                               ),
                                             ],
                                           );

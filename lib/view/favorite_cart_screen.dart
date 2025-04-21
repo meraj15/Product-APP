@@ -264,6 +264,9 @@ class _FavoritesState extends State<Favorites> {
                                   // favoritesProduct.images.first,
                                   favoritesProduct.thumbnail,
                                   width: 120,
+                                  errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error, size: 20);
+                              },
                                   height: 120,
                                 ),
                               ),

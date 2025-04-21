@@ -23,23 +23,57 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   int currentIndex = 0;
-  late final CarouselController carouselController;
-  void initstate() {
-    carouselController = CarouselController();
+  late final CarouselSliderController carouselController; // Fixed type
+
+  @override
+  void initState() {
+    super.initState();
+    carouselController = CarouselSliderController(); // Initialize correctly
+  }
+
+  String getStockStatus(dynamic stock) {
+    int stockValue = 0;
+    if (stock is int) {
+      stockValue = stock;
+    } else if (stock is String) {
+      stockValue = int.tryParse(stock) ?? 0;
+    } else if (stock == null) {
+      stockValue = 0;
+    }
+    if (stockValue == 0) return "Out of Stock";
+    if (stockValue <= 10) return "Low Stock";
+    return "In Stock";
+  }
+
+  Color getStockColor(dynamic stock) {
+    int stockValue = 0;
+    if (stock is int) {
+      stockValue = stock;
+    } else if (stock is String) {
+      stockValue = int.tryParse(stock) ?? 0;
+    } else if (stock == null) {
+      stockValue = 0;
+    }
+    if (stockValue == 0) return Colors.grey;
+    if (stockValue <= 10) return Colors.red;
+    return Colors.green;
   }
 
   @override
   Widget build(BuildContext context) {
-    final isFavorite =
-        context.watch<ProductData>().favorite.contains(widget.product);
     final providerWatch = context.watch<ProductData>();
+    final isFavorite = providerWatch.favorite.contains(widget.product);
+
+    // Debug print to check stock value
+    print('Stock: ${widget.product.stock}, Type: ${widget.product.stock.runtimeType}');
+
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(
           onPressed: () {
-            Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
+            Navigator.of(context).pop(); // Return to previous screen
           },
           icon: const Icon(
             Icons.arrow_back,
@@ -57,6 +91,7 @@ class _ProductDetailState extends State<ProductDetail> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CarouselSlider(
+              carouselController: carouselController, // Fixed controller
               items: widget.product.images.map((image) {
                 return Image.network(
                   image,
@@ -88,8 +123,8 @@ class _ProductDetailState extends State<ProductDetail> {
                     activeSize: const Size(12.0, 12.0),
                   ),
                   onTap: (index) {
-                    carouselController.animateTo(
-                      index.toDouble(),
+                    carouselController.animateToPage(
+                      index,
                       duration: const Duration(seconds: 1),
                       curve: Curves.easeIn,
                     );
@@ -172,7 +207,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   'rating': widget.product.rating,
                                   'warrantyinformation':
                                       widget.product.warrantyInformation,
-                                  'userid': userID,
+                                  'userid': userID, // Global userID from main.dart
                                 };
 
                                 context.read<ProductData>().toggleFavorite(
@@ -191,15 +226,10 @@ class _ProductDetailState extends State<ProductDetail> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            widget.product.stock <= 10
-                                ? "Low Stock"
-                                : "In Stock",
+                            getStockStatus(widget.product.stock),
                             style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: widget.product.stock <= 10
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.green,
+                              color: getStockColor(widget.product.stock),
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
@@ -283,15 +313,12 @@ class _ProductDetailState extends State<ProductDetail> {
               height: 320,
               child: BuiltCategory(
                 category: widget.product.category,
-                // context: context,
                 color: AppColor.whiteColor,
                 product: widget.product,
               ),
             ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            DynamicReviewWidget(product: widget.product)
+            const SizedBox(height: 8.0),
+            DynamicReviewWidget(product: widget.product),
           ],
         ),
       ),

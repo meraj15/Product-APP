@@ -134,6 +134,9 @@ class _AllMyReviewsState extends State<AllMyReviews> {
                                     review['product_images'][imgIndex],
                                     width: 70,
                                     height: 70,
+                                    errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error, size: 20);
+                              },
                                     fit: BoxFit.cover,
                                   ),
                                 ),

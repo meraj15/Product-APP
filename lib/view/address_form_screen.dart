@@ -14,8 +14,8 @@ class AddressForm extends StatefulWidget {
 }
 
 class _AddressFormState extends State<AddressForm> {
-  final _formKey = GlobalKey<FormState>(); // Form key for validation
-
+  final _formKey = GlobalKey<FormState>();
+  bool isFetchingLocation = false;
   @override
   Widget build(BuildContext context) {
     final providerRead = context.read<ProductData>();
@@ -30,7 +30,7 @@ class _AddressFormState extends State<AddressForm> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 35.0),
           child: Form(
-            key: _formKey, // Attach form key
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -128,13 +128,14 @@ class _AddressFormState extends State<AddressForm> {
                       };
 
                       if (providerRead.isAddressFetched) {
-                         providerRead.updateAddressData(userID);
+                        providerRead.updateAddressData(userID);
                       } else {
-                         providerRead.saveAddress(cardProduct);
+                        providerRead.saveAddress(cardProduct);
                       }
 
                       providerRead.addCard.clear();
-                      Navigator.of(context).pushNamed(AppRoutes.paymentmethodscreen);
+                      Navigator.of(context)
+                          .pushNamed(AppRoutes.paymentmethodscreen);
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -142,7 +143,9 @@ class _AddressFormState extends State<AddressForm> {
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
                   ),
                   child: Text(
-                    providerRead.isAddressFetched ? "Confirm ADDRESS" : "SAVE ADDRESS",
+                    providerRead.isAddressFetched
+                        ? "CONFIRM ADDRESS"
+                        : "SAVE ADDRESS",
                     style: const TextStyle(
                       fontSize: 16.0,
                       color: AppColor.whiteColor,
@@ -151,20 +154,50 @@ class _AddressFormState extends State<AddressForm> {
                 ),
                 const SizedBox(height: 15.0),
                 ElevatedButton(
-                  onPressed: () async {
-                    await providerRead.getCurrentLocation(context);
-                  },
+                  onPressed: isFetchingLocation
+                      ? null
+                      : () async {
+                          setState(() {
+                            isFetchingLocation = true;
+                          });
+                          try {
+                            await providerRead.getCurrentLocation(context);
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                      Text('Failed to fetch location: $e')),
+                            );
+                          } finally {
+                            setState(() {
+                              isFetchingLocation = false;
+                            });
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: AppColor.whiteColor,
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
-                  ),
-                  child: const Text(
-                    'Current Location',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: AppColor.whiteColor,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2.0,
                     ),
                   ),
+                  child: isFetchingLocation
+                      ? SizedBox(
+                          width: 24.0,
+                          height: 24.0,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3.0,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        )
+                      : Text(
+                          'CURRENT LOCATION',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -202,13 +235,15 @@ class _AddressFormState extends State<AddressForm> {
           fillColor: Colors.white,
           labelText: labelText,
           labelStyle: const TextStyle(color: Colors.grey),
-          errorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red),
+          errorBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
-          focusedErrorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
-          errorStyle: const TextStyle(color: Colors.red),
+          errorStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
         validator: validator,
       ),

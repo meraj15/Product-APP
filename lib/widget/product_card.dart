@@ -67,6 +67,9 @@ class ProductCard extends StatelessWidget {
                             product.category == "smartphones" || product.category == "vehicle"?
                                   product.images.first :
                                   product.thumbnail,
+                                  errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error, size: 20);
+                              },
                             fit: BoxFit.fitWidth,
                           ),
                         ),

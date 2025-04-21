@@ -85,6 +85,9 @@ class _AddCardState extends State<AddCard> {
                                       product.thumbnail,
                                       width: 115,
                                       height: 130,
+                                      errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error, size: 20);
+                              },
                                       fit: BoxFit.cover,
                                     ),
                                   ),

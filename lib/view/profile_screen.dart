@@ -42,14 +42,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
             },
           ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.menu, color: Colors.black),
-        //     onPressed: () {
-        //       Navigator.of(context).pushNamed(AppRoutes.bottemNavigationBar);
-        //     },
-        //   ),
-        // ],
       ),
       body: providerWatch.userDetails.isEmpty
           ? Center(

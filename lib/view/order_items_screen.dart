@@ -129,6 +129,9 @@ class _OrderItemsState extends State<OrderItems> {
                                 product.thumbnail,
                                 width: 100,
                                 height: 100,
+                                errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error, size: 20);
+                              },
                                 fit: BoxFit.cover,
                               ),
                             ),

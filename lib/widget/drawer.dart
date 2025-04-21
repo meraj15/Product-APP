@@ -4,8 +4,8 @@ import 'package:product_app/constant/contant.dart';
 import 'package:product_app/main.dart';
 import 'package:product_app/provider/product_provider.dart';
 import 'package:product_app/routes/app_routes.dart';
-import 'package:product_app/view/refund_faqs_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -31,15 +31,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             height: 228,
             width: double.infinity,
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.primary,
-                    const Color.fromARGB(255, 216, 91, 79)
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                color: Theme.of(context).colorScheme.primary),
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  const Color.fromARGB(255, 216, 91, 79)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              color: Theme.of(context).colorScheme.primary,
+            ),
             child: providerRead.userDetails.isNotEmpty
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -121,28 +122,50 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   icon: Icons.question_answer,
                   context: context,
                   text: 'FAQS',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const RefundPolicyFaqsScreen(
-                            url:
-                                "https://meraj15.github.io/am/FAQS.html"),
-                      ),
-                    );
+                  onTap: () async {
+                    final url =
+                        Uri.parse("https://meraj15.github.io/am/FAQS.html");
+                    try {
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url,
+                            mode: LaunchMode.externalApplication);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Could not launch FAQS page')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error launching FAQS: $e')),
+                      );
+                    }
                   },
                 ),
                 createDrawerItem(
                   icon: Icons.policy,
                   context: context,
                   text: 'Refund Policy',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const RefundPolicyFaqsScreen(
-                            url:
-                                "https://meraj15.github.io/am/refund_policy.html"),
-                      ),
-                    );
+                  onTap: () async {
+                    final url = Uri.parse(
+                        "https://meraj15.github.io/am/refund_policy.html");
+                    try {
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url,
+                            mode: LaunchMode.externalApplication);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text('Could not launch Refund Policy page')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Error launching Refund Policy: $e')),
+                      );
+                    }
                   },
                 ),
                 const Divider(),
@@ -152,7 +175,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   text: 'Logout',
                   onTap: () async {
                     await AuthService.logout();
-                        providerRead.logout();
+                    providerRead.logout();
                     Navigator.of(context).pushNamed("/");
                   },
                 ),

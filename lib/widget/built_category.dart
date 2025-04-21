@@ -96,6 +96,9 @@ class BuiltCategory extends StatelessWidget {
                                           product.category == "vehicle"
                                       ? product.images.first
                                       : product.thumbnail,
+                                      errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error, size: 20);
+                              },
                                   fit: BoxFit.fitWidth,
                                 ),
                               ),
