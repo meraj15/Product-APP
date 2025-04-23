@@ -15,10 +15,10 @@ class CheckoutButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
       child: FilledButton(
         onPressed: () {
-          context.read<ProductData>().updateCartQuantity(pdata);
+          context.read<ProductData>().updateCartQuantity(pdata,context);
           if(context.read<ProductData>().addCard.isNotEmpty){
           Navigator.of(context).pushNamed(AppRoutes.addressForm);
-             context.read<ProductData>().updateCartQuantity(pdata);
+             context.read<ProductData>().updateCartQuantity(pdata,context);
           }else{
              CustomToast.showCustomToast(context, "Please select the cart");
           }

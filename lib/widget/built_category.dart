@@ -186,7 +186,7 @@ class BuiltCategory extends StatelessWidget {
                                 'category': product.category,
                               };
                               providerRead.toggleFavorite(
-                                  product, favoriteData);
+                                  product, favoriteData,context);
                             },
                             child: Icon(
                               isFavorite

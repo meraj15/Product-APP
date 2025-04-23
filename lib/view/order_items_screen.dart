@@ -32,7 +32,7 @@ class _OrderItemsState extends State<OrderItems> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProductData>().getOrderItems(widget.orderId);
-      context.read<ProductData>().fetchUserOrders(userID);
+      context.read<ProductData>().fetchUserOrders(context);
     });
   }
 

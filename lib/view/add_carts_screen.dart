@@ -62,7 +62,7 @@ class _AddCardState extends State<AddCard> {
                           children: [
                             SlidableAction(
                               onPressed: (context) {
-                                productData.deleteCartData(index);
+                                productData.deleteCartData(index,context);
                               },
                               backgroundColor: AppColor.whiteColor,
                               foregroundColor:
@@ -85,9 +85,11 @@ class _AddCardState extends State<AddCard> {
                                       product.thumbnail,
                                       width: 115,
                                       height: 130,
-                                      errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error, size: 20);
-                              },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(Icons.error,
+                                            size: 20);
+                                      },
                                       fit: BoxFit.cover,
                                     ),
                                   ),

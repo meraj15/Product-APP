@@ -16,7 +16,14 @@ class Favorites extends StatefulWidget {
 }
 
 class _FavoritesState extends State<Favorites> {
-
+  @override
+  void initState() {
+    super.initState();
+    // Fetch favorites when the screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProductData>().getFavouriteData(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +31,14 @@ class _FavoritesState extends State<Favorites> {
       backgroundColor: AppColor.scaffoldColor,
       drawer: const DrawerWidget(),
       appBar: AppBar(
-  title: Text(
-    "Favorites",
-    style: GoogleFonts.pacifico(
-      fontWeight: FontWeight.w500,
-    ),
-  ),
-  actions: [
-     IconButton(
+        title: Text(
+          "Favorites",
+          style: GoogleFonts.pacifico(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        actions: [
+          IconButton(
             onPressed: () {
               Navigator.of(context).pushNamed(AppRoutes.addCardScreen);
             },
@@ -39,181 +46,180 @@ class _FavoritesState extends State<Favorites> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               label: Text(
                 '${context.watch<ProductData>().addCard.length}',
-                style:const TextStyle(
+                style: const TextStyle(
                   color: AppColor.whiteColor,
                   fontWeight: FontWeight.w900,
                 ),
               ),
               child: const Icon(Icons.shopping_cart_outlined),
             ),
-            
           ),
-  ],
-  centerTitle: true,
-  backgroundColor: AppColor.scaffoldColor,
-),
+        ],
+        centerTitle: true,
+        backgroundColor: AppColor.scaffoldColor,
+      ),
       body: Column(
         children: [
-          if(context.read<ProductData>().favorite.isNotEmpty)
-          const SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  FilterCategoryProduct(
-                    selectedFilter: "",
-                    title: "All",
-                    icon: Icons.all_inclusive,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "beauty",
-                    title: "Beauty",
-                    icon: Icons.brush,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "fragrances",
-                    title: "Fragrances",
-                    icon: Icons.spa,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "furniture",
-                    title: "Furniture",
-                    icon: Icons.weekend,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "groceries",
-                    title: "Groceries",
-                    icon: Icons.local_grocery_store,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "home-decoration",
-                    title: "Decoration",
-                    icon: Icons.home,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "kitchen-accessories",
-                    title: "Kitchen",
-                    icon: Icons.kitchen,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "laptops",
-                    title: "Laptops",
-                    icon: Icons.laptop,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "mens-shirts",
-                    title: "Mens shirts",
-                    icon: Icons.checkroom,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "mens-shoes",
-                    title: "Mens Shoes",
-                    icon: Icons.run_circle,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "mens-watches",
-                    title: "Mens Watches",
-                    icon: Icons.watch,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "mobile-accessories",
-                    title: "Mobile Accessories",
-                    icon: Icons.mobile_friendly,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "motorcycle",
-                    title: "Motorcycle",
-                    icon: Icons.motorcycle,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "skin-care",
-                    title: "Skin Care",
-                    icon: Icons.face,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "smartphones",
-                    title: "Smartphones",
-                    icon: Icons.smartphone,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "sports-accessories",
-                    title: "Sports Accessories",
-                    icon: Icons.sports,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "sunglasses",
-                    title: "Sunglasses",
-                    icon: Icons.wb_sunny,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "tablets",
-                    title: "Tablets",
-                    icon: Icons.tablet,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "tops",
-                    title: "Tops",
-                    icon: Icons.emoji_people,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "vehicle",
-                    title: "Vehicle",
-                    icon: Icons.directions_car,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "womens-bags",
-                    title: "Womens Bags",
-                    icon: Icons.shopping_bag,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "womens-dresses",
-                    title: "Womens Dresses",
-                    icon: Icons.collections_sharp,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "womens-jewellery",
-                    title: "Womens Jewellery",
-                    icon: Icons.local_florist,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "womens-shoes",
-                    title: "Womens Shoes",
-                    icon: Icons.run_circle,
-                  ),
-                  SizedBox(width: 8),
-                  FilterCategoryProduct(
-                    selectedFilter: "womens-watches",
-                    title: "Womens Watches",
-                    icon: Icons.watch,
-                  ),
-                ],
+          if (context.read<ProductData>().favorite.isNotEmpty)
+            const SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    FilterCategoryProduct(
+                      selectedFilter: "",
+                      title: "All",
+                      icon: Icons.all_inclusive,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "beauty",
+                      title: "Beauty",
+                      icon: Icons.brush,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "fragrances",
+                      title: "Fragrances",
+                      icon: Icons.spa,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "furniture",
+                      title: "Furniture",
+                      icon: Icons.weekend,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "groceries",
+                      title: "Groceries",
+                      icon: Icons.local_grocery_store,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "home-decoration",
+                      title: "Decoration",
+                      icon: Icons.home,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "kitchen-accessories",
+                      title: "Kitchen",
+                      icon: Icons.kitchen,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "laptops",
+                      title: "Laptops",
+                      icon: Icons.laptop,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "mens-shirts",
+                      title: "Mens shirts",
+                      icon: Icons.checkroom,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "mens-shoes",
+                      title: "Mens Shoes",
+                      icon: Icons.run_circle,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "mens-watches",
+                      title: "Mens Watches",
+                      icon: Icons.watch,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "mobile-accessories",
+                      title: "Mobile Accessories",
+                      icon: Icons.mobile_friendly,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "motorcycle",
+                      title: "Motorcycle",
+                      icon: Icons.motorcycle,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "skin-care",
+                      title: "Skin Care",
+                      icon: Icons.face,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "smartphones",
+                      title: "Smartphones",
+                      icon: Icons.smartphone,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "sports-accessories",
+                      title: "Sports Accessories",
+                      icon: Icons.sports,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "sunglasses",
+                      title: "Sunglasses",
+                      icon: Icons.wb_sunny,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "tablets",
+                      title: "Tablets",
+                      icon: Icons.tablet,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "tops",
+                      title: "Tops",
+                      icon: Icons.emoji_people,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "vehicle",
+                      title: "Vehicle",
+                      icon: Icons.directions_car,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "womens-bags",
+                      title: "Womens Bags",
+                      icon: Icons.shopping_bag,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "womens-dresses",
+                      title: "Womens Dresses",
+                      icon: Icons.collections_sharp,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "womens-jewellery",
+                      title: "Womens Jewellery",
+                      icon: Icons.local_florist,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "womens-shoes",
+                      title: "Womens Shoes",
+                      icon: Icons.run_circle,
+                    ),
+                    SizedBox(width: 8),
+                    FilterCategoryProduct(
+                      selectedFilter: "womens-watches",
+                      title: "Womens Watches",
+                      icon: Icons.watch,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -261,12 +267,11 @@ class _FavoritesState extends State<Favorites> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
                                 child: Image.network(
-                                  // favoritesProduct.images.first,
                                   favoritesProduct.thumbnail,
                                   width: 120,
                                   errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error, size: 20);
-                              },
+                                    return const Icon(Icons.error, size: 20);
+                                  },
                                   height: 120,
                                 ),
                               ),
@@ -297,8 +302,10 @@ class _FavoritesState extends State<Favorites> {
                                       ),
                                       Text(
                                         "\$${favoritesProduct.price}",
-                                        style:  TextStyle(
-                                          color: Theme.of(context).colorScheme.primary,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 16,
                                         ),
@@ -336,15 +343,11 @@ class _FavoritesState extends State<Favorites> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  provider.deleteFavouriteData(index);
-                                  // context.read<ProductData>().saveData();
+                                  provider.deleteFavouriteData(index,context);
                                 },
-                                icon:  Icon(
-
-
-
+                                icon: Icon(
                                   Icons.close,
-                                  color: Theme.of(context).colorScheme.primary
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ],

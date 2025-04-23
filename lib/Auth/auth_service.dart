@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   static const String _userIdKey = "userId";
   static const String _isLoggedInKey = "isLoggedIn";
+  static const String _jwtTokenKey = "jwt_token";
 
   // Save user ID
   static Future<void> saveUserId(String userId) async {
@@ -32,7 +33,22 @@ class AuthService {
 
   // Check if user is logged in
   static Future<bool> isLoggedIn() async {
-    return await getLoginStatus(); // Delegating to getLoginStatus
+    return await getLoginStatus();
+  }
+
+  // Save JWT token
+  static Future<void> saveToken(String token) async {
+    debugPrint("Saving token: $token");
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_jwtTokenKey, token);
+  }
+
+  // Retrieve JWT token
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(_jwtTokenKey);
+    debugPrint("Retrieved token: $token");
+    return token;
   }
 
   // Clear all user data (logout)
@@ -40,11 +56,14 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userIdKey); // Clear user ID
     await prefs.remove(_isLoggedInKey); // Clear login status
+    await prefs.remove(_jwtTokenKey); // Clear JWT token
+    debugPrint("User logged out, all auth data cleared");
   }
 
   // Clear all preferences (optional utility)
   static Future<void> clearAllPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    debugPrint("All preferences cleared");
   }
 }

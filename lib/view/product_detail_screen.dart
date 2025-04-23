@@ -211,7 +211,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                 };
 
                                 context.read<ProductData>().toggleFavorite(
-                                    widget.product, favoriteData);
+                                    widget.product, favoriteData,context);
                               },
                               child: CircleAvatar(
                                 backgroundColor: AppColor.whiteColor,

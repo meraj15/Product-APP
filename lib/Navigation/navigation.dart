@@ -20,12 +20,10 @@ class _BottemNavigationBarState extends State<BottemNavigationBar> {
   int selectedIndex = 0;
   @override
   void initState() {
-    // context.read<ProductData>().getData();
-    context.read<ProductData>().getCartsData(userID);
-    context.read<ProductData>().getFavouriteData(userID);
-    context.read<ProductData>().getAddressData();
-    context.read<ProductData>().fetchMyAllReviews(userID);
-
+    context.read<ProductData>().getCartsData(context);
+    context.read<ProductData>().getAddressData(context);
+    context.read<ProductData>().fetchMyAllReviews(context);
+    context.read<ProductData>().getFavouriteData(context);
     super.initState();
   }
   @override

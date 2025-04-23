@@ -128,9 +128,9 @@ class _AddressFormState extends State<AddressForm> {
                       };
 
                       if (providerRead.isAddressFetched) {
-                        providerRead.updateAddressData(userID);
+                        providerRead.updateAddressData(context);
                       } else {
-                        providerRead.saveAddress(cardProduct);
+                        providerRead.saveAddress(cardProduct,context);
                       }
 
                       providerRead.addCard.clear();
@@ -179,7 +179,7 @@ class _AddressFormState extends State<AddressForm> {
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
                     side: BorderSide(
                       color: Theme.of(context).colorScheme.primary,
-                      width: 2.0,
+                      width: 1.0,
                     ),
                   ),
                   child: isFetchingLocation

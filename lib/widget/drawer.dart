@@ -18,7 +18,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   void initState() {
     super.initState();
-    context.read<ProductData>().getUserDetail(userID);
+    context.read<ProductData>().getUserDetail(context);
   }
 
   @override

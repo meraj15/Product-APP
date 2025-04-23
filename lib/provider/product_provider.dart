@@ -19,11 +19,9 @@ class ProductData extends ChangeNotifier {
   bool isLoaded = true;
   String error = "";
   List<Product> products = [];
-  List addCard = [];
+  List<Product> addCard = [];
   List<Product> favorite = [];
   List<Product> filterFavorites = [];
-  List<String> jsonProducts = [];
-  List<String> jsonCards = [];
   String selectedFilter = "";
   String productSize = '';
   String selectedSortFilter = "No Filter";
@@ -63,6 +61,16 @@ class ProductData extends ChangeNotifier {
   bool isSignLoading = false;
   String passwordErrorMsg = "";
   String emailErrorMsg = "";
+  bool isFetchingCart = false;
+  String? cartError;
+  bool isFetchingAddress = false;
+  String? addressError;
+  bool isFetchingOrders = false;
+  String? ordersError;
+  bool isFetchingReviews = false;
+  String? reviewsError;
+  bool isFetchingUserDetails = false;
+  String? userDetailsError;
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
   GoogleSignInAccount? _user;
@@ -71,6 +79,10 @@ class ProductData extends ChangeNotifier {
 
   Future logout() async {
     await googleSignIn.disconnect();
+    await AuthService.logout();
+    userID = "";
+    _user = null;
+    notifyListeners();
   }
 
   Future<void> googleLogin(BuildContext context) async {
@@ -92,12 +104,38 @@ class ProductData extends ChangeNotifier {
           await _checkUserInDatabase(googleUser.email);
 
       if (userCheckResult['exists']) {
-        userID = userCheckResult['userId'] ?? "";
-        await AuthService.setLoginStatus(true);
-        await AuthService.saveUserId(userID);
-        debugPrint("Existing user ID: $userID");
-        Navigator.of(context)
-            .pushReplacementNamed(AppRoutes.bottemNavigationBar);
+        // Simulate login by calling /api/login with email (backend should handle Google Sign-In)
+        final response = await http.post(
+          Uri.parse(APIEndPoint.userLogin),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"email": googleUser.email, "password": ""}),
+        );
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          if (data['status'] == "success") {
+            userID = data['userId']?.toString() ?? "";
+            final token = data['token'] ?? '';
+            await AuthService.setLoginStatus(true);
+            await AuthService.saveUserId(userID);
+            await AuthService.saveToken(token);
+            debugPrint("Existing user ID: $userID, token: $token");
+            if (context.mounted) {
+              Navigator.of(context)
+                  .pushReplacementNamed(AppRoutes.bottemNavigationBar);
+            }
+          } else {
+            debugPrint("Google login error: ${data['message']}");
+            _user = null;
+            userID = "";
+            notifyListeners();
+          }
+        } else {
+          debugPrint("Google login server error: ${response.statusCode}");
+          _user = null;
+          userID = "";
+          notifyListeners();
+        }
       } else {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -167,9 +205,12 @@ class ProductData extends ChangeNotifier {
 
       if (jsonData['status'] == 'success') {
         userID = jsonData['userId'] ?? "No User ID";
-        debugPrint("User ID sign-up backend: $userID");
+        // For Google Sign-In, assume backend returns a token
+        final token = jsonData['token'] ?? '';
         await AuthService.setLoginStatus(true);
         await AuthService.saveUserId(userID);
+        await AuthService.saveToken(token);
+        debugPrint("User ID sign-up backend: $userID, token: $token");
         signScreenErrorMsg = "";
         if (isGoogleSignIn) {
           Navigator.of(context)
@@ -204,17 +245,12 @@ class ProductData extends ChangeNotifier {
 
   void togglePasswordVisibility() {
     isPasswordObscured = !isPasswordObscured;
+    notifyListeners();
   }
 
   void setProductSize(String size) {
     productSize = size;
     notifyListeners();
-  }
-
-
-  @override
-  void notifyListeners() {
-    super.notifyListeners();
   }
 
   void setSort(String sort) {
@@ -251,6 +287,7 @@ class ProductData extends ChangeNotifier {
     for (var product in addCard) {
       totalAmount += product.productQuantity * product.price;
     }
+    notifyListeners();
   }
 
   void productPriceHightoLow() {
@@ -292,59 +329,706 @@ class ProductData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void postcartsData(Map<String, dynamic> pdata) async {
-    pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
-    var url = Uri.parse(APIEndPoint.postcartsDataEndPoint);
-    pdata['quantity'] = pdata['quantity'] ?? 1;
-    await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(pdata),
-    );
-    getData();
-  }
-
-  void updateCartQuantity(List<Map<String, dynamic>> updatedQuantities) async {
-    var url = Uri.parse(APIEndPoint.updateCartQuantity);
-    await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(updatedQuantities),
-    );
-  }
-
-  void getCartsData(String userid) async {
-    final url = "${APIEndPoint.getCartsData}/$userid";
+  Future<void> getCartsData(BuildContext context) async {
     try {
-      final response = await http.get(Uri.parse(url));
+      isFetchingCart = true;
+      cartError = null;
+      notifyListeners();
+
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = APIEndPoint.getCartsData;
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
       if (response.statusCode == 200) {
         final decodeJson = jsonDecode(response.body) as List<dynamic>;
         addCard = decodeJson.map((json) => Product.fromJson(json)).toList();
-        // debugPrint(" addCard : $addCard");
+        debugPrint("Cart loaded: ${addCard.length} items");
+        updateTotalAmount();
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        cartError = "Failed to load cart. Please try again.";
+        debugPrint("Failed to load cart: ${response.statusCode}");
         notifyListeners();
       }
     } catch (e) {
+      cartError = "Error fetching cart data. Please try again.";
       debugPrint("Error fetching cart data: $e");
+      notifyListeners();
+    } finally {
+      isFetchingCart = false;
+      notifyListeners();
     }
   }
 
-  void deleteCartData(int index) async {
+  Future<void> postcartsData(Map<String, dynamic> pdata, BuildContext context) async {
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
+      pdata['quantity'] = pdata['quantity'] ?? 1;
+      var url = Uri.parse(APIEndPoint.postcartsDataEndPoint);
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(pdata),
+      );
+
+      if (response.statusCode == 201) {
+        debugPrint("Item added to cart successfully");
+        await getCartsData(context); // Refresh cart
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to add to cart: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error posting cart data: $e");
+    }
+  }
+
+  Future<void> updateCartQuantity(List<Map<String, dynamic>> updatedQuantities, BuildContext context) async {
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      var url = Uri.parse(APIEndPoint.updateCartQuantity);
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(updatedQuantities),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("Cart quantities updated successfully");
+        await getCartsData(context); // Refresh cart
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to update cart quantities: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error updating cart quantities: $e");
+    }
+  }
+
+  Future<void> deleteCartData(int index, BuildContext context) async {
     final idToDelete = addCard[index].id;
 
     try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
       final url = Uri.parse("${APIEndPoint.deleteCartData}/$idToDelete");
-      final response = await http.delete(url);
+      final response = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
       if (response.statusCode == 200) {
         addCard.removeAt(index);
+        updateTotalAmount();
+        debugPrint("Cart item deleted successfully");
         notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
       } else {
-        debugPrint(
-            "Failed to delete data. Status code: ${response.statusCode}");
+        debugPrint("Failed to delete cart item: ${response.statusCode}");
       }
     } catch (e) {
-      debugPrint("Error deleting data: $e");
+      debugPrint("Error deleting cart item: $e");
+    }
+  }
+
+  Future<void> deleteAllCarts(BuildContext context) async {
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = Uri.parse(APIEndPoint.deleteAllCarts);
+      final response = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        addCard.clear();
+        updateTotalAmount();
+        debugPrint("All cart items deleted successfully");
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else if (response.statusCode == 404) {
+        debugPrint("No cart items found to delete");
+      } else {
+        debugPrint("Failed to delete all carts: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error deleting all carts: $e");
+    }
+  }
+
+  Future<void> getFavouriteData(BuildContext context) async {
+    try {
+      isFetchingCart = true;
+      cartError = null;
+      notifyListeners();
+
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = APIEndPoint.getFavouriteData;
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+        favorite = decodeJson.map((json) => Product.fromJson(json)).toList();
+        debugPrint("Favorites loaded: ${favorite.length} items");
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to load favourites: ${response.statusCode}");
+        cartError = "Failed to load favorites. Please try again.";
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Error fetching favorites: $e");
+      cartError = "Error fetching favorites. Please try again.";
+      notifyListeners();
+    } finally {
+      isFetchingCart = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> postfavouriteData(Map<String, dynamic> pdata, BuildContext context) async {
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
+      var url = Uri.parse(APIEndPoint.postfavouriteData);
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(pdata),
+      );
+
+      if (response.statusCode == 201) {
+        debugPrint("Favorite added successfully");
+        await getFavouriteData(context); // Refresh favorites
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to add favorite: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error posting favorite data: $e");
+    }
+  }
+
+  Future<void> deleteFavouriteData(int index, BuildContext context) async {
+    final idToDelete = favorite[index].id;
+
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = Uri.parse("${APIEndPoint.deleteFavouriteData}/$idToDelete");
+      final response = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        favorite.removeAt(index);
+        debugPrint("Favorite removed successfully");
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to delete favorite: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error deleting favorite: $e");
+    }
+  }
+
+  Future<void> getAddressData(BuildContext context) async {
+    try {
+      isFetchingAddress = true;
+      addressError = null;
+      notifyListeners();
+
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = APIEndPoint.getAddressData;
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == "success") {
+          final address = data['address'];
+          userName.text = address['name'] ?? '';
+          userStreet.text = address['street'] ?? '';
+          userCity.text = address['city'] ?? '';
+          userState.text = address['state'] ?? '';
+          userZipCode.text = address['zipcode']?.toString() ?? '';
+          userCountry.text = address['country'] ?? '';
+          isAddressFetched = true;
+          debugPrint("Address loaded successfully");
+          notifyListeners();
+        } else {
+          isAddressFetched = false;
+          userName.clear();
+          userStreet.clear();
+          userCity.clear();
+          userState.clear();
+          userZipCode.clear();
+          userCountry.clear();
+          debugPrint("No address found for this user");
+          notifyListeners();
+        }
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        addressError = "Failed to load address. Please try again.";
+        debugPrint("Failed to load address: ${response.statusCode}");
+        notifyListeners();
+      }
+    } catch (e) {
+      addressError = "Error fetching address. Please try again.";
+      debugPrint("Error fetching address: $e");
+      notifyListeners();
+    } finally {
+      isFetchingAddress = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> saveAddress(Map<String, dynamic> data, BuildContext context) async {
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = Uri.parse(APIEndPoint.saveAddress);
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("Address saved successfully");
+        await getAddressData(context); // Refresh address
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to save address: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error saving address: $e");
+    }
+  }
+
+  Future<void> updateAddressData(BuildContext context) async {
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = Uri.parse(APIEndPoint.updateAddressData);
+      final response = await http.patch(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          'name': userName.text,
+          'street': userStreet.text,
+          'city': userCity.text,
+          'state': userState.text,
+          'zipcode': userZipCode.text,
+          'country': userCountry.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("Address updated successfully");
+        await getAddressData(context); // Refresh address
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to update address: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error updating address: $e");
+    }
+  }
+
+  Future<void> fetchMyAllOrders(BuildContext context) async {
+    try {
+      isFetchingOrders = true;
+      ordersError = null;
+      notifyListeners();
+
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = APIEndPoint.fetchMyAllOrders;
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+        userAllOrders = decodeJson;
+        isOrderAllLoading = false;
+        debugPrint("Orders loaded: ${userAllOrders.length} items");
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        ordersError = "Failed to load orders. Please try again.";
+        debugPrint("Failed to load orders: ${response.statusCode}");
+        notifyListeners();
+      }
+    } catch (e) {
+      ordersError = "Error fetching orders. Please try again.";
+      debugPrint("Error fetching orders: $e");
+      notifyListeners();
+    } finally {
+      isFetchingOrders = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchUserOrders(BuildContext context) async {
+    try {
+      isFetchingOrders = true;
+      ordersError = null;
+      notifyListeners();
+
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = APIEndPoint.fetchUserOrders;
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+        orderUsername = decodeJson.isNotEmpty ? decodeJson[0]["name"] ?? "" : "";
+        debugPrint("orderUsername: $orderUsername");
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to load user orders: ${response.statusCode}");
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Error fetching user orders: $e");
+      notifyListeners();
+    } finally {
+      isFetchingOrders = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> postOrder(BuildContext context) async {
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final DateTime orderTime = DateTime.now();
+      final response = await http.post(
+        Uri.parse(APIEndPoint.postOrder),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          'price': totalAmount,
+          'order_time': formatOrderTime(orderTime),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['message'] == "Order placed successfully") {
+          await deleteAllCarts(context);
+          debugPrint("Order placed successfully");
+          notifyListeners();
+        }
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to place order: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error posting order: $e");
+    }
+  }
+
+  Future<void> postReviews(BuildContext context, Map<String, dynamic> reviewData, int productId) async {
+    try {
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final response = await http.post(
+        Uri.parse('${APIEndPoint.postReviews}/products/$productId/reviews'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(reviewData),
+      );
+
+      if (response.statusCode == 201) {
+        if (context.mounted) {
+          Navigator.pop(context);
+          CustomToast.showCustomToast(context, 'Review submitted successfully!');
+        }
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        debugPrint("Failed to submit review: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error posting review: $e");
+    }
+  }
+
+  Future<void> fetchMyAllReviews(BuildContext context) async {
+    try {
+      isFetchingReviews = true;
+      reviewsError = null;
+      notifyListeners();
+
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = APIEndPoint.fetchMyAllReviews;
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body) as List<dynamic>;
+        userAllReviews = decodeJson;
+        debugPrint("Reviews loaded: ${userAllReviews.length} items");
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        reviewsError = "Failed to load reviews. Please try again.";
+        debugPrint("Failed to load reviews: ${response.statusCode}");
+        notifyListeners();
+      }
+    } catch (e) {
+      reviewsError = "Error fetching reviews. Please try again.";
+      debugPrint("Error fetching reviews: $e");
+      notifyListeners();
+    } finally {
+      isFetchingReviews = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getUserDetail(BuildContext context) async {
+    try {
+      isFetchingUserDetails = true;
+      userDetailsError = null;
+      notifyListeners();
+
+      final token = await AuthService.getToken();
+      if (token == null) {
+        debugPrint("No token found, user not authenticated");
+        await _handleUnauthorized(context);
+        return;
+      }
+
+      final url = APIEndPoint.getUserDetail;
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final decodeJson = jsonDecode(response.body);
+        userDetails = [decodeJson]; // Backend returns single object
+        debugPrint("User details loaded: $userDetails");
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized: Invalid or expired token");
+        await _handleUnauthorized(context);
+      } else {
+        userDetailsError = "Failed to load user details. Please try again.";
+        debugPrint("Failed to load user details: ${response.statusCode}");
+        notifyListeners();
+      }
+    } catch (e) {
+      userDetailsError = "Error fetching user details. Please try again.";
+      debugPrint("Error fetching user details: $e");
+      notifyListeners();
+    } finally {
+      isFetchingUserDetails = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _handleUnauthorized(BuildContext context) async {
+    await AuthService.logout();
+    userID = "";
+    _user = null;
+    if (context.mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        AppRoutes.initialRoute,
+        (route) => false,
+      );
     }
   }
 
@@ -355,15 +1039,15 @@ class ProductData extends ChangeNotifier {
   }
 
   Future<void> toggleFavorite(
-      Product product, Map<String, dynamic> pdata) async {
+      Product product, Map<String, dynamic> pdata, BuildContext context) async {
     try {
       notifyListeners();
       if (favorite.contains(product)) {
         final index = favorite.indexOf(product);
-        await deleteFavouriteData(index);
+        await deleteFavouriteData(index, context);
       } else {
         favorites(product);
-        await postfavouriteData(pdata);
+        await postfavouriteData(pdata, context);
       }
     } catch (e) {
       debugPrint("Error toggling favorite: $e");
@@ -379,127 +1063,6 @@ class ProductData extends ChangeNotifier {
       favorite.add(product);
     }
     notifyListeners();
-  }
-
-  Future<void> postfavouriteData(Map<String, dynamic> pdata) async {
-    pdata['price'] = double.tryParse(pdata['price'].toString()) ?? 0.0;
-
-    var url = Uri.parse(APIEndPoint.postfavouriteData);
-    try {
-      final res = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(pdata),
-      );
-      debugPrint("Data posted successfully in favourites");
-    } catch (e) {
-      debugPrint("Error posting data: $e");
-      rethrow;
-    }
-  }
-
-  Future<void> deleteFavouriteData(int index) async {
-    final idToDelete = favorite[index].id;
-    final url = Uri.parse("${APIEndPoint.deleteFavouriteData}/$idToDelete");
-    try {
-      final response = await http.delete(url);
-      if (response.statusCode == 200) {
-        favorite.removeAt(index);
-        notifyListeners();
-        debugPrint("Data removed successfully from favorites.");
-      } else {
-        debugPrint("Failed to delete item: ${response.statusCode}");
-        throw Exception("Failed to delete item: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Error deleting item: $e");
-      rethrow;
-    }
-  }
-
-  void getFavouriteData(String userId) async {
-    final url = "${APIEndPoint.getFavouriteData}/$userId";
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final decodeJson = jsonDecode(response.body) as List<dynamic>;
-
-      favorite = decodeJson.map((json) => Product.fromJson(json)).toList();
-      // debugPrint("favorite  :$favorite");
-      notifyListeners();
-    } else {
-      debugPrint("Failed to load favourites: ${response.statusCode}");
-    }
-  }
-
-  void saveAddress(Map data) async {
-    final url = Uri.parse(APIEndPoint.saveAddress);
-    await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(data),
-    );
-  }
-
-  void updateAddressData(String userId) async {
-    final url = Uri.parse("${APIEndPoint.updateAddressData}/$userId");
-    await http.patch(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        'name': userName.text,
-        'street': userStreet.text,
-        'city': userCity.text,
-        'state': userState.text,
-        'zipcode': userZipCode.text.toString(),
-        'country': userCountry.text,
-      }),
-    );
-
-    // if (response.statusCode == 200) {
-    //   final resData = jsonDecode(response.body);
-    //   // ScaffoldMessenger.of(context).showSnackBar(
-    //   //   SnackBar(
-    //   //       content:
-    //   //           Text(resData['message'] ?? "Address updated successfully")),
-    //   // );
-    // }
-  }
-
-  void getAddressData() async {
-    final url = Uri.parse("${APIEndPoint.getAddressData}/$userID");
-    debugPrint("address usrId : $userID");
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      if (data['status'] == "success") {
-        final address = data['address'];
-        debugPrint("if chala userid : $userID");
-
-        userName.text = address['name'];
-        userStreet.text = address['street'];
-        userCity.text = address['city'];
-        userState.text = address['state'];
-        userZipCode.text = address['zipcode'].toString();
-        userCountry.text = address['country'];
-        isAddressFetched = true;
-        notifyListeners();
-      } else {
-        isAddressFetched = false;
-        userName.clear();
-        userStreet.clear();
-        userCity.clear();
-        userState.clear();
-        userZipCode.clear();
-        userCountry.clear();
-        notifyListeners();
-        debugPrint("No address found for this user.");
-      }
-    } else {
-      debugPrint(
-          "Failed to fetch address. Status Code: ${response.statusCode}");
-    }
   }
 
   Future<void> getCurrentLocation(BuildContext context) async {
@@ -531,28 +1094,7 @@ class ProductData extends ChangeNotifier {
         userCountry.text = place.country ?? '';
       }
     }
-  }
-
-  void fetchMyAllOrders(String userId) async {
-    final url = "${APIEndPoint.fetchMyAllOrders}/$userId";
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final decodeJson = jsonDecode(response.body) as List<dynamic>;
-
-        userAllOrders = decodeJson;
-
-        isOrderAllLoading = false;
-        notifyListeners();
-      } else {
-        throw Exception("Failed to load orders");
-      }
-    } catch (error) {
-      debugPrint("Error fetching user orders: $error");
-
-      isOrderAllLoading = false;
-      notifyListeners();
-    }
+    notifyListeners();
   }
 
   Future<void> getOrderItems(String orderId) async {
@@ -580,34 +1122,6 @@ class ProductData extends ChangeNotifier {
     }
   }
 
-  void fetchUserOrders(String userId) async {
-    final url = "${APIEndPoint.fetchUserOrders}/$userId";
-    final response = await http.get(Uri.parse(url));
-    final decodeJson = jsonDecode(response.body) as List<dynamic>;
-    orderUsername = decodeJson[0]["name"];
-    debugPrint("orderUsername : $orderUsername");
-  }
-
-  Future<void> postReviews(
-      BuildContext context, Map reviewData, int productId) async {
-    try {
-      final response = await http.post(
-        Uri.parse('${APIEndPoint.postReviews}/products/$productId/reviews'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(reviewData),
-      );
-
-      if (response.statusCode == 201) {
-        Navigator.pop(context);
-        CustomToast.showCustomToast(context, 'Review submitted successfully!');
-      } else {
-        debugPrint("Failed to submit review. Error: ${response.body}");
-      }
-    } catch (e) {
-      debugPrint("An error occurred: $e");
-    }
-  }
-
   void getReviews(int productId) async {
     final url = '${APIEndPoint.getReviews}/products/$productId/reviews';
     try {
@@ -625,70 +1139,10 @@ class ProductData extends ChangeNotifier {
     }
   }
 
-  void fetchMyAllReviews(String userId) async {
-    final url = "${APIEndPoint.fetchMyAllReviews}/$userId";
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final decodeJson = jsonDecode(response.body) as List<dynamic>;
-
-        userAllReviews = decodeJson;
-
-        notifyListeners();
-      } else {
-        throw Exception("Failed to load orders");
-      }
-    } catch (error) {
-      debugPrint("Error fetching user orders: $error");
-    }
-  }
-
-  // Future<bool> postSignUpData(Map<String, dynamic> pdata) async {
-  //   var url = Uri.parse(APIEndPoint.postSignUpData);
-  //   try {
-  //     final res = await http.post(
-  //       url,
-  //       headers: {"Content-Type": "application/json"},
-  //       body: jsonEncode(pdata),
-  //     );
-  //     final jsonData = jsonDecode(res.body);
-  //     debugPrint("jsonData: $jsonData");
-
-  //     if (jsonData['status'] == 'error') {
-  //       signScreenErrorMsg = jsonData['message'] ?? "An error occurred";
-  //       if (jsonData['message'] == 'Email already used') {
-  //         signScreenErrorMsg =
-  //             "Email already used. Please use a different email.";
-  //       }
-  //       notifyListeners();
-  //       return false; // No login actions for any error
-  //     }
-
-  //     if (jsonData['status'] == 'success') {
-  //       userID = jsonData['userId'] ?? "No User ID";
-  //       debugPrint("User ID sign-up backend: $userID");
-  //       await AuthService.setLoginStatus(true); // Only on success
-  //       await AuthService.saveUserId(userID); // Only on success
-  //       signScreenErrorMsg = ""; // Clear error
-  //       notifyListeners();
-  //       return true;
-  //     }
-
-  //     signScreenErrorMsg = "Sign-Up failed. Please try again.";
-  //     notifyListeners();
-  //     return false;
-  //   } catch (e) {
-  //     signScreenErrorMsg = "An error occurred. Please try again.";
-  //     notifyListeners();
-  //     debugPrint("Error: $e");
-  //     return false;
-  //   }
-  // }
-
   Future<void> userLogin(
       String email, String password, BuildContext context) async {
     try {
-      emailErrorMsg = ''; // Clear previous errors
+      emailErrorMsg = '';
       passwordErrorMsg = '';
       isLoginLoading = true;
       notifyListeners();
@@ -706,9 +1160,11 @@ class ProductData extends ChangeNotifier {
         final data = jsonDecode(response.body);
         if (data['status'] == "success") {
           userID = data['userId']?.toString() ?? "No User ID";
+          final token = data['token'] ?? '';
           await AuthService.setLoginStatus(true);
           await AuthService.saveUserId(userID);
-          debugPrint("Login success, userID: $userID");
+          await AuthService.saveToken(token);
+          debugPrint("Login success, userID: $userID, token: $token");
           if (context.mounted) {
             Navigator.of(context).pushNamedAndRemoveUntil(
               AppRoutes.bottemNavigationBar,
@@ -746,47 +1202,6 @@ class ProductData extends ChangeNotifier {
     return DateFormat('hh:mm a').format(orderTime);
   }
 
-  void postOrder(BuildContext context) async {
-    final DateTime orderTime = DateTime.now();
-    try {
-      final response = await http.post(
-        Uri.parse(APIEndPoint.postOrder),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "userid": userID,
-          'price': totalAmount,
-          'order_time': formatOrderTime(orderTime),
-        }),
-      );
-
-      final data = jsonDecode(response.body);
-
-      if (data['message'] == "Order placed successfully") {
-        deleteAllCarts();
-      }
-    } catch (e) {
-      debugPrint("Error in postData: $e");
-    }
-  }
-
-  void deleteAllCarts() async {
-    try {
-      final url = Uri.parse(APIEndPoint.deleteAllCarts);
-      final response = await http.delete(url);
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        debugPrint("All carts deleted: ${responseData['message']}");
-      } else if (response.statusCode == 404) {
-        debugPrint("No carts found to delete: ${response.body}");
-      } else {
-        debugPrint("Failed to delete all carts: ${response.body}");
-      }
-    } catch (e) {
-      debugPrint("Error: $e");
-    }
-  }
-
   void updateOrderStatus(String orderId, String newStatus) async {
     final url = "${APIEndPoint.updateOrderStatus}/$orderId";
     final headers = {"Content-Type": "application/json"};
@@ -808,25 +1223,6 @@ class ProductData extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint("Error updating order status: $e");
-    }
-  }
-
-  Future<void> getUserDetail(String userId) async {
-    final url = "${APIEndPoint.getUserDetail}/$userId";
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final List<dynamic> decodeJson = jsonDecode(response.body);
-        userDetails = decodeJson.cast<Map<String, dynamic>>();
-        debugPrint("userDetails: $userDetails");
-        notifyListeners();
-      } else {
-        debugPrint("Failed to load user details: ${response.body}");
-        throw Exception('Failed to load user details');
-      }
-    } catch (e) {
-      debugPrint("Error fetching user details: $e");
-      error = e.toString();
     }
   }
 }

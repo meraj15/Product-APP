@@ -120,7 +120,7 @@ class ProductCard extends StatelessWidget {
                     backgroundColor: AppColor.whiteColor,
                     child: GestureDetector(
                       onTap: () async {
-                        providerRead.toggleFavorite(product, pdata);
+                        providerRead.toggleFavorite(product, pdata,context);
                       },
                       child: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,

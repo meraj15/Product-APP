@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ProductData>().getUserDetail(userID);
+    context.read<ProductData>().getUserDetail(context);
     userHomeSearchInput.clear();
     loadData();
   }
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   'category': product.category,
                                 };
                                 providerRead.toggleFavorite(
-                                    product, favoriteData);
+                                    product, favoriteData,context);
                               },
                               child: Icon(
                                 isFavorite
